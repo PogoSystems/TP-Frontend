@@ -1,1 +1,0 @@
-// la estructura principal de la página, la sidebar, el header, el footer, etc. Es la estructura de la aplicación, lo que se muestra en todas las páginas.
