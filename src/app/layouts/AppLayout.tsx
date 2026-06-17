@@ -1,5 +1,5 @@
 import {Outlet} from "react-router-dom";
-import Sidebar from "../../shared/components/ui/sidebar.tsx";
+import {Sidebar} from "../../shared/components/ui/sidebar.tsx";
 import { IoIosMenu } from "react-icons/io";
 import {useState} from "react";
 

@@ -18,6 +18,10 @@
     /* Sidebar */
     --color-accent-text: #DB1A1A;
     --color-accent-bg: #EEF2FF;
+
+    /* Buttons */
+    --color-bg-button: #092E5E;
+    --color-accent-button: #0B3D7A;
 }
 .counter {
     font-size: 16px;

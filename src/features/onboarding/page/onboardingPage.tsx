@@ -4,6 +4,5 @@ export default function OnboardingPage(){
         <div>
             Onboarding
         </div>
-
     )
 }
