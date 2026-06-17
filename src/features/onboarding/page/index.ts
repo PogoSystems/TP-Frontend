@@ -1,1 +1,0 @@
-// solo une los componentes y los hooks para mostrar la página. Es la estructura

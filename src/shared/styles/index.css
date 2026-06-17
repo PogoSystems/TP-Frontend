@@ -1,6 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
+    /* Fonts */
+    --font-logo: 'Lexend', sans-serif;
+    --font-body: 'Inter', sans-serif;
     /* Background */
     --color-bg-auth: #F9F9FF;
     --color-bg-app: #FFF6F6;
