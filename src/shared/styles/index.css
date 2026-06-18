@@ -22,6 +22,12 @@
     /* Buttons */
     --color-bg-button: #092E5E;
     --color-accent-button: #0B3D7A;
+
+    /* Card */
+    --color-border-card: #E5E7EB;
+
+    /*icons*/
+    --color-icon-purple:#432DD7;
 }
 .counter {
     font-size: 16px;
