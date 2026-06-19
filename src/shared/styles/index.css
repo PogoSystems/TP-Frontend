@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -9,7 +10,8 @@
     --color-bg-auth: #F9F9FF;
     --color-bg-app: #FFF6F6;
     --color-bg-sidebar: #FFFFFF;
-
+    --color-bg-dashboard-card-secondary: #441E1A;
+    --color-bg-dashboard-card-primary: #AC0000;
     /* Text */
     --color-text-title: #1A3A5A;
     --color-text-body: #4A5565;

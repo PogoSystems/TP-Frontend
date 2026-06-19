@@ -25,7 +25,7 @@ export function Button({text, icon, variant='primary', onClick, type='button', d
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`${BASE_STYLE} ${VARIANTS[variant]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`${BASE_STYLE} ${VARIANTS[variant]} w-full ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
             {icon}
             {text}

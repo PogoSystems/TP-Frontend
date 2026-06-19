@@ -23,7 +23,7 @@ export default function AppLayout (){
             />
 
             {/* Main content */}
-            <div className="flex flex-col min-w-0 h-full">
+            <div className="flex flex-col min-w-0 h-full ">
 
                 {/* Header mobile */}
                 <header className='w-full flex flex-row gap-3 lg:hidden p-6 bg-bg-sidebar '>
@@ -33,7 +33,7 @@ export default function AppLayout (){
                     <span className="font-logo text-accent-text font-bold text-4xl px-3 ">Pogo.</span>
                 </header>
 
-                <main className="flex-1 p-6">
+                <main className="flex-1 pl-10 pr-10 pt-6 max-w-5xl  border-accent-text">
                     <Outlet/>
                 </main>
 
