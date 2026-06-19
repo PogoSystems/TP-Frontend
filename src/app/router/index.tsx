@@ -1,7 +1,7 @@
 import {createBrowserRouter} from "react-router-dom";
 import AuthLayout from "../layouts/AuthLayout.tsx";
 import AppLayout from "../layouts/AppLayout.tsx";
-import OnboardingPage from "../../features/onboarding/page/onboardingPage.tsx";
+import DashboardPage from "../../features/dashboard/page/dashboardPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -14,7 +14,7 @@ export const router = createBrowserRouter([
     {
         element: <AppLayout/>,
         children: [
-            {path: '/', element: <OnboardingPage/>},
+            {path: '/', element: <DashboardPage/>},
             {path: '/courses', element: <div>Cursos</div>},
             {path: '/quizzes', element: <div>Cuestionarios</div>},
             {path: '/progress', element: <div>Progreso</div>},

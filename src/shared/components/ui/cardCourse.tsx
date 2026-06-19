@@ -11,27 +11,26 @@ interface CardCourseProps{
 
 export function CardCourse({iconText, courseTitle, courseDescription, lastQuizTime}: CardCourseProps){
     return(
-        <Card className="flex flex-col gap-3">
+        <Card className="flex flex-col gap-3 w-full">
             <div className=" flex flex-row gap-3">
-                <div className="flex bg-accent-button text-white font-semibold text-lg p-3 rounded-xl h-14 w-14 items-center justify-center">
+                <div className="flex bg-bg-icon-pink text-white font-semibold text-lg p-3 rounded-xl h-12 min-w-12 items-center justify-center">
                     {iconText}
                 </div>
 
-                <div>
+                <div className="text-sm">
                     <Card.Header title={`${courseTitle}`}/>
                     <Card.Content>
-                        <p>
+                        <p className="line-clamp-2">
                             {courseDescription}
                         </p>
                     </Card.Content>
-
                 </div>
             </div>
 
             <div className="border-t-1 border-gray-100">
-                <Card.Footer className="flex flex-row gap-2 items-center text-text-subtle pt-2">
+                <Card.Footer className="flex flex-row gap-2 items-center text-text-subtle pt-2 text-xs">
                     <FaRegClock />
-                    <p>Último cuestionario: {lastQuizTime}</p>
+                    <p>Último cuestionario: Hace {lastQuizTime}</p>
                 </Card.Footer>
             </div>
 
