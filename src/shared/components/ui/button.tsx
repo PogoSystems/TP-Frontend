@@ -11,12 +11,12 @@ interface ButtonProps{
     disabled?: boolean;
 }
 
-const BASE_STYLE='flex flex-row gap-2 justify-center items-center px-5 py-2.5 rounded-lg transition-colors text-sm font-medium';
+const BASE_STYLE='flex flex-row gap-2 justify-center items-center rounded-lg transition-colors text-sm font-medium w-full';
 
 const VARIANTS: Record<ButtonVariant, string> ={
-    primary: 'bg-bg-button text-white hover:bg-accent-button',
-    secondary: 'bg-white text-text-body hover:bg-gray-200 border-1 border-gray-200',
-    ghost: 'bg-transparent text-text-body hover:text-accent-text'
+    primary: 'bg-bg-button text-white hover:bg-accent-button px-5 py-2.5 ',
+    secondary: 'bg-white text-text-body hover:bg-gray-200 border-1 border-gray-200 px-5 py-2.5 ',
+    ghost: 'bg-transparent text-ghost-button hover:text-accent-text p-0'
 }
 
 export function Button({text, icon, variant='primary', onClick, type='button', disabled=false}: ButtonProps) {
@@ -25,10 +25,10 @@ export function Button({text, icon, variant='primary', onClick, type='button', d
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`${BASE_STYLE} ${VARIANTS[variant]} w-full ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
+            className={`${BASE_STYLE} ${VARIANTS[variant]} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-            {icon}
             {text}
+            {icon}
         </button>
     )
 }

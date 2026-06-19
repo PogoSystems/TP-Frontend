@@ -6,7 +6,7 @@ export function DashboardQuizCard() {
 
             {/* Text */}
             <div className="flex flex-col gap-2 w-full sm:w-2/3 lg:w-1/2 text-white pb-9">
-                <h2 className="text-2xl">¿Listo para evaluar tu progreso?</h2>
+                <h2 className="text-3xl">¿Listo para evaluar tu progreso?</h2>
                 <p className="text-base font-light">Genera un cuestionario personalizado basado en tu lecturas recientes </p>
             </div>
 

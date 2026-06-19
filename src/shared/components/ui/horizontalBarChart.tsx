@@ -23,7 +23,7 @@ const BLOOM_LEVEL_LABEL: Record<BloomLevel, string> ={
 
 export function HorizontalBarChart({percentage, bloomLevel}: VerticalBarChartProps){
     return(
-        <div className="flex flex-col w-5/12 gap-2 font-medium text-text-title">
+        <div className="flex flex-col gap-2 font-medium text-xs text-text-title">
             <div className="flex flex-row justify-between ">
                 <p>{BLOOM_LEVEL_LABEL[bloomLevel]}</p>
                 <p>{percentage}%</p>

@@ -21,11 +21,12 @@ function CardHeader({title, subtitle}: CardHeaderProps){
 //Content
 interface CardContentProps{
     children: React.ReactNode;
+    className?: string;
 }
 
-function CardContent({children}: CardContentProps){
+function CardContent({children, className}: CardContentProps){
     return(
-        <div className="text-text-body">
+        <div className={`text-text-body ${className}`}>
             {children}
         </div>
     )

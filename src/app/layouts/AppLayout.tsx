@@ -7,7 +7,7 @@ export default function AppLayout (){
     const [sidebarOpen, setSidebarOpen] =useState(false);
 
     return(
-        <div className="h-screen bg-bg-app grid lg:grid-cols-[auto_1fr] ">
+        <div className="h-screen bg-bg-app grid lg:grid-cols-[auto_1fr] overflow-hidden">
 
             {/* Sidebar */}
             <aside className={`fixed h-screen z-30 lg:static transition-transform duration-300 ease-in-out
@@ -23,7 +23,7 @@ export default function AppLayout (){
             />
 
             {/* Main content */}
-            <div className="flex flex-col min-w-0 h-full ">
+            <div className="flex flex-col min-w-0 h-full overflow-y-auto">
 
                 {/* Header mobile */}
                 <header className='w-full flex flex-row gap-3 lg:hidden p-6 bg-bg-sidebar '>
@@ -33,7 +33,7 @@ export default function AppLayout (){
                     <span className="font-logo text-accent-text font-bold text-4xl px-3 ">Pogo.</span>
                 </header>
 
-                <main className="flex-1 pl-10 pr-10 pt-6 max-w-5xl  border-accent-text">
+                <main className="flex-1 pl-10 lg:pl-16 pr-10 pt-14 pb-14 max-w-6xl  border-accent-text">
                     <Outlet/>
                 </main>
 
