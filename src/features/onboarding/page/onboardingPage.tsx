@@ -1,9 +1,8 @@
-
 export default function OnboardingPage(){
     return (
-        <div>
-            Onboarding
-        </div>
+            <div>
+                Onboarding
+            </div>
 
     )
 }

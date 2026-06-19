@@ -18,15 +18,32 @@
     /* Sidebar */
     --color-accent-text: #DB1A1A;
     --color-accent-bg: #EEF2FF;
-}
-.counter {
-    font-size: 16px;
-    padding: 5px 10px;
-    border-radius: 5px;
-    color: white;
-    background: darkblue;
-    border: 2px solid transparent;
-    transition: border-color 0.3s;
-    margin-bottom: 24px;
+
+    /* Buttons */
+    --color-bg-button: #092E5E;
+    --color-accent-button: #0B3D7A;
+
+    /* Card */
+    --color-border-card: #E5E7EB;
+
+    /*icons*/
+    --color-icon-purple:#432DD7;
+
+    /* Taxonomy Levels*/
+    --color-level-remember: #4E79A7;
+    --color-level-understand: #F28E2B;
+    --color-level-apply: #DC4B4B;
+    --color-level-analyze: #59A14F;
+    --color-level-evaluate: #B07AA1;
+
+    /* Charts */
+    --color-bg-bar-chart: #E0E3E5;
 }
 
+body {
+    font-family: var(--font-body),sans-serif;
+    background-color: var(--color-bg-app);
+    color: var(--color-text-body);
+    margin: 0;
+    padding: 0;
+}

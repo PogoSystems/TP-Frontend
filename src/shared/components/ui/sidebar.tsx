@@ -24,7 +24,7 @@ interface SidebarProps{
     onClose: () => void;
 }
 
-export default function Sidebar({onClose}: SidebarProps){
+export function Sidebar({onClose}: SidebarProps){
     return(
         <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30">
 
