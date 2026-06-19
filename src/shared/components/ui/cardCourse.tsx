@@ -11,7 +11,7 @@ interface CardCourseProps{
 
 export function CardCourse({iconText, courseTitle, courseDescription, lastQuizTime}: CardCourseProps){
     return(
-        <Card className="flex flex-col gap-3 w-1/2">
+        <Card className="flex flex-col gap-3 w-full">
             <div className=" flex flex-row gap-3">
                 <div className="flex bg-bg-icon-pink text-white font-semibold text-lg p-3 rounded-xl h-12 min-w-12 items-center justify-center">
                     {iconText}
