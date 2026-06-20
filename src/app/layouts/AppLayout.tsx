@@ -33,7 +33,7 @@ export default function AppLayout (){
                     <span className="font-logo text-accent-text font-bold text-4xl px-3 ">Pogo.</span>
                 </header>
 
-                <main className="flex-1 pl-10 lg:pl-16 pr-10 pt-14 pb-14 max-w-6xl  border-accent-text">
+                <main className="flex-1 pl-10 lg:pl-16 pr-10 pt-14 pb-14 max-w-7xl  border-accent-text">
                     <Outlet/>
                 </main>
 
