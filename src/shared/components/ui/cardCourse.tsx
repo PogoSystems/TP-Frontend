@@ -6,7 +6,7 @@ interface CardCourseProps{
     iconText: string,
     courseTitle: string,
     courseDescription: string,
-    lastQuizTime: string
+    lastQuizTime?: string
 }
 
 export function CardCourse({iconText, courseTitle, courseDescription, lastQuizTime}: CardCourseProps){
