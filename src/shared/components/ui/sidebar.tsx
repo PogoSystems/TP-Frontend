@@ -1,8 +1,5 @@
 import { GiMonkey } from "react-icons/gi";
-import { IoBookOutline } from "react-icons/io5";
-import { LuBrain } from "react-icons/lu";
-import { AiOutlineRise, AiOutlineClose } from "react-icons/ai";
-import { LuUserRound } from "react-icons/lu";
+import { BookOpen, Brain, TrendingUp, UserRound, X} from 'lucide-react';
 import * as React from "react";
 import {NavLink} from "react-router-dom";
 
@@ -14,10 +11,10 @@ interface NavItem{
 
 const NAV_ITEMS: NavItem[]=[
     {label: 'Mi Espacio', icon: <GiMonkey size={20}/>, path: '/' },
-    {label: 'Curso', icon: <IoBookOutline size={20}/>, path: '/courses' },
-    {label: 'Cuestionarios', icon: <LuBrain size={20}/>, path: '/quizzes' },
-    {label: 'Progreso', icon: <AiOutlineRise size={20}/>, path: '/progress' },
-    {label: 'Perfil y Logros', icon: <LuUserRound size={20}/>, path: '/profile-achievements' }
+    {label: 'Curso', icon: <BookOpen size={20}/>, path: '/courses' },
+    {label: 'Cuestionarios', icon: <Brain  size={20}/>, path: '/quizzes' },
+    {label: 'Progreso', icon: <TrendingUp  size={20}/>, path: '/progress' },
+    {label: 'Perfil y Logros', icon: <UserRound size={20}/>, path: '/profile-achievements' }
 ]
 
 interface SidebarProps{
@@ -37,7 +34,7 @@ export function Sidebar({onClose}: SidebarProps){
                 onClick={onClose}
                 aria-label="Close sidebar"
                 className="lg:hidden absolute top-5 right-5 rounded-md p-1 text-text-subtle hover:bg-accent-bg transition-colors">
-                <AiOutlineClose size={20}/>
+                <X size={20}/>
                 </button>
             </div>
 
