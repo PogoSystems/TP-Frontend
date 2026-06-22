@@ -1,5 +1,5 @@
 import {Card} from "./card.tsx";
-import {FaRegClock} from "react-icons/fa6";
+import { Clock } from 'lucide-react';
 
 
 interface CardCourseProps{
@@ -29,7 +29,7 @@ export function CardCourse({iconText, courseTitle, courseDescription, lastQuizTi
 
             <div className="border-t-1 border-gray-100">
                 <Card.Footer className="flex flex-row gap-2 items-center text-text-subtle pt-2 text-xs">
-                    <FaRegClock />
+                    <Clock size={15}/>
                     <p>Último cuestionario: Hace {lastQuizTime}</p>
                 </Card.Footer>
             </div>
