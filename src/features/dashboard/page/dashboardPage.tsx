@@ -1,29 +1,41 @@
 import {DashboardQuizCard} from "../components/dashboardQuizCard.tsx";
-import { AiOutlineFire } from "react-icons/ai";
-import { BsQuestionSquare } from "react-icons/bs";
-import { MdOutlineBook } from "react-icons/md";
 import {DashboardStat} from "../components/dashboardStat.tsx";
 import {Card} from "../../../shared/components/ui/card.tsx";
 import {CardCourse} from "../../../shared/components/ui/cardCourse.tsx";
 import {Button} from "../../../shared/components/ui/button.tsx";
-import { FaArrowRightLong, FaRegCircleCheck } from "react-icons/fa6";
 import {HorizontalBarChart} from "../../../shared/components/ui/horizontalBarChart.tsx";
-import { HiOutlineTrophy } from "react-icons/hi2";
 import {Link} from "react-router-dom";
+import {useCourseSummaries} from "../hook/useCourseSummaries.ts";
+import {useUserActivity} from "../hook/useUserActivity.ts";
+
+import { BadgeCheck , Trophy, Flame, FileQuestionMark, BookMarked, ArrowRight } from 'lucide-react';
+import type {ActivityType} from "../types/userActivity.types.ts";
+import type { LucideIcon } from 'lucide-react'
+import {useBloomStats} from "../types/useBloomStats.ts";
+
+const USER_ACTIVITY_STYLE: Record<ActivityType, {icon: LucideIcon; color:string}> ={
+    quiz:{icon:BadgeCheck , color: 'text-accent-text'},
+    achievement:{icon:Trophy, color:'text-icon-blue'}
+}
+
 export default function DashboardPage(){
+    const {courses} = useCourseSummaries()
+    const {activities} = useUserActivity()
+    const {bloomChartData}=useBloomStats()
+
     return (
         <div className="flex flex-col">
             {/* Header */}
             <div className="flex flex-col gap-1 ">
                 <h2 className="font-semibold text-4xl text-text-title">Hola, Usuario</h2>
                 <ul className="flex flex-row gap-5">
-                    <DashboardStat title={'Racha actual 7 días'} icon={ <AiOutlineFire className="text-accent-text" size={20}/>}/>
+                    <DashboardStat title={'Racha actual 7 días'} icon={ <Flame className="text-accent-text" size={20}/>}/>
                     <div className="border-l border-vertical-divider" aria-hidden="true" />
 
-                    <DashboardStat title={'48 Cuestionarios completados'} icon={<BsQuestionSquare  className="text-icon-green" size={20}/>}/>
+                    <DashboardStat title={'48 Cuestionarios completados'} icon={<FileQuestionMark   className="text-icon-green" size={20}/>}/>
 
                     <div className="border-l border-vertical-divider" aria-hidden="true" />
-                    <DashboardStat title={'5 cursos activos'} icon={<MdOutlineBook className="text-icon-purple" size={20}/>}/>
+                    <DashboardStat title={'5 cursos activos'} icon={<BookMarked  className="text-icon-purple" size={20}/>}/>
                 </ul>
             </div>
 
@@ -40,58 +52,46 @@ export default function DashboardPage(){
                         <div className="flex flex-row justify-between">
                             <h2 className="font-semibold text-lg text-text-title pb-3.5">Mis cursos</h2>
                             <Link to={'/courses'} className="self-center">
-                                <Button text={'Ver todos'} variant={'ghost'} icon={<FaArrowRightLong/>} />
+                                <Button text={'Ver todos'} variant={'ghost'} icon={<ArrowRight  />} />
                             </Link>
 
                         </div>
 
                         <div className='flex flex-row gap-5'>
-                            <Link to={'/courses'} className="block flex-1 ">
-                                <CardCourse iconText={'ED'} courseTitle={'Estructura de Datos'} courseDescription={'Fundamentos para la organización y gestión de datos de forma eficiente'} lastQuizTime={'2 horas'}/>
-                            </Link>
-
-                            <Link to={'/courses'} className="flex-1 block">
-                                <CardCourse iconText={'ML'} courseTitle={'Machine Learning'} courseDescription={'Introduccion al aprendizaje supervisado y no supervisado'} lastQuizTime={'4 días'}/>
-                            </Link>
-
+                            {courses.map((course) =>
+                                <Link to={`/courses/${course.id}`} className="block flex-1 ">
+                                    <CardCourse iconText={`${course.iconText}`} courseTitle={`${course.title}`} courseDescription={`${course.description}`} lastQuizTime={`${course.lastQuizTime}`}/>
+                                </Link>
+                            )}
                         </div>
 
                     {/* Recent activities */}
                     <div>
                         <h2 className="font-semibold text-lg text-text-title pb-3.5">Actividad reciente</h2>
                         <div className="flex flex-col gap-2">
-                            <Card>
-                                <div className="flex flex-row items-center content-center gap-5">
-                                    <div>
-                                        <FaRegCircleCheck size={30} className="text-accent-text"/>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <Card.Header title={'Cuestionario completado: Quiz 1 - Semana 10 - Calidad'}></Card.Header>
-                                        <Card.Content className=" flex flex-col gap-5">
+                            {activities.map((activity) =>{
+                                const style =USER_ACTIVITY_STYLE[activity.type]
+                                const Icon = style.icon
+                                return(
+                                    <Card>
+                                        <div className="flex flex-row items-center content-center gap-5">
                                             <div>
-                                                <p className="text-sm text-text-subtle">Obtuviste 140 puntos</p>
-                                                <p className="text-xs font-light text-text-subtle">Hoy, 22:16</p>
+                                                <Icon size={30} className={style.color}></Icon>
                                             </div>
-                                        </Card.Content>
-                                    </div>
-                                </div>
-                            </Card>
-                            <Card>
-                                <div className="flex flex-row items-center content-center gap-5">
-                                    <div>
-                                        <HiOutlineTrophy size={30} className="text-icon-blue"/>
-                                    </div>
-                                    <div className="flex flex-col">
-                                        <Card.Header title={'Nuevo logro desbloqueado: Primeros Pasos'}></Card.Header>
-                                        <Card.Content className=" flex flex-col gap-5">
-                                            <div>
-                                                <p className="text-sm text-text-subtle">Has completado 1 cuestionario</p>
-                                                <p className="text-xs font-light text-text-subtle">Ayer, 18:16</p>
+                                            <div className="flex flex-col">
+                                                <Card.Header title={`${activity.title}`}></Card.Header>
+                                                <Card.Content className=" flex flex-col gap-5">
+                                                    <div>
+                                                        <p className="text-sm text-text-subtle">{activity.description}</p>
+                                                        <p className="text-xs font-light text-text-subtle">{activity.time}</p>
+                                                    </div>
+                                                </Card.Content>
                                             </div>
-                                        </Card.Content>
-                                    </div>
-                                </div>
-                            </Card>
+                                        </div>
+                                    </Card>
+                                )
+                            }
+                            )}
                         </div>
                     </div>
                 </div>
@@ -101,10 +101,9 @@ export default function DashboardPage(){
                     <Card className="flex flex-col gap-3 w-full">
                         <Card.Header title={'Resumen cognitivo'}/>
                         <Card.Content className="flex flex-col gap-3">
-                            <HorizontalBarChart percentage={70} bloomLevel={'remember'}/>
-                            <HorizontalBarChart percentage={24} bloomLevel={'apply'}/>
-                            <HorizontalBarChart percentage={100} bloomLevel={'understand'}/>
-                            <HorizontalBarChart percentage={42} bloomLevel={'analyze'}/>
+                            {bloomChartData.map((stat) =>
+                                <HorizontalBarChart percentage={stat.percentage} bloomLevel={stat.bloomLevel}/>
+                            )}
                         </Card.Content>
                     </Card>
                 </div>
