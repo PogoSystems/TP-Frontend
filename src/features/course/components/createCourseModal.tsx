@@ -17,8 +17,8 @@ export function CreateCourseModal({isOpen, onClose}: CreateCourseModalProps) {
 
             {/* Form */ }
             <div className="grid grid-rows-1 gap-4 mb-8">
-               <InputText label={'Nombre del curso'} name={'courseName'} placeholder={'Algoritmo y estructura de datos'}></InputText>
-                <TextArea label={'Descripción'} name={'courseDescription'} placeholder={'Escribe una breve descripción del contenido del curso'} ></TextArea>
+               <InputText label={'Nombre del curso'} required={true} name={'courseName'} placeholder={'Algoritmo y estructura de datos'}></InputText>
+                <TextArea label={'Descripción'} required={true} name={'courseDescription'} placeholder={'Escribe una breve descripción del contenido del curso'} ></TextArea>
             </div>
 
             {/* Footer */ }

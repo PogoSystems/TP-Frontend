@@ -4,12 +4,13 @@ interface TextAreaProps {
     placeholder?: string
     rows?: number
     className?: string
+    required?: boolean
 }
 
-export function TextArea({ label, name, placeholder, rows = 4, className }: TextAreaProps) {
+export function TextArea({ label, name, required, placeholder, rows = 4, className }: TextAreaProps) {
     return (
         <div>
-            <h3 className="text-text-title font-medium text-sm pb-2">{label}</h3>
+            <h3 className="text-text-title font-medium text-sm pb-2">{label} {required && <span className="text-red-500 ml-1">*</span>}</h3>
             <textarea
                 name={name}
                 placeholder={placeholder}
