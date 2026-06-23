@@ -53,7 +53,7 @@ export function FileDropzone({onFilesSelected, maxFiles, currentCount}: FileDrop
 
     return (
             <div onDragOver={handleDragOver} onDrop={handleDrop} onDragLeave={() => setIsDraggingOver(false)}
-                 className={` bg-white border-2 border-dashed rounded-lg p-8 flex flex-col justify-center items-center gap-4 text-center text-text-title ${isDraggingOver  ? 'border-accent-button' : 'border-border-input'} ${isDisabled ? 'opacity-50' : ''}`}>
+                 className={`border-2 border-dashed rounded-lg p-8 flex flex-col justify-center items-center gap-4 text-center text-text-title ${isDraggingOver  ? 'border-accent-button' : 'border-border-input'} ${isDisabled ? 'opacity-50' : ''}`}>
                 <div className="bg-gray-100 rounded-full p-4">
                     <Upload className="text-icon-grey"/>
                 </div>
