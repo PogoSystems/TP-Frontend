@@ -47,9 +47,9 @@ export function CreateQuizPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5 pb-4">
                         <Select label={'Selecciona un curso'} required={true} options={courses.map((course) => ({ value: course.id, label: course.title }))} placeholder={'Elige un curso'} value={selectedCourseId} onChange={handleCourseChange}/>
                         <MultiSelectDropdown label={'Documentos para la generación'} required={true} options={documentOptions} selectedValues={selectedDocumentIds} onChange={setSelectedDocumentIds} placeholder={selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}/>
-                        <InputText label={'Título del cuestionario'} required={true} name={'quizTitle'} placeholder={'Quiz de repaso'}/>
+                        <InputText label={'Título del cuestionario'} required={true} name={'quizTitle'} placeholder={'Ej: Quiz de repaso - PC1 - Notación Big O'}/>
                         <InputText label={'Cantidad de preguntas'} required={true} name={'questionCount'} placeholder={'10'}/>
-                        <InputText label={'¿Acerca de qué quieres las preguntas?'} required={true} name={'questionCount'} placeholder={'Historias de Usuario, Velocity y puntos de historia'}/>
+                        <InputText label={'Tema del cuestionario'} required={true} name={'questionCount'} placeholder={'Ej: Patrones de diseño, Diagramas UML, Principios SOLID'}/>
                     </div>
 
                     <div className="pb-4">
