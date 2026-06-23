@@ -1,1 +1,0 @@
-// componentes de UI propios/exclusivos de las vistas de la feature. Puro diseño
