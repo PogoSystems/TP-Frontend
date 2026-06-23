@@ -1,8 +1,10 @@
 import {Button} from "../../../shared/components/ui/button.tsx";
 import {Plus} from "lucide-react";
 import {CardCourse} from "../../../shared/components/ui/cardCourse.tsx";
+import {UseCourseList} from "../hook/useCourseList.ts";
 
 export function CoursesPage() {
+    const {courses} = UseCourseList()
     return(
         <div>
             {/* Header */ }
@@ -18,11 +20,11 @@ export function CoursesPage() {
 
             {/* List of courses */ }
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-wrap pt-10">
-                <CardCourse iconText={'ED'} courseTitle={'Estructura de Datos'} courseDescription={'Fundamentos para la organización y gestión de datos de forma eficiente'}/>
-                <CardCourse iconText={'ML'} courseTitle={'Machine Learning'} courseDescription={'Introducción al aprendizaje supervisado y no supervisado'}/>
-                <CardCourse iconText={'DW'} courseTitle={'Desarrollo Web'} courseDescription={'Construir aplicaciones web modernas y adaptativas'}/>
-                <CardCourse iconText={'ED'} courseTitle={'Estructura de Datos'} courseDescription={'Fundamentos para la organización y gestión de datos de forma eficiente'}/>
-
+                {courses.map((course) =>{
+                    return(
+                        <CardCourse iconText={course.iconText} courseTitle={course.title} courseDescription={course.description} lastQuizTime={course.lastQuizTime}/>
+                    )
+                })}
             </div>
         </div>
         
