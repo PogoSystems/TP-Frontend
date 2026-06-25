@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {FileDropzone} from "../../../shared/components/ui/fileDropzone.tsx";
 import {FileListItem} from "../../../shared/components/ui/fileListItem.tsx";
 import {Card} from "../../../shared/components/ui/card.tsx";
@@ -8,10 +9,12 @@ import {BloomLevelCard} from "../components/bloomLevelCard.tsx";
 import {useCreateQuiz} from "../hook/useCreateQuiz.ts";
 import {Select} from "../../../shared/components/ui/select.tsx";
 import {MultiSelectDropdown} from "../../../shared/components/ui/multiSelectDropdown.tsx";
+import {MOCK_QUIZ} from "../hook/useQuizSession.ts";
 
 const MAX_FILES=3
 
 export function CreateQuizPage() {
+    const navigate = useNavigate();
     const [files, setFiles] = useState<File[]>([]); //to save the files that are dropped or selected by the user
     const [selectedCourseId, setSelectedCourseId] = useState('')
     const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([])
@@ -35,6 +38,11 @@ export function CreateQuizPage() {
 
     function handleRemoveFile(indexToRemove:number){
         setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove))
+    }
+
+    // TODO: Replace MOCK_QUIZ with the actual API response once backend is connected
+    function handleGenerateQuiz() {
+        navigate('/quiz/taking', { state: { quiz: MOCK_QUIZ } })
     }
 
     return(
@@ -79,7 +87,7 @@ export function CreateQuizPage() {
                 <div className="border-t-1 border-gray-100 pt-2">
                     <Card.Footer>
                         <div className="w-fit pt-2">
-                            <Button text={'Generar quiz'}></Button>
+                            <Button text={'Generar quiz'} onClick={handleGenerateQuiz}></Button>
                         </div>
 
                     </Card.Footer>
