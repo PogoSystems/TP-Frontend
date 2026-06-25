@@ -4,6 +4,7 @@ import {CardCourse} from "../../../shared/components/ui/cardCourse.tsx";
 import {UseCourseList} from "../hook/useCourseList.ts";
 import * as React from "react";
 import {CreateCourseModal} from "../components/createCourseModal.tsx";
+import {Link} from "react-router-dom";
 
 export function CoursesPage() {
     const {courses} = UseCourseList()
@@ -25,9 +26,11 @@ export function CoursesPage() {
 
             {/* List of courses */ }
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-wrap pt-10">
-                {courses.map((course) =>{
+            {courses.map((course) =>{
                     return(
-                        <CardCourse iconText={course.iconText} courseTitle={course.title} courseDescription={course.description} lastQuizTime={course.lastQuizTime}/>
+                        <Link key={course.id} to={`/courses/${course.id}`} className="block">
+                            <CardCourse iconText={course.iconText} courseTitle={course.title} courseDescription={course.description} lastQuizTime={course.lastQuizTime}/>
+                        </Link>
                     )
                 })}
             </div>
