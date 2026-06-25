@@ -1,4 +1,5 @@
 import {useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {FileDropzone} from "../../../shared/components/ui/fileDropzone.tsx";
 import {FileListItem} from "../../../shared/components/ui/fileListItem.tsx";
 import {Card} from "../../../shared/components/ui/card.tsx";
@@ -8,10 +9,12 @@ import {BloomLevelCard} from "../components/bloomLevelCard.tsx";
 import {useCreateQuiz} from "../hook/useCreateQuiz.ts";
 import {Select} from "../../../shared/components/ui/select.tsx";
 import {MultiSelectDropdown} from "../../../shared/components/ui/multiSelectDropdown.tsx";
+import {MOCK_QUIZ} from "../hook/useQuizSession.ts";
 
 const MAX_FILES=3
 
 export function CreateQuizPage() {
+    const navigate = useNavigate();
     const [files, setFiles] = useState<File[]>([]); //to save the files that are dropped or selected by the user
     const [selectedCourseId, setSelectedCourseId] = useState('')
     const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([])
@@ -37,6 +40,11 @@ export function CreateQuizPage() {
         setFiles((prevFiles) => prevFiles.filter((_, index) => index !== indexToRemove))
     }
 
+    // TODO: Replace MOCK_QUIZ with the actual API response once backend is connected
+    function handleGenerateQuiz() {
+        navigate('/quiz/taking', { state: { quiz: MOCK_QUIZ } })
+    }
+
     return(
         <>
             <h2 className="font-semibold text-4xl text-text-title">Generar Quiz</h2>
@@ -47,9 +55,9 @@ export function CreateQuizPage() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5 pb-4">
                         <Select label={'Selecciona un curso'} required={true} options={courses.map((course) => ({ value: course.id, label: course.title }))} placeholder={'Elige un curso'} value={selectedCourseId} onChange={handleCourseChange}/>
                         <MultiSelectDropdown label={'Documentos para la generación'} required={true} options={documentOptions} selectedValues={selectedDocumentIds} onChange={setSelectedDocumentIds} placeholder={selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}/>
-                        <InputText label={'Título del cuestionario'} required={true} name={'quizTitle'} placeholder={'Quiz de repaso'}/>
+                        <InputText label={'Título del cuestionario'} required={true} name={'quizTitle'} placeholder={'Ej: Quiz de repaso - PC1 - Notación Big O'}/>
                         <InputText label={'Cantidad de preguntas'} required={true} name={'questionCount'} placeholder={'10'}/>
-                        <InputText label={'¿Acerca de qué quieres las preguntas?'} required={true} name={'questionCount'} placeholder={'Historias de Usuario, Velocity y puntos de historia'}/>
+                        <InputText label={'Tema del cuestionario'} required={true} name={'questionCount'} placeholder={'Ej: Patrones de diseño, Diagramas UML, Principios SOLID'}/>
                     </div>
 
                     <div className="pb-4">
@@ -79,7 +87,7 @@ export function CreateQuizPage() {
                 <div className="border-t-1 border-gray-100 pt-2">
                     <Card.Footer>
                         <div className="w-fit pt-2">
-                            <Button text={'Generar quiz'}></Button>
+                            <Button text={'Generar quiz'} onClick={handleGenerateQuiz}></Button>
                         </div>
 
                     </Card.Footer>
