@@ -2,6 +2,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Lightbulb, CheckCircle, XCircle } from 'lucide-react';
 import { Card } from '../../../shared/components/ui/card.tsx';
 import { QuizBloomResultBar } from '../components/quizBloomResultBar.tsx';
+import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
 import type { QuizResult } from '../types/quiz.types.ts';
 
 // Fallback mock result for direct URL access during development
@@ -25,6 +26,39 @@ export function QuizResultsPage() {
         result.maxTotalScore > 0
             ? Math.round((result.totalScore / result.maxTotalScore) * 100)
             : 0;
+
+    // Calculate dominant and weak cognitive performance levels from bloomBreakdown
+    const bloomStats = result.bloomBreakdown.map((item) => ({
+        ...item,
+        percentage: item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0,
+    }));
+
+    // Sort by success percentage (descending) to find the dominant level
+    const sortedBySuccess = [...bloomStats].sort((a, b) => {
+        if (b.percentage !== a.percentage) {
+            return b.percentage - a.percentage;
+        }
+        return b.total - a.total; // tie-breaker: prefer the level with more questions
+    });
+
+    const dominant = sortedBySuccess[0] || null;
+
+    // Sort by success percentage (ascending) to find the weak level (needs reinforcement)
+    const sortedByFailure = [...bloomStats].sort((a, b) => {
+        if (a.percentage !== b.percentage) {
+            return a.percentage - b.percentage;
+        }
+        return b.total - a.total; // tie-breaker: prefer the level with more questions
+    });
+
+    let weak = sortedByFailure[0] || null;
+    if (dominant && weak && dominant.bloomLevel === weak.bloomLevel) {
+        if (sortedByFailure.length > 1) {
+            weak = sortedByFailure[1];
+        } else {
+            weak = null; // single level evaluated, so no alternative weak level exists
+        }
+    }
 
     return (
         <div className="flex flex-col gap-6 w-full py-8">
@@ -106,19 +140,37 @@ export function QuizResultsPage() {
                 </p>
             </div>
 
-            {/* Bottom row: cognitive performance (placeholder) + CTA */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-                {/* Rendimiento cognitivo — placeholder */}
-                <Card className="flex flex-col gap-3 !p-6 min-h-[200px] items-center justify-center">
-                    <p className="text-sm font-semibold text-[#4a5565]">Rendimiento cognitivo</p>
-                    <p className="text-xs text-[#9ca3af] text-center max-w-[200px]">
-                        Próximamente disponible cuando se conecte con el backend
-                    </p>
+            {/* Bottom section: cognitive performance & CTA */}
+            <div className="flex flex-col lg:flex-row items-stretch gap-4">
+                {/* Rendimiento cognitivo card */}
+                <Card className="flex-1 flex flex-col gap-5 !p-6">
+                    <h2 className="text-xl font-semibold text-[#1a3a5a]">Rendimiento cognitivo</h2>
+                    {dominant ? (
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <BloomSummaryCard
+                                variant="dominant"
+                                level={dominant.label}
+                                percentage={dominant.percentage}
+                                answeredCount={dominant.total}
+                            />
+                            {weak && (
+                                <BloomSummaryCard
+                                    variant="weak"
+                                    level={weak.label}
+                                    percentage={weak.percentage}
+                                    answeredCount={weak.total}
+                                />
+                            )}
+                        </div>
+                    ) : (
+                        <p className="text-sm text-[#4a5565] py-4 text-center">
+                            No hay datos de rendimiento cognitivo disponibles.
+                        </p>
+                    )}
                 </Card>
 
                 {/* CTA */}
-                <div className="flex items-end justify-end">
+                <div className="flex items-end justify-end shrink-0">
                     <button
                         onClick={() => navigate('/courses')}
                         className="px-6 py-3 bg-[#092e5e] text-white rounded-xl font-medium text-base hover:bg-[#1a3a5a] transition-colors"

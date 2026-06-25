@@ -1,4 +1,4 @@
-interface CourseBloomSummaryCardProps {
+interface BloomSummaryCardProps {
     variant: 'dominant' | 'weak';
     level: string;
     percentage: number;
@@ -25,12 +25,12 @@ const VARIANT_LABEL: Record<'dominant' | 'weak', string> = {
     weak: 'Nivel a reforzar',
 };
 
-export function CourseBloomSummaryCard({
+export function BloomSummaryCard({
     variant,
     level,
     percentage,
     answeredCount,
-}: CourseBloomSummaryCardProps) {
+}: BloomSummaryCardProps) {
     const styles = VARIANT_STYLES[variant];
 
     return (
@@ -39,10 +39,10 @@ export function CourseBloomSummaryCard({
                 <p className={`text-xs font-semibold uppercase tracking-wide ${styles.label}`}>
                     {VARIANT_LABEL[variant]}
                 </p>
-                <p className="text-xl font-bold text-text-title uppercase">{level}</p>
+                <p className="text-xl font-bold text-[#1a3a5a] uppercase">{level}</p>
             </div>
             <p className={`text-4xl font-bold ${styles.percentage}`}>{percentage}%</p>
-            <p className="text-sm text-text-body">{answeredCount} preguntas respondidas</p>
+            <p className="text-sm text-[#4a5565]">{answeredCount} preguntas respondidas</p>
         </div>
     );
 }

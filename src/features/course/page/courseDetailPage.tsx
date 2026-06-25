@@ -1,7 +1,7 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Lightbulb, BarChart2, TrendingUp } from 'lucide-react';
 import { useCourseDetail } from '../hook/useCourseDetail.ts';
-import { CourseBloomSummaryCard } from '../components/courseBloomSummaryCard.tsx';
+import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
 import { Card } from '../../../shared/components/ui/card.tsx';
 import { FileDropzone } from '../../../shared/components/ui/fileDropzone.tsx';
 import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarChart.tsx';
@@ -87,13 +87,13 @@ export function CourseDetailPage() {
 
                 {/* Dominant / Weak level summary */}
                 <div className="flex flex-col sm:flex-row gap-4">
-                    <CourseBloomSummaryCard
+                    <BloomSummaryCard
                         variant="dominant"
                         level={course.dominantLevel}
                         percentage={course.dominantLevelPercentage}
                         answeredCount={course.dominantLevelAnswered}
                     />
-                    <CourseBloomSummaryCard
+                    <BloomSummaryCard
                         variant="weak"
                         level={course.weakLevel}
                         percentage={course.weakLevelPercentage}
