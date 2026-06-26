@@ -1,6 +1,6 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation, Navigate } from 'react-router-dom';
 import { Clock } from 'lucide-react';
-import { useQuizSession, MOCK_QUIZ } from '../hook/useQuizSession.ts';
+import { useQuizSession } from '../hook/useQuizSession.ts';
 import { QuizAnswerOption } from '../components/quizAnswerOption.tsx';
 import { QuizProgressBar } from '../components/quizProgressBar.tsx';
 import type { Quiz } from '../types/quiz.types.ts';
@@ -158,8 +158,11 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
 
 export function QuizTakingPage() {
     const location = useLocation();
-    // When connected to the backend, the quiz data will come via location.state
-    const quiz: Quiz = (location.state as { quiz?: Quiz })?.quiz ?? MOCK_QUIZ;
+    const quiz: Quiz | undefined = (location.state as { quiz?: Quiz })?.quiz;
+
+    if (!quiz) {
+        return <Navigate to="/quiz/create" replace />;
+    }
 
     return <QuizTakingContent quiz={quiz} />;
 }

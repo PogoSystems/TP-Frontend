@@ -1,9 +1,11 @@
 export interface QuizAnswer {
+    id: number;
     text: string;
     is_correct: boolean;
 }
 
 export interface QuizQuestion {
+    id: number;
     text: string;
     bloom_level: string;
     score: number;
@@ -12,6 +14,7 @@ export interface QuizQuestion {
 }
 
 export interface Quiz {
+    id: number;
     title: string;
     questions: QuizQuestion[];
 }

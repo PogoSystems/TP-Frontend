@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import type { DocumentResponse } from "../types/document.ts"
-import {deleteDocument, fetchDocumentsByCourse} from "../services/documentService.ts"
+import { deleteDocument, fetchDocumentsByCourse } from "../services/documentService.ts"
 
 export function useCourseDocuments(courseId: number) {
     const [documents, setDocuments] = useState<DocumentResponse[]>([])
@@ -11,7 +11,7 @@ export function useCourseDocuments(courseId: number) {
      * Fetches all documents for the current course from the backend
      * and replaces the local state.
      */
-    const fetchDocuments = async () => {
+    const fetchDocuments = useCallback(async () => {
         setIsLoading(true)
         setError(null)
 
@@ -23,7 +23,7 @@ export function useCourseDocuments(courseId: number) {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [courseId])
 
     /**
      * Loads documents when the courseId changes.
