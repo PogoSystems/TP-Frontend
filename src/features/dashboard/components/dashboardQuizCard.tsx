@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {Button} from "../../../shared/components/ui/button.tsx";
 
 export function DashboardQuizCard() {
@@ -12,7 +13,10 @@ export function DashboardQuizCard() {
 
             {/* Button */}
             <div className="w-40 ">
-                <Button text={'Generar quiz'} variant={'secondary'}></Button>
+                <Link to={'/quizzes'} className="w-full">
+                    <Button text={'Generar quiz'} variant={'secondary'}></Button>
+                </Link>
+
             </div>
 
             {/* Icon */}

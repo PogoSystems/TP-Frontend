@@ -1,10 +1,22 @@
-import {Outlet} from "react-router-dom";
+import {Navigate, Outlet} from "react-router-dom";
 import {Sidebar} from "../../shared/components/ui/sidebar.tsx";
 import { IoIosMenu } from "react-icons/io";
 import {useState} from "react";
+import {useSession} from "../../features/auth/hook/useSession.ts";
 
 export default function AppLayout (){
+    const {session, isCheckingSession} = useSession();
     const [sidebarOpen, setSidebarOpen] =useState(false);
+
+    // While checking the session, show a loading screen
+    if(isCheckingSession){
+        return <div className="h-screen flex items-center justify-center">Cargando...</div>
+    }
+
+    // If there is no session, redirect to the login page
+    if(!session){
+        return <Navigate to={'/login'} replace/>
+    }
 
     return(
         <div className="h-screen bg-bg-app grid lg:grid-cols-[auto_1fr] overflow-hidden">

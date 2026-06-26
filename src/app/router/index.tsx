@@ -7,13 +7,15 @@ import {CourseDetailPage} from "../../features/course/page/courseDetailPage.tsx"
 import { QuizTakingPage } from "../../features/quiz/page/quizTakingPage.tsx";
 import { QuizResultsPage } from "../../features/quiz/page/quizResultsPage.tsx";
 import {CreateQuizPage} from "../../features/quiz/page/createQuizPage.tsx";
+import {LoginPage} from "../../features/auth/page/loginPage.tsx";
+import {RegisterPage} from "../../features/auth/page/registerPage.tsx";
 
 export const router = createBrowserRouter([
     {
         element: <AuthLayout />,
         children: [
-            { path: '/login', element: <div>Login</div> },
-            { path: '/register', element: <div>Register</div> },
+            { path: '/login', element: <LoginPage/> },
+            {path: '/register', element: <RegisterPage/>},
         ]
     },
     {
