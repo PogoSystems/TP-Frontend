@@ -7,7 +7,7 @@ interface InputTextProps{
     className?:string;
     required?: boolean
     value: string
-    onChange:(event: React.ChangeEvent<HTMLInputElement>) => void
+    onChange?:(event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
 export function InputText({label,name, placeholder, className, required, value, onChange}: InputTextProps) {
