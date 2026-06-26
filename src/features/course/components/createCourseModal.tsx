@@ -3,13 +3,44 @@ import {InputText} from "../../../shared/components/ui/inputText.tsx";
 import {Button} from "../../../shared/components/ui/button.tsx";
 import { Plus } from 'lucide-react';
 import {TextArea} from "../../../shared/components/ui/textArea.tsx";
+import type {CourseResponse} from "../types/course.types.ts";
+import {useState} from "react";
+import {createCourse} from "../services/courseService.ts";
 
 interface CreateCourseModalProps {
     isOpen: boolean;
     onClose: () => void;
+    onCourseCreated: (course: CourseResponse) => void
 }
 
-export function CreateCourseModal({isOpen, onClose}: CreateCourseModalProps) {
+export function CreateCourseModal({isOpen, onClose, onCourseCreated }: CreateCourseModalProps) {
+    const [name, setName] = useState("")
+    const [description, setDescription] = useState("")
+    const [error, setError] = useState("")
+    const [isSubmitting, setIsSubmitting] = useState(false)
+
+    async function handleCreate() {
+        setError("")
+
+        if (!name.trim() || !description.trim()) {
+            setError("All fields are required.")
+            return
+        }
+
+        setIsSubmitting(true)
+        try {
+            const course = await createCourse({ name, description })
+            onCourseCreated(course)
+            setName("")
+            setDescription("")
+            onClose()
+        } catch {
+            setError("There was an error creating the course. Please try again.")
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
     return(
         <Modal isOpen={isOpen} onClose={onClose}>
             {/* Header */ }
@@ -17,9 +48,11 @@ export function CreateCourseModal({isOpen, onClose}: CreateCourseModalProps) {
 
             {/* Form */ }
             <div className="grid grid-rows-1 gap-4 mb-8">
-               <InputText label={'Nombre del curso'} required={true} name={'courseName'} placeholder={'Algoritmo y estructura de datos'}></InputText>
-                <TextArea label={'Descripción'} required={true} name={'courseDescription'} placeholder={'Escribe una breve descripción del contenido del curso'} ></TextArea>
+               <InputText label={'Nombre del curso'} value={name} required={true} name={'courseName'} placeholder={'Algoritmo y estructura de datos'}  onChange={(e) => setName(e.target.value)}></InputText>
+                <TextArea label={'Descripción'} value={description} required={true} name={'courseDescription'} placeholder={'Escribe una breve descripción del contenido del curso'} onChange={(e) => setDescription(e.target.value)}></TextArea>
             </div>
+
+            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
             {/* Footer */ }
             <div className="flex flex-row justify-end gap-4">
@@ -28,12 +61,8 @@ export function CreateCourseModal({isOpen, onClose}: CreateCourseModalProps) {
                 </div>
 
                 <div>
-                    <Button text={'Crear curso'} icon={<Plus/>} onClick={onClose}/>
+                    <Button text={isSubmitting ? "Creando..." : "Crear curso"} icon={<Plus/>} onClick={handleCreate}/>
                 </div>
-               {/* <Link to={`/course/${course.id}`} className="w-full">
-                    <Button text={'Crear curso'} icon={<Plus/>} />
-                </Link>*/}
-
             </div>
         </Modal>
     )
