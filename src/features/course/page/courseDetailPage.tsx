@@ -1,6 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Lightbulb, BarChart2, TrendingUp } from 'lucide-react';
-import { useCourseDetail } from '../hook/useCourseDetail.ts';
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
 import { Card } from '../../../shared/components/ui/card.tsx';
 import { FileDropzone } from '../../../shared/components/ui/fileDropzone.tsx';
@@ -8,7 +7,9 @@ import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarC
 import { BloomRadarChart } from '../../../shared/components/ui/bloomRadarChart.tsx';
 import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
 import type { BloomLevel } from '../../../shared/types/bloomLevel.ts';
-import * as React from 'react';
+
+import {UseCourseDetail} from "../hook/useCourseDetail.ts";
+import {useSyllabus} from "../hook/useSyllabus.ts";
 
 const BLOOM_LEVELS: { key: keyof import('../types/course.types.ts').CourseBloomStats; bloomLevel: BloomLevel }[] = [
     { key: 'remember',   bloomLevel: 'remember' },
@@ -19,10 +20,14 @@ const BLOOM_LEVELS: { key: keyof import('../types/course.types.ts').CourseBloomS
 ];
 
 export function CourseDetailPage() {
-    const { courseId } = useParams<{ courseId: string }>();
-    const { course } = useCourseDetail(courseId ?? '');
+    const { courseId } = useParams<{ courseId: string }>()
+    const numericCourseId = Number(courseId)
+    const { course, isLoading } = UseCourseDetail(numericCourseId)
+    const { upload } = useSyllabus(numericCourseId)
 
-    const [syllabusFiles, setSyllabusFiles] = React.useState<File[]>([]);
+    if (isLoading) {
+        return <div>Cargando curso...</div>
+    }
 
     if (!course) {
         return (
@@ -66,19 +71,15 @@ export function CourseDetailPage() {
             <Card className="flex flex-col gap-4 !p-6">
                 <h2 className="text-xl font-semibold text-text-title">Syllabus</h2>
                 <FileDropzone
-                    onFilesSelected={(files) => setSyllabusFiles((prev) => [...prev, ...files])}
+                    onFilesSelected={async (files) => {
+                        const file = files[0]
+                        if (!file) return
+
+                        await upload(file)
+                    }}
                     maxFiles={1}
-                    currentCount={syllabusFiles.length}
+                    currentCount={0}
                 />
-                {syllabusFiles.length > 0 && (
-                    <ul className="flex flex-col gap-1 text-sm text-text-body">
-                        {syllabusFiles.map((f) => (
-                            <li key={f.name} className="flex items-center gap-2">
-                                <span className="text-accent-button">✓</span> {f.name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
             </Card>
 
             {/* Rendimiento cognitivo card */}

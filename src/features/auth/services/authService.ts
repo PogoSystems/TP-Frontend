@@ -2,7 +2,6 @@ import type { SignInCredentials, SignUpCredentials } from "../types/auth.types.t
 import { supabase } from "../../../shared/services/api/supabase-client.ts"
 
 export async function signUp({ email, password }: SignUpCredentials) {
-    console.log("SIGNUP CALLED", new Date().toISOString(), email)
     const { data, error } = await supabase.auth.signUp({ email, password })
     if (error) throw error
     return data
