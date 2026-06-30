@@ -1,9 +1,11 @@
-import {useState} from "react";
-import * as React from "react";
-import {InputText} from "../../../shared/components/ui/inputText.tsx";
-import {Button} from "../../../shared/components/ui/button.tsx";
-import {useAuth} from "../hook/useAuth.ts";
-import {Link, useNavigate} from "react-router-dom";
+import { useState } from "react"
+import * as React from "react"
+import { InputText } from "../../../shared/components/ui/inputText.tsx"
+import { Button } from "../../../shared/components/ui/button.tsx"
+import { useAuth } from "../hook/useAuth.ts"
+import { Link, useNavigate } from "react-router-dom"
+import { ArrowRight } from "lucide-react"
+import { AuthSplitLayout } from "../components/authSplitLayout.tsx"
 
 export function LoginPage() {
     //to store the email and password input values
@@ -34,18 +36,44 @@ export function LoginPage() {
         }
     }
 
-    return(
-        <div className="flex flex-col gap-5">
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <InputText label={'Email'} name={'email'} placeholder={'email@example.com'} value={email} onChange={(e) =>setEmail(e.target.value)}/>
-                <InputText label={'Password'} name={'password'} placeholder={'********'} value={password} onChange={(e) =>setPassword(e.target.value)}/>
-                <Button text={isSubmitting ? 'Iniciando sesión...' : 'Iniciar sesión'} type="submit"></Button>
-            </form>
-            {error && <p className="text-accent-text text-sm">{error}</p>}
-            <p>
-                ¿No tienes cuenta? <Link to="/register" className="text-accent-button">Regístrate</Link>
-            </p>
-        </div>
+    return (
+        <AuthSplitLayout title="Iniciar sesión" description="Bienvenido de nuevo. Por favor, ingresa tus credenciales."
+            footer={
+                <p className="text-center text-[16px] leading-6 text-text-body">
+                    ¿No tienes cuenta? <Link to="/register" className="font-medium text-[#0060AC] hover:underline">Crear cuenta</Link>
+                </p>
+            }>
+                
+            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+                <InputText
+                    label="Correo electrónico"
+                    name="email"
+                    placeholder="nombre@universidad.edu"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                />
+                <InputText
+                    label="Contraseña"
+                    name="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                />
 
+                <div className="flex">
+                    <button type="button" className="text-[14px] font-medium leading-5 text-[#2B6CB0] hover:underline">
+                        ¿Olvidaste tu contraseña?
+                    </button>
+                </div>
+
+                <div className="pt-2">
+                    <Button text={isSubmitting ? "Iniciando sesión..." : "Iniciar sesión"} type="submit" icon={<ArrowRight size={16} />} />
+                </div>
+            </form>
+
+            {error && <p className="mt-4 text-sm text-accent-text">{error}</p>}
+        </AuthSplitLayout>
     )
 }
