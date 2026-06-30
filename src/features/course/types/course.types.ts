@@ -1,9 +1,29 @@
 export interface CourseSummary{
-    id: string,
+    id: number,
     iconText: string,
     title: string,
     description: string,
     lastQuizTime: string
+}
+
+export interface CreateCourseRequest {
+    name: string;
+    description: string;
+}
+
+export interface UpdateCourseRequest {
+    name?: string;
+    description?: string;
+    max_score?: number;
+}
+
+export interface CourseResponse {
+    id: number
+    name: string
+    description: string | null
+    user_id: number
+    max_score: number | null
+    created_at: string
 }
 
 export interface CourseBloomStats {
