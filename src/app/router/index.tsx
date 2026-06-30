@@ -9,6 +9,7 @@ import { QuizResultsPage } from "../../features/quiz/page/quizResultsPage.tsx";
 import {CreateQuizPage} from "../../features/quiz/page/createQuizPage.tsx";
 import {LoginPage} from "../../features/auth/page/loginPage.tsx";
 import {RegisterPage} from "../../features/auth/page/registerPage.tsx";
+import { ProgressPage } from "../../features/metrics/page/progressPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -27,7 +28,7 @@ export const router = createBrowserRouter([
             { path: '/quizzes', element: <CreateQuizPage /> },
             { path: '/quiz/taking', element: <QuizTakingPage /> },
             { path: '/quiz/results', element: <QuizResultsPage /> },
-            { path: '/progress', element: <div>Progreso</div> },
+            { path: '/progress', element: <ProgressPage /> },
             { path: '/profile-achievements', element: <div>Perfil y Logros</div> },
         ]
     }
