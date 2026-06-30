@@ -48,11 +48,10 @@ export function LoginPage() {
                 <InputText
                     label="Correo electrónico"
                     name="email"
-                    placeholder="tu@universidad.edu"
+                    placeholder="nombre@universidad.edu"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="email"
-                    className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]"
                 />
                 <InputText
                     label="Contraseña"
@@ -61,7 +60,6 @@ export function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     type="password"
-                    className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]"
                 />
 
                 <div className="flex">

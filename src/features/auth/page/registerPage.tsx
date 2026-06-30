@@ -52,7 +52,7 @@ export function RegisterPage() {
             title="Crear cuenta"
             description="Únete a la comunidad académica de Pogo hoy mismo."
             brandPlacement="bottom"
-            contentMaxWidth="lg:max-w-[336px]"
+            contentMaxWidth=""
             footer={
                 <p className="text-center text-[16px] leading-6 text-text-body">
                     ¿Ya tienes una cuenta? <Link to="/login" className="font-medium text-[#0060AC] hover:underline">Inicia sesión</Link>
@@ -61,20 +61,20 @@ export function RegisterPage() {
         >
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Nombre" name="name" placeholder="Ej. Ana" value={name} onChange={(e) => setName(e.target.value)} className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
-                    <InputText label="Apellido" name="last_name" placeholder="Ej. García" value={last_name} onChange={(e) => setLastName(e.target.value)} className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
+                    <InputText label="Nombre" name="name" placeholder="Ej. Ana" value={name} onChange={(e) => setName(e.target.value)}  />
+                    <InputText label="Apellido" name="last_name" placeholder="Ej. García" value={last_name} onChange={(e) => setLastName(e.target.value)}  />
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Universidad" name="college" placeholder="Ej. UPC" value={college} onChange={(e) => setCollege(e.target.value)} className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
-                    <InputText label="Carrera" name="major" placeholder="Ej. Software" value={major} onChange={(e) => setMajor(e.target.value)} className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
+                    <InputText label="Universidad" name="college" placeholder="Ej. Universidad Peruana de Ciencias Aplicadas" value={college} onChange={(e) => setCollege(e.target.value)}/>
+                    <InputText label="Carrera" name="major" placeholder="Ej. Ingeniería de Sofware" value={major} onChange={(e) => setMajor(e.target.value)}  />
                 </div>
 
-                <InputText label="Correo electrónico" name="email" placeholder="nombre@universidad.edu" value={email} onChange={(e) => setEmail(e.target.value)} type="email" className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
+                <InputText label="Correo electrónico" name="email" placeholder="nombre@universidad.edu" value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Contraseña" name="password" placeholder="" value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
-                    <InputText label="Confirmar contraseña" name="confirmPassword" placeholder="" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" className="bg-[#F9F9FF] border-[#C5C6CE] rounded-[8px] px-[17px] py-[15px] text-[16px] text-text-title placeholder:text-[#6B7280]" />
+                    <InputText label="Contraseña" name="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} type="password"  />
+                    <InputText label="Confirmar contraseña" name="confirmPassword" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password"  />
                 </div>
 
                 <div className="pt-2">
