@@ -29,5 +29,5 @@ export function UseCourseDetail(courseId: number) {
         }
     }, [courseId])
 
-    return { course, isLoading, error }
+    return { course, isLoading, error, setCourse }
 }

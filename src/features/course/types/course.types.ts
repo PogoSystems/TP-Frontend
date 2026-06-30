@@ -11,6 +11,12 @@ export interface CreateCourseRequest {
     description: string;
 }
 
+export interface UpdateCourseRequest {
+    name?: string;
+    description?: string;
+    max_score?: number;
+}
+
 export interface CourseResponse {
     id: number
     name: string
