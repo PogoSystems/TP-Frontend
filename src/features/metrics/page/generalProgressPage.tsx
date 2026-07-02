@@ -11,19 +11,11 @@ import { StatKpiCard } from '../components/StatKpiCard.tsx';
 import { CourseProgressRow } from '../components/CourseProgressRow.tsx';
 import { BloomCoverageRow } from '../components/BloomCoverageRow.tsx';
 import { BloomBarChart } from '../components/BloomBarChart.tsx';
-import type { BloomLevelKey } from '../types/metrics.types.ts';
+import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
 
-const BLOOM_LABEL: Record<BloomLevelKey, string> = {
-    remember: 'RECORDAR',
-    understand: 'COMPRENDER',
-    apply: 'APLICAR',
-    analyze: 'ANALIZAR',
-    evaluate: 'EVALUAR',
-    create: 'CREAR',
-};
-
-export function ProgressPage() {
+export function GeneralProgressPage() {
     const { metrics, isLoading, error } = useUserMetrics();
+
 
     if (isLoading) {
         return (
@@ -41,8 +33,9 @@ export function ProgressPage() {
         );
     }
 
-    const maxAttempted = metrics.bloomMetrics.reduce(
-        (max, b) => (b.questionsAttempted > max ? b.questionsAttempted : max),
+    const totalActiveCourses = metrics.course_performance.length;
+    const maxAttempted = metrics.bloom_breakdown.reduce(
+        (max, b) => Math.max(max, b.questions_attempted),
         0,
     );
 
@@ -59,24 +52,24 @@ export function ProgressPage() {
             <div className="flex flex-col sm:flex-row gap-6">
 
                 {/* Rendimiento general */}
-                <StatKpiCard title="Rendimiento general" value={`${metrics.globalAccuracyPercentage}%`} isMain>
+                <StatKpiCard title="Rendimiento general" value={`${metrics.overall_accuracy}%`} isMain>
                     <div className="bg-[#e5e7eb] rounded-full h-[7px] w-full overflow-hidden">
                         <div
                             className="bg-[#db1a1a] h-[7px] rounded-full transition-all duration-500"
-                            style={{ width: `${metrics.globalAccuracyPercentage}%` }}
+                            style={{ width: `${metrics.overall_accuracy}%` }}
                         />
                     </div>
                 </StatKpiCard>
 
                 {/* Cuestionarios realizados */}
-                <StatKpiCard title="Cuestionarios realizados" value={metrics.totalQuizzesCompleted}>
+                <StatKpiCard title="Cuestionarios realizados" value={metrics.quizzes_completed}>
                     <div className="flex gap-2 mt-1">
                         {[...Array(4)].map((_, i) => (
                             <div
                                 key={i}
                                 className="h-[7px] rounded-full flex-1"
                                 style={{
-                                    backgroundColor: i < Math.min(Math.ceil(metrics.totalQuizzesCompleted / 15), 4)
+                                    backgroundColor: i < Math.min(Math.ceil(metrics.quizzes_completed / 15), 4)
                                         ? '#1a3a5a'
                                         : '#e5e7eb',
                                 }}
@@ -86,33 +79,33 @@ export function ProgressPage() {
                 </StatKpiCard>
 
                 {/* Cursos activos */}
-                <StatKpiCard title="Cursos activos" value={metrics.totalActiveCourses}>
+                <StatKpiCard title="Cursos activos" value={totalActiveCourses}>
                     <div className="flex gap-1 mt-1 flex-wrap">
-                        {metrics.courseMetrics.slice(0, 3).map((c) => {
-                            const initials = c.courseName
+                        {metrics.course_performance.slice(0, 3).map((c) => {
+                            const initials = c.course_name
                                 .split(' ')
                                 .filter(Boolean)
                                 .slice(0, 2)
                                 .map((w) => w[0].toUpperCase())
                                 .join('');
                             const colors = ['#f05a5a', '#2e6f95', '#f28f3b', '#1a3a5a'];
-                            const colorIdx = c.courseId % colors.length;
+                            const colorIdx = c.course_id % colors.length;
                             return (
                                 <div
-                                    key={c.courseId}
+                                    key={c.course_id}
                                     className="flex items-center justify-center rounded-[5px] text-white text-[8px] font-semibold border border-white"
                                     style={{ width: 20, height: 21, backgroundColor: colors[colorIdx] }}
-                                    title={c.courseName}
+                                    title={c.course_name}
                                 >
                                     {initials}
                                 </div>
                             );
                         })}
-                        {metrics.totalActiveCourses > 3 && (
+                        {totalActiveCourses  > 3 && (
                             <div className="flex items-center justify-center rounded-[5px] bg-[#1a3a5a] text-[#e5e7eb] text-[8px] font-semibold border border-white"
                                 style={{ width: 20, height: 21 }}
                             >
-                                +{metrics.totalActiveCourses - 3}
+                                +{totalActiveCourses  - 3}
                             </div>
                         )}
                     </div>
@@ -139,12 +132,12 @@ export function ProgressPage() {
                         </div>
 
                         <div className="flex flex-col gap-4">
-                            {metrics.courseMetrics.map((course) => (
+                            {metrics.course_performance.map((course) => (
                                 <CourseProgressRow
-                                    key={course.courseId}
-                                    courseName={course.courseName}
-                                    quizzesCompleted={course.quizzesCompleted}
-                                    accuracyPercentage={course.accuracyPercentage}
+                                    key={course.course_id}
+                                    courseName={course.course_name}
+                                    quizzesCompleted={course.quizzes_completed}
+                                    accuracyPercentage={course.accuracy_percentage}
                                 />
                             ))}
                         </div>
@@ -159,7 +152,7 @@ export function ProgressPage() {
                             </h2>
                         </div>
 
-                        <BloomBarChart data={metrics.bloomMetrics} />
+                        <BloomBarChart data={metrics.bloom_breakdown} />
 
                         <div className="flex items-center gap-2 text-sm text-[#2e6f95]">
                             <span className="inline-block w-3 h-3 rounded-full bg-[#2e6f95] opacity-80" />
@@ -177,15 +170,15 @@ export function ProgressPage() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <BloomSummaryCard
                                 variant="dominant"
-                                level={metrics.dominantLevel ? BLOOM_LABEL[metrics.dominantLevel] : '—'}
-                                percentage={metrics.dominantLevelPercentage}
-                                answeredCount={metrics.dominantLevelAnswered}
+                                level={metrics.dominant_level ? BloomLevelLabel[metrics.dominant_level] : '—'}
+                                percentage={metrics.dominant_percentage}
+                                answeredCount={metrics.dominant_correct}
                             />
                             <BloomSummaryCard
                                 variant="weak"
-                                level={metrics.weakLevel ? BLOOM_LABEL[metrics.weakLevel] : '—'}
-                                percentage={metrics.weakLevelPercentage}
-                                answeredCount={metrics.weakLevelAnswered}
+                                level={metrics.weak_level ? BloomLevelLabel[metrics.weak_level] : '—'}
+                                percentage={metrics.weak_percentage}
+                                answeredCount={metrics.weak_correct}
                             />
                         </div>
                     </Card>
@@ -194,14 +187,14 @@ export function ProgressPage() {
                     <Card className="flex flex-col gap-4 !p-6">
                         <h2 className="text-lg font-semibold text-[#1a3a5a]">Cobertura cognitiva por nivel</h2>
                         <div className="flex flex-col gap-3">
-                            {metrics.bloomMetrics
+                            {metrics.bloom_breakdown
                                 .slice()
-                                .sort((a, b) => b.questionsAttempted - a.questionsAttempted)
+                                .sort((a, b) => b.questions_attempted - a.questions_attempted)
                                 .map((b) => (
                                     <BloomCoverageRow
-                                        key={b.level}
-                                        level={b.level}
-                                        questionsAttempted={b.questionsAttempted}
+                                        key={b.bloom_level}
+                                        level={b.bloom_level}
+                                        questionsAttempted={b.questions_attempted}
                                         maxAttempted={maxAttempted}
                                     />
                                 ))}
@@ -213,10 +206,10 @@ export function ProgressPage() {
                         <p className="text-sm font-semibold text-[#4a5565]">Nivel más practicado</p>
                         <div className="flex items-baseline justify-between gap-2 flex-wrap">
                             <p className="text-3xl font-bold text-[#1a3a5a] uppercase tracking-wide">
-                                {metrics.mostPracticedLevel ? BLOOM_LABEL[metrics.mostPracticedLevel] : '—'}
+                                {metrics.most_practiced_level ? BloomLevelLabel[metrics.most_practiced_level] : '—'}
                             </p>
                             <p className="text-sm text-[#4a5565] shrink-0">
-                                {metrics.mostPracticedLevelPercentage}% de las preguntas
+                                {metrics.most_practiced_attempted}% de las preguntas
                             </p>
                         </div>
                     </Card>
@@ -229,7 +222,7 @@ export function ProgressPage() {
                     <TrendingUp size={20} className="text-text-subtle" />
                     <h2 className="text-lg font-semibold text-[#1a3a5a]">Progreso en el tiempo</h2>
                 </div>
-                <LineChart data={metrics.progressOverTime} />
+                <LineChart data={metrics.progress_over_time ?? []} />
             </Card>
 
         </div>

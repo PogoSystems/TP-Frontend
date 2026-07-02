@@ -34,7 +34,7 @@ export function BloomRadarChart({ data }: BloomRadarChartProps) {
                     strokeWidth={2}
                 />
                 <Tooltip
-                    formatter={(value: number) => [`${value}%`, 'Puntuación']}
+                    formatter={(value) => [`${value}%`, 'Puntuación']}
                     contentStyle={{
                         borderRadius: '8px',
                         border: '1px solid #e5e7eb',

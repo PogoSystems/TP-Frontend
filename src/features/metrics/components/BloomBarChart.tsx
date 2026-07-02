@@ -8,22 +8,14 @@ import {
     ResponsiveContainer,
     Cell,
 } from 'recharts';
-import type { BloomLevelMetric } from '../types/metrics.types.ts';
+import type { BloomStatsResponse } from '../types/metrics.types.ts';
+import { BloomLevelLabel } from '../../../shared/types/bloomLevel.ts';
 
-const BLOOM_LABEL: Record<string, string> = {
-    remember: 'Recordar',
-    understand: 'Comprender',
-    apply: 'Aplicar',
-    analyze: 'Analizar',
-    evaluate: 'Evaluar',
-    create: 'Crear',
-};
 
-// Uniform bar color matching the Figma design (dark teal-blue)
 const BAR_COLOR = '#2e6f95';
 
 interface BloomBarChartProps {
-    data: BloomLevelMetric[];
+    data: BloomStatsResponse[];
 }
 
 /**
@@ -33,8 +25,8 @@ interface BloomBarChartProps {
  */
 export function BloomBarChart({ data }: BloomBarChartProps) {
     const chartData = data.map((d) => ({
-        name: BLOOM_LABEL[d.level] ?? d.level,
-        score: d.accuracyPercentage,
+        name: BloomLevelLabel[d.bloom_level],
+        score: d.percentage,
     }));
 
     return (
