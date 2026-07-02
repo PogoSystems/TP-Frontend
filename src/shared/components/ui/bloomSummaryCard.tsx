@@ -1,6 +1,6 @@
 interface BloomSummaryCardProps {
     variant: 'dominant' | 'weak';
-    level: string;
+    level: string | null;
     percentage: number;
     answeredCount: number;
 }
@@ -39,7 +39,7 @@ export function BloomSummaryCard({
                 <p className={`text-xs font-semibold uppercase tracking-wide ${styles.label}`}>
                     {VARIANT_LABEL[variant]}
                 </p>
-                <p className="text-xl font-bold text-[#1a3a5a] uppercase">{level}</p>
+                <p className="text-xl font-bold text-[#1a3a5a] uppercase">{level ?? '—'}</p>
             </div>
             <p className={`text-4xl font-bold ${styles.percentage}`}>{percentage}%</p>
             <p className="text-sm text-[#4a5565]">{answeredCount} preguntas respondidas</p>

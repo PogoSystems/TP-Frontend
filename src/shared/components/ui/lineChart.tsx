@@ -19,28 +19,32 @@ interface LineChartProps {
 }
 
 export function LineChart({ data }: LineChartProps) {
+    const safeData = data.length > 0 ? data : [{ label: '', score: 0 }];
     return (
         <ResponsiveContainer width="100%" height={280}>
             <RechartsLineChart
-                data={data}
+                data={safeData}
                 margin={{ top: 8, right: 8, left: -16, bottom: 0 }}
             >
                 <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
                 <XAxis
                     dataKey="label"
+                    type="category"
+                    allowDuplicatedCategory={false}
                     tick={{ fill: '#6b7280', fontSize: 11, fontFamily: 'Inter, sans-serif' }}
                     axisLine={false}
                     tickLine={false}
                 />
                 <YAxis
                     domain={[0, 100]}
+
                     tick={{ fill: '#6b7280', fontSize: 12, fontFamily: 'Inter, sans-serif' }}
                     axisLine={false}
                     tickLine={false}
                     ticks={[0, 25, 50, 75, 100]}
                 />
                 <Tooltip
-                    formatter={(value: number) => [`${value}%`, 'Puntuación']}
+                    formatter={(value) => [`${value}%`, 'Puntuación']}
                     contentStyle={{
                         borderRadius: '8px',
                         border: '1px solid #e5e7eb',
