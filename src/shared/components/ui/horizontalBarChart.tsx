@@ -26,7 +26,7 @@ export function HorizontalBarChart({percentage, bloomLevel}: VerticalBarChartPro
         <div className="flex flex-col gap-2 font-medium text-xs text-text-title">
             <div className="flex flex-row justify-between ">
                 <p>{BLOOM_LEVEL_LABEL[bloomLevel]}</p>
-                <p>{percentage}%</p>
+                <p>{Math.round(percentage)}%</p>
             </div>
             <div className="bg-bg-bar-chart w-full rounded-xl">
                 <div className={`${BLOOM_LEVEL_COLOR[bloomLevel]}  h-3 rounded-xl`} style={{width: `${percentage}%`}}>

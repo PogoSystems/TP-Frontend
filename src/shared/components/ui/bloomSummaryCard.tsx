@@ -1,6 +1,8 @@
+import {type BloomLevel, BloomLevelLabel} from "../../types/bloomLevel.ts";
+
 interface BloomSummaryCardProps {
     variant: 'dominant' | 'weak';
-    level: string | null;
+    level: BloomLevel  | null;
     percentage: number;
     answeredCount: number;
 }
@@ -32,6 +34,7 @@ export function BloomSummaryCard({
     answeredCount,
 }: BloomSummaryCardProps) {
     const styles = VARIANT_STYLES[variant];
+    const displayLevel = level ? BloomLevelLabel[level] : '-';
 
     return (
         <div className={`flex flex-col gap-2 px-8 pt-6 pb-10 ${styles.wrapper} ${styles.align} flex-1`}>
@@ -39,9 +42,9 @@ export function BloomSummaryCard({
                 <p className={`text-xs font-semibold uppercase tracking-wide ${styles.label}`}>
                     {VARIANT_LABEL[variant]}
                 </p>
-                <p className="text-xl font-bold text-[#1a3a5a] uppercase">{level ?? '—'}</p>
+                <p className="text-xl font-bold text-[#1a3a5a] uppercase">{displayLevel}</p>
             </div>
-            <p className={`text-4xl font-bold ${styles.percentage}`}>{percentage}%</p>
+            <p className={`text-4xl font-bold ${styles.percentage}`}>{Math.round(percentage)}%</p>
             <p className="text-sm text-[#4a5565]">{answeredCount} preguntas respondidas</p>
         </div>
     );

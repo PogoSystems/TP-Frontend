@@ -7,11 +7,11 @@ export const BloomLevel={
 } as const
 
 export const BloomLevelLabel: Record<BloomLevel, string> = {
-    remember: 'RECORDAR',
-    understand: 'COMPRENDER',
-    apply: 'APLICAR',
-    analyze: 'ANALIZAR',
-    evaluate: 'EVALUAR',
+    remember: 'Recordar',
+    understand: 'Comprender',
+    apply: 'Aplicar',
+    analyze: 'Analizar',
+    evaluate: 'Evaluar',
 } as const
 
 

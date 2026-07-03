@@ -170,13 +170,13 @@ export function GeneralProgressPage() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <BloomSummaryCard
                                 variant="dominant"
-                                level={metrics.dominant_level ? BloomLevelLabel[metrics.dominant_level] : '—'}
+                                level={metrics.dominant_level}
                                 percentage={metrics.dominant_percentage}
                                 answeredCount={metrics.dominant_correct}
                             />
                             <BloomSummaryCard
                                 variant="weak"
-                                level={metrics.weak_level ? BloomLevelLabel[metrics.weak_level] : '—'}
+                                level={metrics.weak_level}
                                 percentage={metrics.weak_percentage}
                                 answeredCount={metrics.weak_correct}
                             />

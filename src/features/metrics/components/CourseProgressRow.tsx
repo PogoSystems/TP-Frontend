@@ -25,7 +25,7 @@ export function CourseProgressRow({ courseName, quizzesCompleted, accuracyPercen
                     <p className="text-[#1a3a5a] text-base font-medium leading-6">{courseName}</p>
                     <p className="text-[#6a7282] text-xs font-normal">{quizzesCompleted} quizzes</p>
                 </div>
-                <p className="text-lg font-bold" style={{ color }}>{accuracyPercentage}%</p>
+                <p className="text-lg font-bold" style={{ color }}>{Math.round(accuracyPercentage)}%</p>
             </div>
 
             {/* Progress bar */}
