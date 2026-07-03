@@ -1,76 +1,47 @@
-// los modelos de datos que se van a usar y que coinciden con los modelos que se están usando en el back
-
-// ──────────────────────────────────────────────────────────
-// Raw API response types (match DB schema exactly)
-// ──────────────────────────────────────────────────────────
-
-export type BloomLevelKey =
-    | 'remember'
-    | 'understand'
-    | 'apply'
-    | 'analyze'
-    | 'evaluate'
-    | 'create';
+import type { BloomLevel } from "../../../shared/types/bloomLevel";
 
 /** Maps to the `bloom_stats` table — one row per (course_id, bloom_level) */
 export interface BloomStatsResponse {
-    id: number;
-    course_id: number;
-    bloom_level: BloomLevelKey;
+    bloom_level: BloomLevel ;
     questions_attempted: number;
     questions_correct: number;
-    updated_at: string;
+    percentage: number;
 }
-
-/** Maps to the `course_stats` table — one row per course_id */
-export interface CourseStatsResponse {
-    id: number;
+export interface CoursePerformanceResponse {
     course_id: number;
-    course_name: string;           // joined from `course.name`
+    course_name: string;
+    quizzes_completed: number;
+    accuracy_percentage: number;
+}
+export interface ProgressPoint {
+    label: string;
+    score: number;
+}
+export interface UserDashboardResponse {
     quizzes_completed: number;
     questions_attempted: number;
     questions_correct: number;
-    updated_at: string;
+    overall_accuracy: number;
+    dominant_level: BloomLevel | null;
+    dominant_percentage: number;
+    dominant_correct: number;
+    weak_level: BloomLevel | null;
+    weak_percentage: number;
+    weak_correct: number;
+    most_practiced_level: BloomLevel | null;
+    most_practiced_attempted: number;
+    bloom_breakdown: BloomStatsResponse[];
+    course_performance: CoursePerformanceResponse[];
+    progress_over_time?: ProgressPoint[];
 }
 
-/** Full payload that the endpoint returns */
-export interface UserMetricsResponse {
-    bloom_stats: BloomStatsResponse[];
-    course_stats: CourseStatsResponse[];
-}
-
-// ──────────────────────────────────────────────────────────
-// Frontend view-model types (calculated from the raw data)
-// ──────────────────────────────────────────────────────────
-
-export interface CourseMetric {
-    courseId: number;
-    courseName: string;
-    quizzesCompleted: number;
-    accuracyPercentage: number;   // (correct / attempted) * 100, 0 if no attempts
-}
-
-export interface BloomLevelMetric {
-    level: BloomLevelKey;
-    questionsAttempted: number;
-    questionsCorrect: number;
-    accuracyPercentage: number;   // (correct / attempted) * 100, 0 if no attempts
-}
-
-/** Consolidated view-model consumed by the ProgressPage */
-export interface UserMetrics {
-    globalAccuracyPercentage: number;   // across all courses/levels
-    totalQuizzesCompleted: number;
-    totalActiveCourses: number;
-    dominantLevel: BloomLevelKey | null;
-    dominantLevelPercentage: number;
-    dominantLevelAnswered: number;
-    weakLevel: BloomLevelKey | null;
-    weakLevelPercentage: number;
-    weakLevelAnswered: number;
-    mostPracticedLevel: BloomLevelKey | null;
-    mostPracticedLevelPercentage: number; // share of total questions attempted
-    courseMetrics: CourseMetric[];
-    bloomMetrics: BloomLevelMetric[];
-    progressOverTime: { label: string; score: number }[];   // placeholder until backend provides it
+export interface CourseAnalyticsResponse {
+    course_id: number;
+    dominant_level: BloomLevel | null;
+    dominant_percentage: number;
+    dominant_correct: number;
+    weak_level: BloomLevel | null;
+    weak_percentage: number;
+    weak_correct: number;
+    bloom_breakdown: BloomStatsResponse[];
 }

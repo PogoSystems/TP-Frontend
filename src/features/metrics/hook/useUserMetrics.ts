@@ -1,19 +1,16 @@
-//lógica de la feature, hooks personalizados, funciones de negocio, etc. Puro código
-
 import { useEffect, useState } from 'react';
-import type { UserMetrics } from '../types/metrics.types.ts';
-import { fetchUserMetrics } from '../services/metricsService.ts';
+import {fetchUserDashboard} from "../services/metricsService.ts";
+import type {UserDashboardResponse} from "../types/metrics.types.ts";
 
 export function useUserMetrics() {
-    const [metrics, setMetrics] = useState<UserMetrics | null>(null);
+    const [metrics, setMetrics] = useState<UserDashboardResponse  | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         let isMounted = true;
-        setIsLoading(true);
 
-        fetchUserMetrics()
+        fetchUserDashboard()
             .then((data) => {
                 if (isMounted) setMetrics(data);
             })

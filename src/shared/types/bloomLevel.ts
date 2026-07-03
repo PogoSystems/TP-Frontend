@@ -6,4 +6,13 @@ export const BloomLevel={
     EVALUATE:'evaluate',
 } as const
 
+export const BloomLevelLabel: Record<BloomLevel, string> = {
+    remember: 'RECORDAR',
+    understand: 'COMPRENDER',
+    apply: 'APLICAR',
+    analyze: 'ANALIZAR',
+    evaluate: 'EVALUAR',
+} as const
+
+
 export type BloomLevel= typeof BloomLevel[keyof typeof BloomLevel]

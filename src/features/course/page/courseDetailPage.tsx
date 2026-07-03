@@ -9,7 +9,6 @@ import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarC
 import { BloomRadarChart } from '../../../shared/components/ui/bloomRadarChart.tsx';
 import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
 
-import type { BloomLevel } from '../../../shared/types/bloomLevel.ts';
 import { UseCourseDetail } from "../hook/useCourseDetail.ts";
 import { useCourseDocuments } from "../../../shared/hooks/useCourseDocuments.ts";
 import { useUploadSyllabus } from "../hook/useUploadSyllabus.ts";
@@ -18,28 +17,21 @@ import { toCourseDetail } from "../../../shared/utils/courseDisplay.ts";
 import { deleteCourse } from "../services/courseService.ts";
 import { Modal } from '../../../shared/components/ui/modal.tsx';
 import { Button } from '../../../shared/components/ui/button.tsx';
-
-const BLOOM_LEVELS: {
-    key: keyof import('../types/course.types.ts').CourseBloomStats;
-    bloomLevel: BloomLevel;
-}[] = [
-        { key: 'remember', bloomLevel: 'remember' },
-        { key: 'understand', bloomLevel: 'understand' },
-        { key: 'apply', bloomLevel: 'apply' },
-        { key: 'analyze', bloomLevel: 'analyze' },
-        { key: 'evaluate', bloomLevel: 'evaluate' },
-    ];
+import {useCourseAnalytics} from "../hook/useCourseAnalytics.ts";
+import {BloomLevel} from "../../../shared/types/bloomLevel.ts";
 
 export function CourseDetailPage() {
     const { courseId } = useParams<{ courseId: string }>();
     const numericCourseId = Number(courseId);
 
     const { course, isLoading, setCourse } = UseCourseDetail(numericCourseId);
+    const { analytics, isLoading: loadingAnalytics } = useCourseAnalytics(numericCourseId);
     const { uploadSyllabus } = useUploadSyllabus(numericCourseId);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
+    const BLOOM_LEVELS: BloomLevel[] = Object.values(BloomLevel);
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -57,9 +49,12 @@ export function CourseDetailPage() {
         removeDocument,
     } = useCourseDocuments(numericCourseId);
 
-    if (isLoading) {
+    if (isLoading || loadingAnalytics || !course || !analytics) {
         return <div>Cargando curso...</div>;
     }
+
+    const bloomMap = Object.fromEntries(analytics.bloom_breakdown.map(b => [b.bloom_level, b.percentage])
+    ) as Record<string, number>;
 
     if (!course) {
         return (
@@ -72,14 +67,10 @@ export function CourseDetailPage() {
         );
     }
 
-    const radarData = [
-        { level: 'Recordar', value: course.bloomStats.remember },
-        { level: 'Entender', value: course.bloomStats.understand },
-        { level: 'Aplicar', value: course.bloomStats.apply },
-        { level: 'Analizar', value: course.bloomStats.analyze },
-        { level: 'Evaluar', value: course.bloomStats.evaluate },
-        { level: 'Crear', value: course.bloomStats.create },
-    ];
+    const radarData = analytics.bloom_breakdown.map((b) => ({
+        level: b.bloom_level,
+        value: b.percentage,
+    }));
 
     return (
         <div className="flex flex-col gap-6 w-full">
@@ -154,24 +145,24 @@ export function CourseDetailPage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                     <BloomSummaryCard
                         variant="dominant"
-                        level={course.dominantLevel}
-                        percentage={course.dominantLevelPercentage}
-                        answeredCount={course.dominantLevelAnswered}
+                        level={analytics.dominant_level}
+                        percentage={analytics.dominant_percentage}
+                        answeredCount={analytics.dominant_correct}
                     />
                     <BloomSummaryCard
                         variant="weak"
-                        level={course.weakLevel}
-                        percentage={course.weakLevelPercentage}
-                        answeredCount={course.weakLevelAnswered}
+                        level={analytics.weak_level}
+                        percentage={analytics.weak_percentage}
+                        answeredCount={analytics.weak_correct}
                     />
                 </div>
 
                 <div className="flex flex-col gap-3 px-2">
-                    {BLOOM_LEVELS.map(({ key, bloomLevel }) => (
+                    {BLOOM_LEVELS.map((level) => (
                         <HorizontalBarChart
-                            key={bloomLevel}
-                            bloomLevel={bloomLevel}
-                            percentage={course.bloomStats[key]}
+                            key={level}
+                            bloomLevel={level}
+                            percentage={bloomMap[level] ?? 0}
                         />
                     ))}
                 </div>
@@ -211,7 +202,7 @@ export function CourseDetailPage() {
                         </h3>
                     </div>
 
-                    <LineChart data={course.progressOverTime} />
+                    <LineChart data={analytics.progress_over_time  ?? []} />
                 </Card>
 
             </div>
