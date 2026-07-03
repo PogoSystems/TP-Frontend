@@ -26,7 +26,7 @@ interface BloomBarChartProps {
 export function BloomBarChart({ data }: BloomBarChartProps) {
     const chartData = data.map((d) => ({
         name: BloomLevelLabel[d.bloom_level],
-        score: d.percentage,
+        score: Math.round(d.percentage)
     }));
 
     return (

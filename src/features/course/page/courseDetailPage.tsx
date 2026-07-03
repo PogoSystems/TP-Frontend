@@ -69,7 +69,7 @@ export function CourseDetailPage() {
 
     const radarData = analytics.bloom_breakdown.map((b) => ({
         level: b.bloom_level,
-        value: b.percentage,
+        value: Math.round(b.percentage),
     }));
 
     return (
