@@ -1,17 +1,12 @@
 import { apiClient } from "../../../shared/services/api/axios-client.ts"
-import type { Quiz } from "../types/quiz.types.ts"
-import type { BloomLevel } from "../../../shared/types/bloomLevel.ts"
+import type {AttemptResultResponse, GenerateQuizRequest, Quiz, SubmitQuizRequest} from "../types/quiz.types.ts"
 
-export interface GenerateQuizPayload {
-    course_id: number
-    title: string
-    document_ids: number[]
-    query_text: string
-    num_questions: number
-    bloom_levels: BloomLevel[]
-}
-
-export async function generateQuiz(payload: GenerateQuizPayload): Promise<Quiz> {
+export async function generateQuiz(payload: GenerateQuizRequest): Promise<Quiz> {
     const { data } = await apiClient.post<Quiz>("/quizzes", payload)
     return data
+}
+
+export async function submitQuiz(quizId: number, payload: SubmitQuizRequest): Promise<AttemptResultResponse> {
+    const { data } = await apiClient.post<AttemptResultResponse>(`/quizzes/${quizId}/submit`, payload);
+    return data;
 }

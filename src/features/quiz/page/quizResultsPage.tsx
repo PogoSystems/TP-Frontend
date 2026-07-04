@@ -1,36 +1,44 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import {Navigate, useLocation, useNavigate} from 'react-router-dom';
 import { Lightbulb, CheckCircle, XCircle } from 'lucide-react';
 import { Card } from '../../../shared/components/ui/card.tsx';
 import { QuizBloomResultBar } from '../components/quizBloomResultBar.tsx';
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
-import type { QuizResult } from '../types/quiz.types.ts';
+import type {AttemptResultResponse} from "../types/quiz.types.ts";
+import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
 
-// Fallback mock result for direct URL access during development
-const FALLBACK_RESULT: QuizResult = {
-    quiz: { title: 'Cuestionario de ejemplo', questions: [] },
-    records: [],
-    totalScore: 0,
-    maxTotalScore: 0,
-    correctCount: 0,
-    incorrectCount: 0,
-    bloomBreakdown: [],
+type ResultState = {
+    result: AttemptResultResponse;
 };
 
 export function QuizResultsPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    const state = location.state as ResultState | undefined;
+    if (!state) {
+        return <Navigate to="/quiz/create" replace />;
+    }
+    const { result } = state;
 
-    const result: QuizResult = (location.state as { result?: QuizResult })?.result ?? FALLBACK_RESULT;
+    const totalScore = result.total_score;
 
-    const scorePercent =
-        result.maxTotalScore > 0
-            ? Math.round((result.totalScore / result.maxTotalScore) * 100)
-            : 0;
+    // calculate correct and incorrect counts
+    const correctCount = result.question_results.filter((q) => q.is_correct).length;
+    const incorrectCount = result.question_results.length - correctCount;
 
     // Calculate dominant and weak cognitive performance levels from bloomBreakdown
-    const bloomStats = result.bloomBreakdown.map((item) => ({
-        ...item,
-        percentage: item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0,
+    const bloomStats = result.bloom_breakdown.map((item) => ({
+        bloomLevel: item.bloom_level,
+        label: BloomLevelLabel[item.bloom_level],
+        correct: item.correct,
+        total: item.total_attempted_questions,
+        percentage:
+            item.total_attempted_questions > 0
+                ? Math.round(
+                    (item.correct /
+                        item.total_attempted_questions) *
+                    100
+                )
+                : 0,
     }));
 
     // Sort by success percentage (descending) to find the dominant level
@@ -51,13 +59,12 @@ export function QuizResultsPage() {
         return b.total - a.total; // tie-breaker: prefer the level with more questions
     });
 
-    let weak = sortedByFailure[0] || null;
+    let weak: typeof sortedByFailure[number] | null =
+        sortedByFailure[0] ?? null;
     if (dominant && weak && dominant.bloomLevel === weak.bloomLevel) {
-        if (sortedByFailure.length > 1) {
-            weak = sortedByFailure[1];
-        } else {
-            weak = null; // single level evaluated, so no alternative weak level exists
-        }
+        weak = sortedByFailure.length > 1
+                ? sortedByFailure[1]
+                : null;
     }
 
     return (
@@ -66,7 +73,9 @@ export function QuizResultsPage() {
             {/* Page title */}
             <div className="flex flex-col gap-1">
                 <h1 className="text-3xl font-semibold text-[#1a3a5a]">Resultados del Quiz</h1>
-                <p className="text-base text-[#4a5565]">{result.quiz.title}</p>
+                <p className="text-base text-[#4a5565]">
+                    Análisis detallado de tu dominio cognitivo del tema basado en la Taxonomía de Bloom.
+                </p>
             </div>
 
             {/* Top row: score card + bloom breakdown */}
@@ -80,7 +89,7 @@ export function QuizResultsPage() {
 
                     <div className="flex flex-col items-center gap-1">
                         <p className="text-8xl font-semibold text-[#031632] leading-none tracking-tight">
-                            {scorePercent}
+                            {totalScore}
                         </p>
                         <p className="text-xl font-medium text-[#44474d]">puntos</p>
                     </div>
@@ -90,7 +99,7 @@ export function QuizResultsPage() {
                         <div className="flex flex-col items-start gap-1">
                             <div className="flex items-center gap-2">
                                 <CheckCircle size={22} className="text-[#0d542b]" />
-                                <p className="text-2xl font-bold text-[#0d542b]">{result.correctCount}</p>
+                                <p className="text-2xl font-bold text-[#0d542b]">{correctCount}</p>
                             </div>
                             <p className="text-sm font-semibold text-[#4a5565] leading-tight">
                                 Preguntas<br />Correctas
@@ -100,7 +109,7 @@ export function QuizResultsPage() {
                         <div className="flex flex-col items-start gap-1">
                             <div className="flex items-center gap-2">
                                 <XCircle size={22} className="text-[#82181a]" />
-                                <p className="text-2xl font-bold text-[#82181a]">{result.incorrectCount}</p>
+                                <p className="text-2xl font-bold text-[#82181a]">{incorrectCount}</p>
                             </div>
                             <p className="text-sm font-semibold text-[#4a5565] leading-tight">
                                 Preguntas<br />Incorrectas
@@ -115,8 +124,8 @@ export function QuizResultsPage() {
                         Desempeño por Taxonomía de Bloom
                     </h2>
                     <div className="flex flex-col gap-5">
-                        {result.bloomBreakdown.length > 0 ? (
-                            result.bloomBreakdown.map((item) => (
+                        {bloomStats.length > 0 ? (
+                            bloomStats.map((item) => (
                                 <QuizBloomResultBar
                                     key={item.bloomLevel}
                                     label={item.label}
@@ -125,7 +134,9 @@ export function QuizResultsPage() {
                                 />
                             ))
                         ) : (
-                            <p className="text-sm text-[#4a5565]">No hay datos disponibles.</p>
+                            <p className="text-sm text-[#4a5565]">
+                                No hay datos disponibles.
+                            </p>
                         )}
                     </div>
                 </Card>
