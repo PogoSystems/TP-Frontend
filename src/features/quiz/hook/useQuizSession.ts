@@ -1,59 +1,29 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { Quiz, QuizAnswerRecord, QuizResult, BloomBreakdown } from '../types/quiz.types.ts';
-
-
-// Labels for Bloom levels
-const BLOOM_LABELS: Record<string, string> = {
-    remember: 'Recordar',
-    understand: 'Comprender',
-    apply: 'Aplicar',
-    analyze: 'Analizar',
-    evaluate: 'Evaluar',
-    create: 'Crear',
-};
+import type {AttemptResultResponse, Quiz, SubmitQuizAnswer, SubmitQuizRequest} from '../types/quiz.types.ts';
+import {submitQuiz} from "../services/quizService.ts";
 
 type Phase = 'answering' | 'revealed';
 
-function computeResult(quiz: Quiz, records: QuizAnswerRecord[]): QuizResult {
-    const totalScore = records.reduce((sum, r) => sum + r.scoreEarned, 0);
-    const maxTotalScore = records.reduce((sum, r) => sum + r.maxScore, 0);
-    const correctCount = records.filter((r) => r.isCorrect).length;
-    const incorrectCount = records.filter((r) => !r.isCorrect).length;
-
-    // Group by bloom level
-    const bloomMap: Record<string, { correct: number; total: number }> = {};
-    for (const record of records) {
-        const lvl = record.bloomLevel;
-        if (!bloomMap[lvl]) bloomMap[lvl] = { correct: 0, total: 0 };
-        bloomMap[lvl].total += 1;
-        if (record.isCorrect) bloomMap[lvl].correct += 1;
-    }
-
-    const bloomBreakdown: BloomBreakdown[] = Object.entries(bloomMap).map(([bloomLevel, data]) => ({
-        bloomLevel,
-        label: BLOOM_LABELS[bloomLevel] ?? bloomLevel,
-        correct: data.correct,
-        total: data.total,
-    }));
-
-    return { quiz, records, totalScore, maxTotalScore, correctCount, incorrectCount, bloomBreakdown };
-}
-
 export function useQuizSession(quiz: Quiz) {
     const navigate = useNavigate();
+
+    const startedAt = useRef(new Date().toISOString());
+
     const [currentIndex, setCurrentIndex] = useState(0);
     const [phase, setPhase] = useState<Phase>('answering');
     const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-    const [records, setRecords] = useState<QuizAnswerRecord[]>([]);
+
+    const [answers, setAnswers] = useState<SubmitQuizAnswer[]>([]);
+    const answersRef = useRef<SubmitQuizAnswer[]>([]);
+    answersRef.current = answers;
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
     const [secondsLeft, setSecondsLeft] = useState(() => {
         const totalMinutes = quiz.questions.length / 2;
         return Math.round(totalMinutes * 60);
     });
-
-    // Keep a ref to always have the latest records inside the timer callback
-    const recordsRef = useRef(records);
-    recordsRef.current = records;
 
     const totalQuestions = quiz.questions.length;
     const currentQuestion = quiz.questions[currentIndex];
@@ -63,16 +33,14 @@ export function useQuizSession(quiz: Quiz) {
     useEffect(() => {
         if (phase === 'revealed') return; // pause during reveal
         if (secondsLeft <= 0) {
-            // Time's up: navigate to results with whatever records we have
-            const result = computeResult(quiz, recordsRef.current);
-            navigate('/quiz/results', { state: { result } });
+            void finishQuiz();
             return;
         }
         const id = setInterval(() => setSecondsLeft((s) => s - 1), 1000);
         return () => clearInterval(id);
-    }, [secondsLeft, phase, quiz, navigate]);
+    }, [secondsLeft, phase]);
 
-    // Format seconds → "M:SS"
+    // Format seconds -> "M:SS"
     const formattedTime = `${Math.floor(secondsLeft / 60)}:${String(secondsLeft % 60).padStart(2, '0')}`;
 
     function handleSelectAnswer(index: number) {
@@ -82,32 +50,52 @@ export function useQuizSession(quiz: Quiz) {
 
     function handleConfirm() {
         if (selectedIndex === null) return;
-        const answer = currentQuestion.answers[selectedIndex];
-        const isCorrect = answer.is_correct;
+        const selectedAnswer = currentQuestion.answers[selectedIndex];
 
-        const record: QuizAnswerRecord = {
-            questionIndex: currentIndex,
-            selectedAnswerIndex: selectedIndex,
-            isCorrect,
-            bloomLevel: currentQuestion.bloom_level,
-            scoreEarned: isCorrect ? currentQuestion.score : 0,
-            maxScore: currentQuestion.score,
-        };
-
-        setRecords((prev) => [...prev, record]);
+        setAnswers((prev) => [
+            ...prev,
+            {
+                question_id: currentQuestion.id,
+                selected_answer_id: selectedAnswer.id,
+            },
+        ]);
         setPhase('revealed');
     }
 
-    function handleNext() {
+    async function finishQuiz() {
+        if (isSubmitting) return;
+        setIsSubmitting(true);
+
+        const payload: SubmitQuizRequest = {
+            started_at: startedAt.current,
+            answers: answersRef.current,
+        };
+
+        try {
+            const result: AttemptResultResponse =
+                await submitQuiz(quiz.id, payload);
+            navigate("/quiz/results", {
+                state: {
+                    result,
+                    quiz,
+                },
+            });
+
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setIsSubmitting(false);
+        }
+    }
+
+    async function handleNext() {
         if (isLastQuestion) {
-            // Build final result and navigate
-            const finalRecords = [...records]; // records already has the last entry from handleConfirm
-            const result = computeResult(quiz, finalRecords);
-            navigate('/quiz/results', { state: { result } });
+            await finishQuiz();
+            return;
         } else {
             setCurrentIndex((prev) => prev + 1);
-            setPhase('answering');
             setSelectedIndex(null);
+            setPhase('answering');
         }
     }
 
@@ -115,7 +103,7 @@ export function useQuizSession(quiz: Quiz) {
         navigate('/quizzes');
     }
 
-    const progressPercentage = (currentIndex / totalQuestions) * 100;
+    const progressPercentage = ((currentIndex + 1)/ totalQuestions) * 100;
 
     return {
         quiz,
@@ -128,6 +116,7 @@ export function useQuizSession(quiz: Quiz) {
         progressPercentage,
         formattedTime,
         secondsLeft,
+        isSubmitting,
         handleSelectAnswer,
         handleConfirm,
         handleNext,
