@@ -4,15 +4,7 @@ import { useQuizSession } from '../hook/useQuizSession.ts';
 import { QuizAnswerOption } from '../components/quizAnswerOption.tsx';
 import { QuizProgressBar } from '../components/quizProgressBar.tsx';
 import type { Quiz } from '../types/quiz.types.ts';
-
-const BLOOM_LABEL: Record<string, string> = {
-    remember: 'Recordar',
-    understand: 'Comprender',
-    apply: 'Aplicar',
-    analyze: 'Analizar',
-    evaluate: 'Evaluar',
-    create: 'Crear',
-};
+import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
 
 function QuizTakingContent({ quiz }: { quiz: Quiz }) {
     const {
@@ -25,6 +17,7 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
         progressPercentage,
         formattedTime,
         secondsLeft,
+        isSubmitting,
         handleSelectAnswer,
         handleConfirm,
         handleNext,
@@ -43,7 +36,7 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
         return 'idle';
     }
 
-    const bloomLabel = BLOOM_LABEL[currentQuestion.bloom_level] ?? currentQuestion.bloom_level;
+    const bloomLabel = BloomLevelLabel[currentQuestion.bloom_level] ?? currentQuestion.bloom_level;
     const isCorrectAnswer = selectedIndex !== null && currentQuestion.answers[selectedIndex]?.is_correct;
 
     return (
@@ -123,6 +116,7 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
             <div className="flex items-center justify-between">
                 <button
                     onClick={handleExit}
+                    disabled={isSubmitting}
                     className="text-base text-[#4a5565] hover:text-[#1a3a5a] transition-colors font-medium"
                 >
                     Salir del Quiz
@@ -132,7 +126,7 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
                     {phase === 'answering' && (
                         <button
                             onClick={handleConfirm}
-                            disabled={selectedIndex === null}
+                            disabled={selectedIndex === null|| isSubmitting}
                             className={`px-6 py-2.5 rounded-xl font-medium text-base transition-colors ${
                                 selectedIndex === null
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -145,9 +139,14 @@ function QuizTakingContent({ quiz }: { quiz: Quiz }) {
                     {phase === 'revealed' && (
                         <button
                             onClick={handleNext}
+                            disabled={isSubmitting}
                             className="px-6 py-2.5 rounded-xl font-medium text-base bg-[#092e5e] text-white hover:bg-[#1a3a5a] transition-colors"
                         >
-                            {isLastQuestion ? 'Ver resultados' : 'Siguiente →'}
+                            {isSubmitting
+                                ? "Enviando..."
+                                : isLastQuestion
+                                    ? "Ver resultados"
+                                    : "Siguiente →"}
                         </button>
                     )}
                 </div>

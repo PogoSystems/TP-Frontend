@@ -1,7 +1,9 @@
 import { GiMonkey } from "react-icons/gi";
-import { BookOpen, Brain, TrendingUp, UserRound, X} from 'lucide-react';
+import {BookOpen, Brain, LogOut, TrendingUp, UserRound, X} from 'lucide-react';
 import * as React from "react";
-import {NavLink} from "react-router-dom";
+import {NavLink, useNavigate} from "react-router-dom";
+import {useAuth} from "../../../features/auth/hook/useAuth.ts";
+import {Button} from "./button.tsx";
 
 interface NavItem{
     label: string;
@@ -22,6 +24,19 @@ interface SidebarProps{
 }
 
 export function Sidebar({onClose}: SidebarProps){
+    const { signOut } = useAuth();
+    const navigate = useNavigate();
+
+    async function handleLogout() {
+        try {
+            await signOut();
+            navigate("/login", { replace: true });
+        } catch (error) {
+            console.error("Failed to sign out", error);
+        }
+    }
+
+
     return(
         <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30">
 
@@ -56,6 +71,10 @@ export function Sidebar({onClose}: SidebarProps){
                     {label}
                 </NavLink>
             ))}
+
+            <div className="mt-auto py-6">
+                <Button text="Cerrar sesión" icon={<LogOut size={18} />} variant="ghost" onClick={handleLogout}/>
+            </div>
         </nav>
     )
 }

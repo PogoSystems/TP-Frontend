@@ -1,1 +1,0 @@
-// interacción con el backend, llamadas a la API para consumir los endpoints
