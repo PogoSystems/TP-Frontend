@@ -19,8 +19,8 @@ const USER_ACTIVITY_STYLE: Record<ActivityType, {icon: LucideIcon; color:string}
 }
 
 export default function DashboardPage(){
-    const {courses} = useCourseSummaries()
-    const {activities} = useUserActivity()
+    const {courses, totalCourses} = useCourseSummaries()
+    const {activities, totalQuizzes, currentStreak} = useUserActivity()
     const {bloomChartData}=useBloomStats()
 
     return (
@@ -29,13 +29,13 @@ export default function DashboardPage(){
             <div className="flex flex-col gap-1 ">
                 <h2 className="font-semibold text-4xl text-text-title">Hola, Usuario</h2>
                 <ul className="flex flex-row gap-5">
-                    <DashboardStat title={'Racha actual 7 días'} icon={ <Flame className="text-accent-text" size={20}/>}/>
+                    <DashboardStat title={`Racha actual ${currentStreak} días`} icon={ <Flame className="text-accent-text" size={20}/>}/>
                     <div className="border-l border-vertical-divider" aria-hidden="true" />
 
-                    <DashboardStat title={'48 Cuestionarios completados'} icon={<FileQuestionMark   className="text-icon-green" size={20}/>}/>
+                    <DashboardStat title={`${totalQuizzes} Cuestionarios completados`} icon={<FileQuestionMark   className="text-icon-green" size={20}/>}/>
 
                     <div className="border-l border-vertical-divider" aria-hidden="true" />
-                    <DashboardStat title={'5 cursos activos'} icon={<BookMarked  className="text-icon-purple" size={20}/>}/>
+                    <DashboardStat title={`${totalCourses} cursos activos`} icon={<BookMarked  className="text-icon-purple" size={20}/>}/>
                 </ul>
             </div>
 
@@ -59,7 +59,7 @@ export default function DashboardPage(){
 
                         <div className='flex flex-row gap-5'>
                             {courses.map((course) =>
-                                <Link to={`/courses/${course.id}`} className="block flex-1 ">
+                                <Link to={`/courses/${course.id}`} className="block flex-1 " key={course.id}>
                                     <CardCourse iconText={`${course.iconText}`} courseTitle={`${course.title}`} courseDescription={`${course.description}`} lastQuizTime={`${course.lastQuizTime}`}/>
                                 </Link>
                             )}
@@ -73,7 +73,7 @@ export default function DashboardPage(){
                                 const style =USER_ACTIVITY_STYLE[activity.type]
                                 const Icon = style.icon
                                 return(
-                                    <Card>
+                                    <Card key={activity.id}>
                                         <div className="flex flex-row items-center content-center gap-5">
                                             <div>
                                                 <Icon size={30} className={style.color}></Icon>
@@ -102,7 +102,7 @@ export default function DashboardPage(){
                         <Card.Header title={'Resumen cognitivo'}/>
                         <Card.Content className="flex flex-col gap-3">
                             {bloomChartData.map((stat) =>
-                                <HorizontalBarChart percentage={stat.percentage} bloomLevel={stat.bloomLevel}/>
+                                <HorizontalBarChart percentage={stat.percentage} bloomLevel={stat.bloomLevel} key={stat.bloomLevel}/>
                             )}
                         </Card.Content>
                     </Card>
