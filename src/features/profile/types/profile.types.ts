@@ -1,3 +1,11 @@
+export interface UpdateProfileRequest {
+    name?: string | null;
+    last_name?: string | null;
+    email?: string | null;
+    college?: string | null;
+    major?: string | null;
+}
+
 /** Respuesta del perfil de usuario desde el backend */
 export interface UserProfileResponse {
     name: string;

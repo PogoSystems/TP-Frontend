@@ -17,7 +17,7 @@ export function WeeklyActivityCard({ activity }: WeeklyActivityCardProps) {
 
             <div className="flex justify-center gap-3">
                 {DAY_LABELS.map((label, i) => {
-                    const isActive = activity[i] ?? false;
+                    const isActive = activity?.[i] ?? false;
                     return (
                         <div key={label} className="flex flex-col items-center gap-2">
                             <div

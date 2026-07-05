@@ -1,22 +1,36 @@
-import type {UserBloomStats} from "../../../shared/types/bloomStats.types.ts";
-import {mapBloomStatsToChartData} from "../../../shared/utils/mapBloomStats.ts";
+import { useState, useEffect } from 'react';
+import type { BloomLevel } from "../../../shared/types/bloomLevel.ts";
+import { getBloomSummary } from "../services/dashboardService.ts";
 
-const MOCK_BLOOM_STATS: UserBloomStats ={
-    id: 'stats1',
-    user_id: 'user1',
-    course_id: 'course1',
-    correct_questions: 80,
-    incorrect_questions: 20,
-    max_score: 100,
-    remember_percentage: 40,
-    understand_percentage: 30,
-    apply_percentage: 20,
-    analyze_percentage: 10,
-    evaluate_percentage: 5,
-    updated_at: '2024-06-01T12:00:00Z',
-}
+export function useBloomStats() {
+    const [bloomChartData, setBloomChartData] = useState<{percentage: number, bloomLevel: BloomLevel}[]>([]);
+    const [loading, setLoading] = useState(true);
 
-export function useBloomStats(){
-    const bloomChartData= mapBloomStatsToChartData(MOCK_BLOOM_STATS);
-    return {bloomChartData};
+    useEffect(() => {
+        const fetchBloomStats = async () => {
+            try {
+                const data = await getBloomSummary();
+                const allLevels: BloomLevel[] = ['remember', 'understand', 'apply', 'analyze', 'evaluate'];
+                
+                const mappedData = allLevels.map(level => {
+                    const found = data.find(d => d.bloom_level === level);
+                    return {
+                        bloomLevel: level,
+                        percentage: found ? found.percentage : 0
+                    };
+                });
+                setBloomChartData(mappedData);
+            } catch (error) {
+                console.error("Failed to fetch bloom stats", error);
+                const allLevels: BloomLevel[] = ['remember', 'understand', 'apply', 'analyze', 'evaluate'];
+                setBloomChartData(allLevels.map(l => ({ bloomLevel: l, percentage: 0 })));
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchBloomStats();
+    }, []);
+
+    return { bloomChartData, loading };
 }

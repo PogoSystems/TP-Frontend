@@ -1,4 +1,4 @@
-import { Flame, Star, Trophy, Award } from 'lucide-react';
+import { Flame, Star, Trophy } from 'lucide-react';
 
 import { useProfileData } from '../hook/useProfileData';
 import { ProfileCard } from '../components/ProfileCard';
@@ -7,7 +7,7 @@ import { WeeklyActivityCard } from '../components/WeeklyActivityCard';
 import { AchievementCard } from '../components/AchievementCard';
 
 export function ProfileAchievementsPage() {
-    const { data, isLoading, error } = useProfileData();
+    const { data, isLoading, error, refetch } = useProfileData();
 
     if (isLoading) {
         return (
@@ -39,7 +39,7 @@ export function ProfileAchievementsPage() {
             </div>
 
             {/* ── Profile Card ───────────────────────────────────── */}
-            <ProfileCard user={user} />
+            <ProfileCard user={user} onEditSuccess={refetch} />
 
             {/* ── KPI Row ────────────────────────────────────────── */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">

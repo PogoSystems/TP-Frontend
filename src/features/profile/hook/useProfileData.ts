@@ -7,24 +7,23 @@ export function useProfileData() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let isMounted = true;
-
+    const loadData = () => {
+        setIsLoading(true);
         fetchProfileData()
             .then((result) => {
-                if (isMounted) setData(result);
+                setData(result);
             })
             .catch(() => {
-                if (isMounted) setError('Hubo un error al cargar los datos del perfil.');
+                setError('Hubo un error al cargar los datos del perfil.');
             })
             .finally(() => {
-                if (isMounted) setIsLoading(false);
+                setIsLoading(false);
             });
+    };
 
-        return () => {
-            isMounted = false;
-        };
+    useEffect(() => {
+        loadData();
     }, []);
 
-    return { data, isLoading, error };
+    return { data, isLoading, error, refetch: loadData };
 }

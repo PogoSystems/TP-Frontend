@@ -1,15 +1,20 @@
+import { useState } from 'react';
 import { Mail, MapPin } from 'lucide-react';
 import type { UserProfileResponse } from '../types/profile.types';
+import { EditProfileModal } from './EditProfileModal';
 
 interface ProfileCardProps {
     user: UserProfileResponse;
+    onEditSuccess?: () => void;
 }
 
 /**
  * Tarjeta de perfil del usuario con avatar de iniciales, datos personales
- * y botón "Editar perfil" (placeholder sin acción por ahora).
+ * y botón "Editar perfil".
  */
-export function ProfileCard({ user }: ProfileCardProps) {
+export function ProfileCard({ user, onEditSuccess }: ProfileCardProps) {
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    
     const initials = `${user.name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
     const fullName = `${user.name} ${user.last_name}`;
 
@@ -20,10 +25,9 @@ export function ProfileCard({ user }: ProfileCardProps) {
                 <h2 className="text-lg font-semibold text-[#1a3a5a]">Tu perfil</h2>
                 <button
                     type="button"
+                    onClick={() => setIsEditModalOpen(true)}
                     className="bg-[#1a3a5a] text-white text-base font-medium px-4 py-2 rounded-lg
-                               hover:bg-[#153050] transition-colors cursor-default"
-                    disabled
-                    title="Próximamente"
+                               hover:bg-[#153050] transition-colors"
                 >
                     Editar perfil
                 </button>
@@ -56,6 +60,15 @@ export function ProfileCard({ user }: ProfileCardProps) {
                     </div>
                 </div>
             </div>
+            
+            <EditProfileModal 
+                isOpen={isEditModalOpen} 
+                onClose={() => setIsEditModalOpen(false)} 
+                user={user} 
+                onSuccess={() => {
+                    if (onEditSuccess) onEditSuccess();
+                }} 
+            />
         </div>
     );
 }
