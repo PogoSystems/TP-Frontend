@@ -15,8 +15,14 @@ export interface CoursePerformanceResponse {
 }
 export interface ProgressPoint {
     label: string;
-    score: number;
+    accuracy: number;
 }
+
+export interface ProgressResponse{
+    granularity:string;
+    points: ProgressPoint[];
+}
+
 export interface UserDashboardResponse {
     quizzes_completed: number;
     questions_attempted: number;

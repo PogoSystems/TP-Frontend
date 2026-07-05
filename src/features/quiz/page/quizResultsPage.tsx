@@ -160,14 +160,14 @@ export function QuizResultsPage() {
                         <div className="flex flex-col sm:flex-row gap-4">
                             <BloomSummaryCard
                                 variant="dominant"
-                                level={dominant.label}
+                                level={dominant.bloomLevel}
                                 percentage={dominant.percentage}
                                 answeredCount={dominant.total}
                             />
                             {weak && (
                                 <BloomSummaryCard
                                     variant="weak"
-                                    level={weak.label}
+                                    level={weak.bloomLevel}
                                     percentage={weak.percentage}
                                     answeredCount={weak.total}
                                 />

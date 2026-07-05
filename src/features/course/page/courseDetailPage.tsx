@@ -19,6 +19,8 @@ import { Modal } from '../../../shared/components/ui/modal.tsx';
 import { Button } from '../../../shared/components/ui/button.tsx';
 import {useCourseAnalytics} from "../hook/useCourseAnalytics.ts";
 import {BloomLevel} from "../../../shared/types/bloomLevel.ts";
+import {useCourseProgress} from "../hook/useCourseProgress.ts";
+import {ProgressGranularity} from "../../../shared/utils/progress.ts";
 
 export function CourseDetailPage() {
     const { courseId } = useParams<{ courseId: string }>();
@@ -32,6 +34,12 @@ export function CourseDetailPage() {
     const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
     const BLOOM_LEVELS: BloomLevel[] = Object.values(BloomLevel);
+    const {progress, granularity, setGranularity} = useCourseProgress(numericCourseId);
+
+    const progressData = progress?.points.map((point) => ({
+        label: point.label,
+        score: point.accuracy,
+    })) ?? [];
 
     const handleDelete = async () => {
         setIsDeleting(true);
@@ -43,11 +51,7 @@ export function CourseDetailPage() {
             setIsDeleting(false);
         }
     };
-    const {
-        syllabus,
-        addDocument,
-        removeDocument,
-    } = useCourseDocuments(numericCourseId);
+    const {syllabus, addDocument, removeDocument} = useCourseDocuments(numericCourseId);
 
     if (isLoading || loadingAnalytics || !course || !analytics) {
         return <div>Cargando curso...</div>;
@@ -69,7 +73,7 @@ export function CourseDetailPage() {
 
     const radarData = analytics.bloom_breakdown.map((b) => ({
         level: b.bloom_level,
-        value: b.percentage,
+        value: Math.round(b.percentage),
     }));
 
     return (
@@ -195,14 +199,33 @@ export function CourseDetailPage() {
                 </Card>
 
                 <Card className="flex flex-col gap-4 !p-6">
-                    <div className="flex items-center gap-2">
-                        <TrendingUp size={20} className="text-text-subtle" />
-                        <h3 className="text-lg font-semibold text-text-title">
-                            Progreso en el tiempo
-                        </h3>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <TrendingUp size={20} className="text-text-subtle" />
+                            <h3 className="text-lg font-semibold text-text-title">
+                                Progreso en el tiempo
+                            </h3>
+                        </div>
+
+                        <select value={granularity}
+                                onChange={(e) =>
+                                    setGranularity(e.target.value as typeof granularity)
+                                }
+                                className=" rounded-lg px-3py-2 text-smbg-whiteborder-gray-300">
+
+                            <option value={ProgressGranularity.WEEK}>
+                                Semanas
+                            </option>
+                            <option value={ProgressGranularity.MONTH}>
+                                Meses
+                            </option>
+                            <option value={ProgressGranularity.YEAR}>
+                                Años
+                            </option>
+                        </select>
                     </div>
 
-                    <LineChart data={analytics.progress_over_time  ?? []} />
+                    <LineChart data={progressData} />
                 </Card>
 
             </div>
