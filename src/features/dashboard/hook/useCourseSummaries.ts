@@ -1,22 +1,36 @@
-import type {CourseSummary} from "../../course/types/course.types.ts";
+import { useState, useEffect } from 'react';
+import type { CourseSummary } from "../../course/types/course.types.ts";
+import { getTopCourses } from "../services/dashboardService.ts";
 
-const MOCK_COURSES: CourseSummary[] = [
-    {
-        id: 'course1',
-        iconText: 'ED',
-        title: 'Estructura de Datos',
-        description: 'Fundamentos para la organización y gestión de datos de forma eficiente',
-        lastQuizTime: '2 horas'
-    },
-    {
-        id: 'course2',
-        iconText: 'ML',
-        title: 'Machine Learning',
-        description: 'Introduccion al aprendizaje supervisado y no supervisado',
-        lastQuizTime: '4 días'
-    }
-]
+export function useCourseSummaries() {
+    const [courses, setCourses] = useState<CourseSummary[]>([]);
+    const [totalCourses, setTotalCourses] = useState(0);
+    const [loading, setLoading] = useState(true);
 
-export function useCourseSummaries(){
-    return{courses: MOCK_COURSES}
+    useEffect(() => {
+        const fetchCourses = async () => {
+            try {
+                const data = await getTopCourses();
+                setTotalCourses(data.total_courses);
+                
+                const mappedCourses: CourseSummary[] = data.courses.map(c => ({
+                    id: c.id,
+                    iconText: c.name.substring(0, 2).toUpperCase(),
+                    title: c.name,
+                    description: c.description || 'Sin descripción',
+                    lastQuizTime: new Date(c.created_at).toLocaleDateString() // Using created date as a placeholder
+                }));
+                
+                setCourses(mappedCourses);
+            } catch (error) {
+                console.error("Failed to fetch top courses", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchCourses();
+    }, []);
+
+    return { courses, totalCourses, loading };
 }
