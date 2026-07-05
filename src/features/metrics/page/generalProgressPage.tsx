@@ -12,10 +12,12 @@ import { CourseProgressRow } from '../components/CourseProgressRow.tsx';
 import { BloomCoverageRow } from '../components/BloomCoverageRow.tsx';
 import { BloomBarChart } from '../components/BloomBarChart.tsx';
 import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
+import {ProgressGranularity} from "../../../shared/utils/progress.ts";
+import {useUserProgress} from "../hook/useUserProgress.ts";
 
 export function GeneralProgressPage() {
     const { metrics, isLoading, error } = useUserMetrics();
-
+    const {progress, granularity, setGranularity} = useUserProgress();
 
     if (isLoading) {
         return (
@@ -38,6 +40,12 @@ export function GeneralProgressPage() {
         (max, b) => Math.max(max, b.questions_attempted),
         0,
     );
+
+    const progressData =
+        progress?.points.map((point) => ({
+            label: point.label,
+            score: point.accuracy,
+        })) ?? [];
 
     return (
         <div className="flex flex-col gap-6 w-full">
@@ -217,12 +225,33 @@ export function GeneralProgressPage() {
             </div>
 
             {/* ── Progreso en el tiempo (full width) ─────────────── */}
-            <Card className="flex flex-col gap-4 !p-6">
-                <div className="flex items-center gap-2">
-                    <TrendingUp size={20} className="text-text-subtle" />
-                    <h2 className="text-lg font-semibold text-[#1a3a5a]">Progreso en el tiempo</h2>
+            <Card className="flex flex-col gap-5 !p-6">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <TrendingUp size={20} className="text-text-subtle"/>
+                        <h2 className="text-lg font-semibold text-[#1a3a5a]">
+                            Progreso en el tiempo
+                        </h2>
+                    </div>
+
+                    <select value={granularity}
+                        onChange={(e) =>
+                            setGranularity(e.target.value as typeof granularity)
+                        }
+                        className=" rounded-lg px-3py-2 text-smbg-whiteborder-gray-300">
+
+                        <option value={ProgressGranularity.WEEK}>
+                            Semanas
+                        </option>
+                        <option value={ProgressGranularity.MONTH}>
+                            Meses
+                        </option>
+                        <option value={ProgressGranularity.YEAR}>
+                            Años
+                        </option>
+                    </select>
                 </div>
-                <LineChart data={metrics.progress_over_time ?? []} />
+                <LineChart data={progressData}/>
             </Card>
 
         </div>
