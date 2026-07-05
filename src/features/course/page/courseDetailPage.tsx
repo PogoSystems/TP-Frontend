@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Lightbulb, BarChart2, TrendingUp, Pencil } from 'lucide-react';
+import { ArrowLeft, Lightbulb, BarChart2, TrendingUp, Pencil, ChevronDown, ChevronUp, Loader2, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
@@ -12,6 +12,7 @@ import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
 import { UseCourseDetail } from "../hook/useCourseDetail.ts";
 import { useCourseDocuments } from "../../../shared/hooks/useCourseDocuments.ts";
 import { useUploadSyllabus } from "../hook/useUploadSyllabus.ts";
+import { useCourseQuizzes } from "../hook/useCourseQuizzes.ts";
 import { ManageCourseModal } from "../components/ManageCourseModal.tsx";
 import { toCourseDetail } from "../../../shared/utils/courseDisplay.ts";
 import { deleteCourse } from "../services/courseService.ts";
@@ -29,6 +30,15 @@ export function CourseDetailPage() {
     const { course, isLoading, setCourse } = UseCourseDetail(numericCourseId);
     const { analytics, isLoading: loadingAnalytics } = useCourseAnalytics(numericCourseId);
     const { uploadSyllabus } = useUploadSyllabus(numericCourseId);
+    const { 
+        quizzes, 
+        isLoading: loadingQuizzes, 
+        isQuizzesExpanded, 
+        isLoadingQuiz, 
+        toggleQuizzes, 
+        handleRetryQuiz 
+    } = useCourseQuizzes(numericCourseId);
+    
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -140,6 +150,61 @@ export function CourseDetailPage() {
                     </div>
                 )}
             </Card>
+
+            {/* Reintentar Cuestionarios Section */}
+            <div className="flex flex-col gap-3">
+                <button
+                    onClick={toggleQuizzes}
+                    className="w-full flex items-center justify-between p-4 bg-white border border-[#e5e7eb] rounded-xl hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                            <RotateCcw size={20} />
+                        </div>
+                        <span className="font-medium text-text-title">Reintentar cuestionarios pasados</span>
+                    </div>
+                    {isQuizzesExpanded ? <ChevronUp size={20} className="text-gray-400" /> : <ChevronDown size={20} className="text-gray-400" />}
+                </button>
+
+                {isQuizzesExpanded && (
+                    <Card className="flex flex-col gap-3 !p-4 border border-gray-200">
+                        {loadingQuizzes ? (
+                            <div className="flex justify-center items-center py-6 text-gray-400">
+                                <Loader2 size={24} className="animate-spin" />
+                            </div>
+                        ) : quizzes.length === 0 ? (
+                            <p className="text-sm text-gray-500 text-center py-4">No hay cuestionarios previos para este curso.</p>
+                        ) : (
+                            <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-2">
+                                {quizzes.map((q) => (
+                                    <button
+                                        key={q.id}
+                                        onClick={() => handleRetryQuiz(q.id)}
+                                        disabled={isLoadingQuiz !== null}
+                                        className={`flex items-center justify-between p-3 border rounded-lg transition-colors text-left
+                                            ${isLoadingQuiz === q.id ? 'bg-gray-50 border-blue-200' : 'bg-white border-gray-100 hover:border-blue-200 hover:bg-blue-50/30'}
+                                            ${isLoadingQuiz !== null && isLoadingQuiz !== q.id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                                        `}
+                                    >
+                                        <div className="flex flex-col gap-1">
+                                            <span className="font-medium text-text-title text-sm">{q.title}</span>
+                                            <span className="text-xs text-text-subtle">
+                                                {new Date(q.created_at).toLocaleString('es-ES', { 
+                                                    day: '2-digit', month: '2-digit', year: 'numeric', 
+                                                    hour: '2-digit', minute: '2-digit' 
+                                                })}
+                                            </span>
+                                        </div>
+                                        {isLoadingQuiz === q.id && (
+                                            <Loader2 size={18} className="text-blue-500 animate-spin" />
+                                        )}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                    </Card>
+                )}
+            </div>
 
             <Card className="flex flex-col gap-5 !p-6">
                 <h2 className="text-xl font-semibold text-text-title">

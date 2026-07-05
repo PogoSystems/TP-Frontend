@@ -71,7 +71,6 @@ export function CreateQuizPage() {
         quizTitle.trim() &&
         questionCount &&
         Number(questionCount) > 0 &&
-        selectedBloomLevels.length > 0 &&
         (selectedDocumentIds.length > 0 || totalFiles > 0) &&
         !isGenerating &&
         !isAnyFileUploading

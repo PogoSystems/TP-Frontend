@@ -66,3 +66,13 @@ export interface AttemptResultResponse {
     question_results: QuestionAttemptResult[];
     bloom_breakdown: BloomBreakdownResult[];
 }
+
+export interface QuizSummary {
+    id: number;
+    title: string;
+    created_at: string;
+}
+
+export interface QuizzesByCourseResponse {
+    quizzes: QuizSummary[];
+}
