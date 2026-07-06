@@ -5,6 +5,7 @@ import { QuizBloomResultBar } from '../components/quizBloomResultBar.tsx';
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
 import type {AttemptResultResponse} from "../types/quiz.types.ts";
 import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
+import {Button} from "../../../shared/components/ui/button.tsx";
 
 type ResultState = {
     result: AttemptResultResponse;
@@ -68,7 +69,7 @@ export function QuizResultsPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6 w-full py-8">
+        <div className="flex flex-col gap-6 max-w-4/5 py-8">
 
             {/* Page title */}
             <div className="flex flex-col gap-1">
@@ -79,117 +80,128 @@ export function QuizResultsPage() {
             </div>
 
             {/* Top row: score card + bloom breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 items-start ">
 
-                {/* Score card */}
-                <Card className="flex flex-col items-center gap-4 !p-8 min-w-[240px]">
-                    <h2 className="text-xl font-semibold text-[#1a3a5a] w-full text-center">
-                        Puntaje Total
-                    </h2>
+                <div className="flex flex-col gap-3">
+                    {/* Score card */}
+                    <Card className="flex flex-col items-center gap-4 !p-8  min-w-[350px]">
+                        <h2 className="text-xl font-semibold text-[#1a3a5a] w-full text-center">
+                            Puntaje Total
+                        </h2>
 
-                    <div className="flex flex-col items-center gap-1">
-                        <p className="text-8xl font-semibold text-[#031632] leading-none tracking-tight">
-                            {totalScore}
+                        <div className="flex flex-col items-center gap-1">
+                            <p className="text-8xl font-semibold text-[#031632] leading-none tracking-tight">
+                                {totalScore}
+                            </p>
+                            <p className="text-xl font-medium text-[#44474d]">puntos</p>
+                        </div>
+
+                        <div className="flex gap-6 pt-2">
+                            {/* Correct */}
+                            <div className="flex flex-col items-start gap-1">
+                                <div className="flex items-center gap-2">
+                                    <CheckCircle size={22} className="text-[#0d542b]" />
+                                    <p className="text-2xl font-bold text-[#0d542b]">{correctCount}</p>
+                                </div>
+                                <p className="text-sm font-semibold text-[#4a5565] leading-tight">
+                                    Preguntas<br />Correctas
+                                </p>
+                            </div>
+                            {/* Incorrect */}
+                            <div className="flex flex-col items-start gap-1">
+                                <div className="flex items-center gap-2">
+                                    <XCircle size={22} className="text-[#82181a]" />
+                                    <p className="text-2xl font-bold text-[#82181a]">{incorrectCount}</p>
+                                </div>
+                                <p className="text-sm font-semibold text-[#4a5565] leading-tight">
+                                    Preguntas<br />Incorrectas
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+
+                    {/* Tip banner */}
+                    <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 max-w-[350px]">
+                        <Lightbulb size={18} className="text-blue-700 shrink-0 mt-0.5" />
+                        <p className="text-sm text-blue-800">
+                            <span className="font-semibold">Tip: </span>
+                            Intenta repasar definiciones, conceptos clave y terminología antes de volver a evaluar este tema.
                         </p>
-                        <p className="text-xl font-medium text-[#44474d]">puntos</p>
                     </div>
+                </div>
 
-                    <div className="flex gap-6 pt-2">
-                        {/* Correct */}
-                        <div className="flex flex-col items-start gap-1">
-                            <div className="flex items-center gap-2">
-                                <CheckCircle size={22} className="text-[#0d542b]" />
-                                <p className="text-2xl font-bold text-[#0d542b]">{correctCount}</p>
-                            </div>
-                            <p className="text-sm font-semibold text-[#4a5565] leading-tight">
-                                Preguntas<br />Correctas
-                            </p>
-                        </div>
-                        {/* Incorrect */}
-                        <div className="flex flex-col items-start gap-1">
-                            <div className="flex items-center gap-2">
-                                <XCircle size={22} className="text-[#82181a]" />
-                                <p className="text-2xl font-bold text-[#82181a]">{incorrectCount}</p>
-                            </div>
-                            <p className="text-sm font-semibold text-[#4a5565] leading-tight">
-                                Preguntas<br />Incorrectas
-                            </p>
-                        </div>
-                    </div>
-                </Card>
 
-                {/* Bloom breakdown */}
-                <Card className="flex flex-col gap-5 !p-6">
-                    <h2 className="text-xl font-semibold text-[#1a3a5a]">
-                        Desempeño por Taxonomía de Bloom
-                    </h2>
-                    <div className="flex flex-col gap-5">
-                        {bloomStats.length > 0 ? (
-                            bloomStats.map((item) => (
-                                <QuizBloomResultBar
-                                    key={item.bloomLevel}
-                                    label={item.label}
-                                    correct={item.correct}
-                                    total={item.total}
-                                />
-                            ))
-                        ) : (
-                            <p className="text-sm text-[#4a5565]">
-                                No hay datos disponibles.
-                            </p>
-                        )}
-                    </div>
-                </Card>
-            </div>
 
-            {/* Tip banner */}
-            <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4">
-                <Lightbulb size={18} className="text-blue-700 shrink-0 mt-0.5" />
-                <p className="text-sm text-blue-800">
-                    <span className="font-semibold">Tip: </span>
-                    Intenta repasar definiciones, conceptos clave y terminología fundamental antes de volver a evaluar este tema.
-                </p>
-            </div>
-
-            {/* Bottom section: cognitive performance & CTA */}
-            <div className="flex flex-col lg:flex-row items-stretch gap-4">
-                {/* Rendimiento cognitivo card */}
-                <Card className="flex-1 flex flex-col gap-5 !p-6">
-                    <h2 className="text-xl font-semibold text-[#1a3a5a]">Rendimiento cognitivo</h2>
-                    {dominant ? (
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <BloomSummaryCard
-                                variant="dominant"
-                                level={dominant.bloomLevel}
-                                percentage={dominant.percentage}
-                                answeredCount={dominant.total}
-                            />
-                            {weak && (
-                                <BloomSummaryCard
-                                    variant="weak"
-                                    level={weak.bloomLevel}
-                                    percentage={weak.percentage}
-                                    answeredCount={weak.total}
-                                />
+                <div className="flex flex-col gap-4">
+                    {/* Bloom breakdown */}
+                    <Card className="flex flex-col gap-5 !p-6 min-h-[380px]">
+                        <h2 className="text-xl font-semibold text-[#1a3a5a]">
+                            Desempeño por Taxonomía de Bloom
+                        </h2>
+                        <div className="flex flex-col gap-5">
+                            {bloomStats.length > 0 ? (
+                                bloomStats.map((item) => (
+                                    <QuizBloomResultBar
+                                        key={item.bloomLevel}
+                                        label={item.label}
+                                        correct={item.correct}
+                                        total={item.total}
+                                    />
+                                ))
+                            ) : (
+                                <p className="text-sm text-[#4a5565]">
+                                    No hay datos disponibles.
+                                </p>
                             )}
                         </div>
-                    ) : (
-                        <p className="text-sm text-[#4a5565] py-4 text-center">
-                            No hay datos de rendimiento cognitivo disponibles.
-                        </p>
-                    )}
-                </Card>
+                    </Card>
 
-                {/* CTA */}
-                <div className="flex items-end justify-end shrink-0">
-                    <button
-                        onClick={() => navigate('/courses')}
-                        className="px-6 py-3 bg-[#092e5e] text-white rounded-xl font-medium text-base hover:bg-[#1a3a5a] transition-colors"
-                    >
-                        Volver a mis cursos
-                    </button>
+
+                    {/* Bottom section: cognitive performance & CTA */}
+                    <div className="flex flex-col lg:flex-row items-stretch gap-4">
+                        {/* Rendimiento cognitivo card */}
+                        <Card className="flex-1 flex flex-col gap-5 !p-6">
+                            <h2 className="text-xl font-semibold text-[#1a3a5a]">Rendimiento cognitivo</h2>
+                            {dominant ? (
+                                <div className="flex flex-col sm:flex-row gap-4">
+                                    <BloomSummaryCard
+                                        variant="dominant"
+                                        level={dominant.bloomLevel}
+                                        percentage={dominant.percentage}
+                                        answeredCount={dominant.total}
+                                    />
+                                    {weak && (
+                                        <BloomSummaryCard
+                                            variant="weak"
+                                            level={weak.bloomLevel}
+                                            percentage={weak.percentage}
+                                            answeredCount={weak.total}
+                                        />
+                                    )}
+                                </div>
+                            ) : (
+                                <p className="text-sm text-[#4a5565] py-4 text-center">
+                                    No hay datos de rendimiento cognitivo disponibles.
+                                </p>
+                            )}
+                        </Card>
+                    </div>
+                    {/* CTA */}
+                    <div className="flex items-center justify-evenly shrink-0">
+                        <div className="max-w-2/4">
+                            <Button onClick={() => navigate('/courses')} text={'Volver a mis cursos'} variant={'secondary'}/>
+                        </div>
+
+                        <div>
+                            <Button onClick={() => navigate('/quizzes')} text={'Generar nuevo quiz'} variant={'primary'}/>
+                        </div>
+
+                    </div>
+
+
                 </div>
-            </div>
+                </div>
+
         </div>
     );
 }
