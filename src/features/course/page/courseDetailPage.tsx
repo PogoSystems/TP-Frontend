@@ -1,5 +1,5 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Lightbulb, BarChart2, TrendingUp, Pencil, ChevronDown, ChevronUp, Loader2, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Lightbulb, BarChart2, TrendingUp, Pencil, ChevronDown, ChevronUp, RotateCcw } from 'lucide-react';
 import { useState } from 'react';
 
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
@@ -8,6 +8,11 @@ import { FileDropzone } from '../../../shared/components/ui/fileDropzone.tsx';
 import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarChart.tsx';
 import { BloomRadarChart } from '../../../shared/components/ui/bloomRadarChart.tsx';
 import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
+import {
+    Skeleton,
+    BloomStatSkeleton,
+    ChartCardSkeleton
+} from '../../../shared/components/ui/skeletons.tsx';
 
 import { UseCourseDetail } from "../hook/useCourseDetail.ts";
 import { useCourseDocuments } from "../../../shared/hooks/useCourseDocuments.ts";
@@ -18,10 +23,11 @@ import { toCourseDetail } from "../../../shared/utils/courseDisplay.ts";
 import { deleteCourse } from "../services/courseService.ts";
 import { Modal } from '../../../shared/components/ui/modal.tsx';
 import { Button } from '../../../shared/components/ui/button.tsx';
-import {useCourseAnalytics} from "../hook/useCourseAnalytics.ts";
-import {BloomLevel} from "../../../shared/types/bloomLevel.ts";
-import {useCourseProgress} from "../hook/useCourseProgress.ts";
-import {ProgressGranularity} from "../../../shared/utils/progress.ts";
+import { useCourseAnalytics } from "../hook/useCourseAnalytics.ts";
+import { BloomLevel } from "../../../shared/types/bloomLevel.ts";
+import { useCourseProgress } from "../hook/useCourseProgress.ts";
+import { ProgressGranularity } from "../../../shared/utils/progress.ts";
+import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
 
 export function CourseDetailPage() {
     const { courseId } = useParams<{ courseId: string }>();
@@ -30,21 +36,21 @@ export function CourseDetailPage() {
     const { course, isLoading, setCourse } = UseCourseDetail(numericCourseId);
     const { analytics, isLoading: loadingAnalytics } = useCourseAnalytics(numericCourseId);
     const { uploadSyllabus } = useUploadSyllabus(numericCourseId);
-    const { 
-        quizzes, 
-        isLoading: loadingQuizzes, 
-        isQuizzesExpanded, 
-        isLoadingQuiz, 
-        toggleQuizzes, 
-        handleRetryQuiz 
+    const {
+        quizzes,
+        isLoading: loadingQuizzes,
+        isQuizzesExpanded,
+        isLoadingQuiz,
+        toggleQuizzes,
+        handleRetryQuiz
     } = useCourseQuizzes(numericCourseId);
-    
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const navigate = useNavigate();
     const BLOOM_LEVELS: BloomLevel[] = Object.values(BloomLevel);
-    const {progress, granularity, setGranularity} = useCourseProgress(numericCourseId);
+    const { progress, granularity, setGranularity } = useCourseProgress(numericCourseId);
 
     const progressData = progress?.points.map((point) => ({
         label: point.label,
@@ -61,18 +67,57 @@ export function CourseDetailPage() {
             setIsDeleting(false);
         }
     };
-    const {syllabus, addDocument, removeDocument} = useCourseDocuments(numericCourseId);
+    const { syllabus, addDocument, removeDocument } = useCourseDocuments(numericCourseId);
 
-    if (isLoading || loadingAnalytics || !course || !analytics) {
-        return <div>Cargando curso...</div>;
+    // Carga inicial
+    if (isLoading || loadingAnalytics) {
+        return (
+            <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto min-w-0 pb-10">
+                {/* Volver a cursos + Título del curso */}
+                <div className="flex flex-col gap-2">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-8 w-1/3" />
+                    <Skeleton className="h-4 w-1/2" />
+                </div>
+
+                {/* Sección Syllabus */}
+                <Card className="!p-6 flex flex-col gap-4">
+                    <Skeleton className="h-6 w-28" />
+                    <Skeleton className="h-20 w-full rounded-xl" />
+                </Card>
+
+                {/* Botón Reintentar cuestionarios */}
+                <Skeleton className="h-14 w-full rounded-xl" />
+
+                {/* Card Rendimiento Cognitivo */}
+                <Card className="!p-6 flex flex-col gap-5">
+                    <Skeleton className="h-6 w-48" />
+                    <div className="flex flex-col sm:flex-row gap-4">
+                        <Skeleton className="h-24 flex-1 rounded-xl" />
+                        <Skeleton className="h-24 flex-1 rounded-xl" />
+                    </div>
+                    <div className="flex flex-col gap-3 px-2 pt-2">
+                        {Array.from({ length: 6 }).map((_, i) => (
+                            <BloomStatSkeleton key={i} />
+                        ))}
+                    </div>
+                </Card>
+
+                {/* Tip visual */}
+                <Skeleton className="h-14 w-full rounded-xl" />
+
+                {/* Gráficos Radar y Progreso */}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <ChartCardSkeleton />
+                    <ChartCardSkeleton />
+                </div>
+            </div>
+        );
     }
 
-    const bloomMap = Object.fromEntries(analytics.bloom_breakdown.map(b => [b.bloom_level, b.percentage])
-    ) as Record<string, number>;
-
-    if (!course) {
+    if (!course || !analytics) {
         return (
-            <div className="flex flex-col items-center justify-center h-full gap-4 text-text-subtle">
+            <div className="flex flex-col items-center justify-center h-full gap-4 text-text-subtle py-12">
                 <p className="text-lg font-semibold">Curso no encontrado.</p>
                 <Link to="/courses" className="text-sm text-accent-button hover:underline flex items-center gap-1">
                     <ArrowLeft size={16} /> Regresar a Cursos
@@ -81,13 +126,16 @@ export function CourseDetailPage() {
         );
     }
 
+    const bloomMap = Object.fromEntries(analytics.bloom_breakdown.map(b => [b.bloom_level, b.percentage])
+    ) as Record<string, number>;
+
     const radarData = analytics.bloom_breakdown.map((b) => ({
         level: b.bloom_level,
         value: Math.round(b.percentage),
     }));
 
     return (
-        <div className="flex flex-col gap-6 w-full">
+        <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto min-w-0 pb-10">
 
             <Link
                 to="/courses"
@@ -155,10 +203,10 @@ export function CourseDetailPage() {
             <div className="flex flex-col gap-3">
                 <button
                     onClick={toggleQuizzes}
-                    className="w-full flex items-center justify-between p-4 bg-white border border-[#e5e7eb] rounded-xl hover:bg-gray-50 transition-colors shadow-sm cursor-pointer"
+                    className="w-full flex items-center justify-between p-4 bg-white border border-[#e5e7eb] rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-blue-50 text-blue-600 rounded-lg">
+                        <div className="p-2  text-blue-600 rounded-lg">
                             <RotateCcw size={20} />
                         </div>
                         <span className="font-medium text-text-title">Reintentar cuestionarios pasados</span>
@@ -169,8 +217,9 @@ export function CourseDetailPage() {
                 {isQuizzesExpanded && (
                     <Card className="flex flex-col gap-3 !p-4 border border-gray-200">
                         {loadingQuizzes ? (
-                            <div className="flex justify-center items-center py-6 text-gray-400">
-                                <Loader2 size={24} className="animate-spin" />
+                            <div className="flex justify-center items-center gap-1 py-6">
+                                <LoadSpinner width={32} height={32} />
+                                <p>Cargando lista de cuestionarios...</p>
                             </div>
                         ) : quizzes.length === 0 ? (
                             <p className="text-sm text-gray-500 text-center py-4">No hay cuestionarios previos para este curso.</p>
@@ -189,14 +238,15 @@ export function CourseDetailPage() {
                                         <div className="flex flex-col gap-1">
                                             <span className="font-medium text-text-title text-sm">{q.title}</span>
                                             <span className="text-xs text-text-subtle">
-                                                {new Date(q.created_at).toLocaleString('es-ES', { 
-                                                    day: '2-digit', month: '2-digit', year: 'numeric', 
-                                                    hour: '2-digit', minute: '2-digit' 
+                                                {new Date(q.created_at).toLocaleString('es-ES', {
+                                                    day: '2-digit', month: '2-digit', year: 'numeric',
+                                                    hour: '2-digit', minute: '2-digit'
                                                 })}
                                             </span>
                                         </div>
+                                        {/* 3. SPINNER INDIVIDUAL POR CUESTIONARIO */}
                                         {isLoadingQuiz === q.id && (
-                                            <Loader2 size={18} className="text-blue-500 animate-spin" />
+                                            <LoadSpinner width={20} height={20} />
                                         )}
                                     </button>
                                 ))}
@@ -276,7 +326,7 @@ export function CourseDetailPage() {
                                 onChange={(e) =>
                                     setGranularity(e.target.value as typeof granularity)
                                 }
-                                className=" rounded-lg px-3py-2 text-smbg-whiteborder-gray-300">
+                                className="rounded-lg px-3 py-2 text-sm bg-white border border-gray-300">
 
                             <option value={ProgressGranularity.WEEK}>
                                 Semanas
@@ -302,6 +352,7 @@ export function CourseDetailPage() {
                 Eliminar curso
             </button>
 
+            {/* Modal de eliminación */}
             <Modal isOpen={isDeleteModalOpen} onClose={() => !isDeleting && setIsDeleteModalOpen(false)}>
                 <h2 className="text-text-title text-lg font-semibold mb-4">Eliminar curso</h2>
                 <p className="text-text-subtle mb-8">
@@ -313,11 +364,21 @@ export function CourseDetailPage() {
                     </div>
                     <div>
                         <button
-                            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors ${isDeleting ? 'bg-red-400 cursor-not-allowed text-white' : 'bg-red-600 text-white hover:bg-red-700 cursor-pointer'}`}
+                            className={`px-5 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 ${
+                                isDeleting ? 'bg-red-400 cursor-not-allowed text-white' : 'bg-red-600 text-white hover:bg-red-700 cursor-pointer'
+                            }`}
                             onClick={handleDelete}
                             disabled={isDeleting}
                         >
-                            {isDeleting ? "Eliminando..." : "Sí, eliminar"}
+                            {/* 4. SPINNER EN ACCIÓN DE ELIMINACIÓN */}
+                            {isDeleting ? (
+                                <>
+                                    <LoadSpinner width={18} height={18} monochrome />
+                                    <span>Eliminando...</span>
+                                </>
+                            ) : (
+                                "Sí, eliminar"
+                            )}
                         </button>
                     </div>
                 </div>
