@@ -1,7 +1,8 @@
 import { Modal } from "../../../shared/components/ui/modal.tsx";
 import { InputText } from "../../../shared/components/ui/inputText.tsx";
 import { Button } from "../../../shared/components/ui/button.tsx";
-import { Plus, Pencil } from 'lucide-react';
+import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
+import {Plus, Pencil, AlertCircle} from 'lucide-react';
 import { TextArea } from "../../../shared/components/ui/textArea.tsx";
 import type { CourseResponse } from "../types/course.types.ts";
 import { useState, useEffect } from "react";
@@ -17,44 +18,44 @@ interface ManageCourseModalProps {
 }
 
 export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUpdated, initialData, mode = 'create' }: ManageCourseModalProps) {
-    const [name, setName] = useState("")
-    const [description, setDescription] = useState("")
-    const [error, setError] = useState("")
-    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [error, setError] = useState("");
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         if (isOpen && mode === 'edit' && initialData) {
-            setName(initialData.name)
-            setDescription(initialData.description)
+            setName(initialData.name);
+            setDescription(initialData.description);
         } else if (isOpen && mode === 'create') {
-            setName("")
-            setDescription("")
+            setName("");
+            setDescription("");
         }
-        setError("")
-    }, [isOpen, mode, initialData])
+        setError("");
+    }, [isOpen, mode, initialData]);
 
     async function handleSave() {
-        setError("")
+        setError("");
 
         if (!name.trim() || !description.trim()) {
-            setError("Todos los campos son requeridos.")
-            return
+            setError("Todos los campos son requeridos.");
+            return;
         }
 
-        setIsSubmitting(true)
+        setIsSubmitting(true);
         try {
             if (mode === 'edit' && initialData) {
-                const updated = await updateCourse(initialData.id, { name, description, max_score: 0 })
-                onCourseUpdated?.(updated)
+                const updated = await updateCourse(initialData.id, { name, description, max_score: 0 });
+                onCourseUpdated?.(updated);
             } else {
-                const course = await createCourse({ name, description })
-                onCourseCreated?.(course)
+                const course = await createCourse({ name, description });
+                onCourseCreated?.(course);
             }
-            onClose()
+            onClose();
         } catch {
-            setError(mode === 'edit' ? "Hubo un error al actualizar el curso. Inténtalo de nuevo." : "Hubo un error al crear el curso. Inténtalo de nuevo.")
+            setError(mode === 'edit' ? "Hubo un error al actualizar el curso. Inténtalo de nuevo." : "Hubo un error al crear el curso. Inténtalo de nuevo.");
         } finally {
-            setIsSubmitting(false)
+            setIsSubmitting(false);
         }
     }
 
@@ -66,23 +67,59 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
             </h2>
 
             {/* Form */}
-            <div className="grid grid-rows-1 gap-4 mb-8">
-                <InputText label={'Nombre del curso'} value={name} required={true} name={'courseName'} placeholder={'Algoritmo y estructura de datos'} onChange={(e) => setName(e.target.value)}></InputText>
-                <TextArea label={'Descripción'} value={description} required={true} name={'courseDescription'} placeholder={'Escribe una breve descripción del contenido del curso'} onChange={(e) => setDescription(e.target.value)}></TextArea>
+            <div className="grid grid-rows-1 gap-4 mb-3">
+                <InputText
+                    label={'Nombre del curso'}
+                    value={name}
+                    required={true}
+                    name={'courseName'}
+                    placeholder={'Algoritmo y estructura de datos'}
+                    onChange={(e) => setName(e.target.value)}
+                />
+                <TextArea
+                    label={'Descripción'}
+                    value={description}
+                    required={true}
+                    name={'courseDescription'}
+                    placeholder={'Escribe una breve descripción del contenido del curso'}
+                    onChange={(e) => setDescription(e.target.value)}
+                />
+                {error && (
+                    <div className="flex items-center gap-2 text-red-600 text-sm">
+                        <AlertCircle size={18} className="shrink-0" />
+                        <span>{error}</span>
+                    </div>
+                )}
             </div>
-
-            {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
             {/* Footer */}
             <div className="flex flex-row justify-end gap-4">
                 <div>
-                    <Button text={'Cancelar'} variant={'secondary'} onClick={onClose} />
+                    <Button
+                        text={'Cancelar'}
+                        variant={'secondary'}
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                    />
                 </div>
 
                 <div>
-                    <Button text={isSubmitting ? (mode === 'edit' ? "Guardando..." : "Creando...") : (mode === 'edit' ? "Guardar cambios" : "Crear curso")} icon={mode === 'edit' ? <Pencil size={18} /> : <Plus size={18} />} onClick={handleSave} />
+                    <Button
+                        text={isSubmitting ? (mode === 'edit' ? "Guardando..." : "Creando...") : (mode === 'edit' ? "Guardar cambios" : "Crear curso")}
+                        icon={
+                            isSubmitting ? (
+                                <LoadSpinner width={23} height={23} monochrome={true} />
+                            ) : mode === 'edit' ? (
+                                <Pencil size={18} />
+                            ) : (
+                                <Plus size={18} />
+                            )
+                        }
+                        onClick={handleSave}
+                        disabled={isSubmitting}
+                    />
                 </div>
             </div>
         </Modal>
-    )
+    );
 }

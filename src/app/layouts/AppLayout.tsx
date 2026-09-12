@@ -9,8 +9,13 @@ export default function AppLayout (){
     const [sidebarOpen, setSidebarOpen] =useState(false);
 
     // While checking the session, show a loading screen
-    if(isCheckingSession){
-        return <div className="h-screen flex items-center justify-center">Cargando...</div>
+    if (isCheckingSession) {
+        return (
+            <div className="h-screen flex flex-col items-center justify-center gap-3 bg-bg-app">
+                <img src="/../public/monkeError2.svg" alt="Cargando..." className="w-8 h-8 animate-spin" />
+                <span className="text-sm text-text-subtle font-medium">Cargando sesión...</span>
+            </div>
+        );
     }
 
     // If there is no session, redirect to the login page
