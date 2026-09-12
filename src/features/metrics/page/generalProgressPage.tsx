@@ -18,6 +18,8 @@ import { GeneralProgressSkeleton } from '../components/GeneralProgressSkeleton.t
 import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
 
+const MAX_VISIBLE_COURSES = 4;
+
 export function GeneralProgressPage() {
     const { metrics, isLoading, error, refetch } = useUserMetrics();
     const { progress, granularity, setGranularity } = useUserProgress();
@@ -145,14 +147,22 @@ export function GeneralProgressPage() {
                                     </div>
 
                                     <div className="flex flex-col gap-4">
-                                        {metrics.course_performance.map((course) => (
-                                            <CourseProgressRow
-                                                key={course.course_id}
-                                                courseName={course.course_name}
-                                                quizzesCompleted={course.quizzes_completed}
-                                                accuracyPercentage={course.accuracy_percentage}
-                                            />
-                                        ))}
+                                        {metrics.course_performance
+                                            .slice(0, MAX_VISIBLE_COURSES)
+                                            .map((course) => (
+                                                <CourseProgressRow
+                                                    key={course.course_id}
+                                                    courseName={course.course_name}
+                                                    quizzesCompleted={course.quizzes_completed}
+                                                    accuracyPercentage={course.accuracy_percentage}
+                                                />
+                                            ))}
+
+                                        {metrics.course_performance.length > MAX_VISIBLE_COURSES && (
+                                            <p className="text-xs text-center text-[#8997a5] pt-1">
+                                                Mostrando {MAX_VISIBLE_COURSES} de {metrics.course_performance.length} cursos.
+                                            </p>
+                                        )}
                                     </div>
                                 </Card>
 

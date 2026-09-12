@@ -124,7 +124,7 @@ export default function DashboardPage() {
                                     const Icon = style.icon;
                                     return (
                                         <Card key={activity.id}>
-                                            <div className="flex flex-row items-center gap-5 p-4">
+                                            <div className="flex flex-row items-center gap-5 ">
                                                 <div>
                                                     <Icon size={30} className={style.color} />
                                                 </div>

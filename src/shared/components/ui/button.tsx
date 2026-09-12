@@ -3,7 +3,7 @@ import * as React from "react";
 type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 
 interface ButtonProps{
-    text: string;
+    text: string | React.ReactNode;
     icon?: React.ReactNode;
     variant?: ButtonVariant;
     onClick?: () => void;

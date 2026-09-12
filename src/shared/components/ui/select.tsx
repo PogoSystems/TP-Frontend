@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDown, Check } from 'lucide-react'
+import {LoadSpinner} from "./loadSpinner.tsx";
 
 interface SelectOption {
     value: string
@@ -13,9 +14,10 @@ interface SelectProps {
     onChange: (value: string) => void
     placeholder?: string
     required?: boolean
+    isLoading?: boolean
 }
 
-export function Select({ label, options, value, required, onChange, placeholder = 'Selecciona una opción' }: SelectProps) {
+export function Select({label, options, value, required, onChange, placeholder = 'Selecciona una opción', isLoading = false}: SelectProps) {
     const [isOpen, setIsOpen] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
 
@@ -44,14 +46,19 @@ export function Select({ label, options, value, required, onChange, placeholder 
             <div className="relative">
                 <button
                     type="button"
+                    disabled={isLoading}
                     onClick={() => setIsOpen((prev) => !prev)}
-                    className="flex items-center justify-between border border-border-input rounded-lg p-2.5 w-full text-left text-text-title"
+                    className="flex items-center justify-between border border-border-input rounded-lg p-2.5 w-full text-left text-text-title disabled:bg-gray-50 disabled:cursor-not-allowed"
                 >
                     <span className={!selectedOption ? 'text-text-subtle' : ''}>{displayText}</span>
-                    <ChevronDown size={16} className={`text-text-subtle transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    {isLoading ? (
+                        <LoadSpinner width={25} height={25}/>
+                    ) : (
+                        <ChevronDown size={16} className={`text-text-subtle transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+                    )}
                 </button>
 
-                {isOpen && (
+                {isOpen && !isLoading && (
                     <div className="absolute z-10 mt-1 w-full bg-white border border-border-input rounded-lg shadow-sm max-h-60 overflow-y-auto">
                         {options.map((option) => {
                             const isSelected = option.value === value

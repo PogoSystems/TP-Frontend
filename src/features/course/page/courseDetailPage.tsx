@@ -8,12 +8,6 @@ import { FileDropzone } from '../../../shared/components/ui/fileDropzone.tsx';
 import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarChart.tsx';
 import { BloomRadarChart } from '../../../shared/components/ui/bloomRadarChart.tsx';
 import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
-import {
-    Skeleton,
-    BloomStatSkeleton,
-    ChartCardSkeleton
-} from '../../../shared/components/ui/skeletons.tsx';
-
 import { UseCourseDetail } from "../hook/useCourseDetail.ts";
 import { useCourseDocuments } from "../../../shared/hooks/useCourseDocuments.ts";
 import { useUploadSyllabus } from "../hook/useUploadSyllabus.ts";
@@ -28,6 +22,7 @@ import { BloomLevel } from "../../../shared/types/bloomLevel.ts";
 import { useCourseProgress } from "../hook/useCourseProgress.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
 import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
+import {CourseDetailSkeleton} from "../components/CourseDetailSkeleton.tsx";
 
 export function CourseDetailPage() {
     const { courseId } = useParams<{ courseId: string }>();
@@ -71,48 +66,7 @@ export function CourseDetailPage() {
 
     // Carga inicial
     if (isLoading || loadingAnalytics) {
-        return (
-            <div className="flex flex-col gap-6 w-full max-w-6xl mx-auto min-w-0 pb-10">
-                {/* Volver a cursos + Título del curso */}
-                <div className="flex flex-col gap-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-8 w-1/3" />
-                    <Skeleton className="h-4 w-1/2" />
-                </div>
-
-                {/* Sección Syllabus */}
-                <Card className="!p-6 flex flex-col gap-4">
-                    <Skeleton className="h-6 w-28" />
-                    <Skeleton className="h-20 w-full rounded-xl" />
-                </Card>
-
-                {/* Botón Reintentar cuestionarios */}
-                <Skeleton className="h-14 w-full rounded-xl" />
-
-                {/* Card Rendimiento Cognitivo */}
-                <Card className="!p-6 flex flex-col gap-5">
-                    <Skeleton className="h-6 w-48" />
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <Skeleton className="h-24 flex-1 rounded-xl" />
-                        <Skeleton className="h-24 flex-1 rounded-xl" />
-                    </div>
-                    <div className="flex flex-col gap-3 px-2 pt-2">
-                        {Array.from({ length: 6 }).map((_, i) => (
-                            <BloomStatSkeleton key={i} />
-                        ))}
-                    </div>
-                </Card>
-
-                {/* Tip visual */}
-                <Skeleton className="h-14 w-full rounded-xl" />
-
-                {/* Gráficos Radar y Progreso */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                    <ChartCardSkeleton />
-                    <ChartCardSkeleton />
-                </div>
-            </div>
-        );
+        return <CourseDetailSkeleton />;
     }
 
     if (!course || !analytics) {
@@ -244,7 +198,6 @@ export function CourseDetailPage() {
                                                 })}
                                             </span>
                                         </div>
-                                        {/* 3. SPINNER INDIVIDUAL POR CUESTIONARIO */}
                                         {isLoadingQuiz === q.id && (
                                             <LoadSpinner width={20} height={20} />
                                         )}
@@ -352,7 +305,6 @@ export function CourseDetailPage() {
                 Eliminar curso
             </button>
 
-            {/* Modal de eliminación */}
             <Modal isOpen={isDeleteModalOpen} onClose={() => !isDeleting && setIsDeleteModalOpen(false)}>
                 <h2 className="text-text-title text-lg font-semibold mb-4">Eliminar curso</h2>
                 <p className="text-text-subtle mb-8">
@@ -370,7 +322,6 @@ export function CourseDetailPage() {
                             onClick={handleDelete}
                             disabled={isDeleting}
                         >
-                            {/* 4. SPINNER EN ACCIÓN DE ELIMINACIÓN */}
                             {isDeleting ? (
                                 <>
                                     <LoadSpinner width={18} height={18} monochrome />
