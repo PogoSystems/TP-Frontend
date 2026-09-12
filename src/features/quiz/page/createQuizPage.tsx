@@ -9,16 +9,17 @@ import { BloomLevelCard } from "../components/bloomLevelCard.tsx";
 import { useCreateQuiz } from "../hook/useCreateQuiz.ts";
 import { Select } from "../../../shared/components/ui/select.tsx";
 import { MultiSelectDropdown } from "../../../shared/components/ui/multiSelectDropdown.tsx";
+import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
 
-const MAX_FILES = 3
+const MAX_FILES = 3;
 
 export function CreateQuizPage() {
     const navigate = useNavigate();
-    const [selectedCourseId, setSelectedCourseId] = useState('')
-    const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([])
-    const [quizTitle, setQuizTitle] = useState('')
-    const [questionCount, setQuestionCount] = useState('')
-    const [quizSubject, setQuizSubject] = useState('')
+    const [selectedCourseId, setSelectedCourseId] = useState('');
+    const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
+    const [quizTitle, setQuizTitle] = useState('');
+    const [questionCount, setQuestionCount] = useState('');
+    const [quizSubject, setQuizSubject] = useState('');
 
     const {
         bloomLevels,
@@ -36,18 +37,18 @@ export function CreateQuizPage() {
         error,
         loadDocuments,
         handleGenerateQuiz,
-    } = useCreateQuiz()
+    } = useCreateQuiz();
 
-    const documentOptions = availableDocuments.map((doc) => ({ value: String(doc.id), label: doc.title }))
+    const documentOptions = availableDocuments.map((doc) => ({ value: String(doc.id), label: doc.title }));
 
     function handleCourseChange(courseId: string) {
-        setSelectedCourseId(courseId)
-        setSelectedDocumentIds([])
-        loadDocuments(courseId)
+        setSelectedCourseId(courseId);
+        setSelectedDocumentIds([]);
+        loadDocuments(courseId);
     }
 
     function handleFilesSelected(newFiles: File[]) {
-        addFiles(newFiles)
+        addFiles(newFiles);
     }
 
     async function handleSubmit() {
@@ -58,14 +59,14 @@ export function CreateQuizPage() {
                 selectedDocumentIds,
                 queryText: quizSubject,
                 numQuestions: Number(questionCount),
-            })
-            navigate('/quiz/taking', { state: { quiz } })
+            });
+            navigate('/quiz/taking', { state: { quiz } });
         } catch {
             // error is already set in the hook
         }
     }
 
-    const totalFiles = fileEntries.length
+    const totalFiles = fileEntries.length;
     const canGenerate =
         selectedCourseId &&
         quizTitle.trim() &&
@@ -73,7 +74,7 @@ export function CreateQuizPage() {
         Number(questionCount) > 0 &&
         (selectedDocumentIds.length > 0 || totalFiles > 0) &&
         !isGenerating &&
-        !isAnyFileUploading
+        !isAnyFileUploading;
 
     return (
         <>
@@ -87,9 +88,10 @@ export function CreateQuizPage() {
                             label={'Selecciona un curso'}
                             required={true}
                             options={courses.map((course) => ({ value: course.id, label: course.title }))}
-                            placeholder={isLoadingCourses ? 'Cargando cursos...' : 'Elige un curso'}
+                            placeholder={'Elige un curso'}
                             value={selectedCourseId}
                             onChange={handleCourseChange}
+                            isLoading={isLoadingCourses}
                         />
                         <MultiSelectDropdown
                             label={'Documentos para la generación'}
@@ -97,7 +99,9 @@ export function CreateQuizPage() {
                             options={documentOptions}
                             selectedValues={selectedDocumentIds}
                             onChange={setSelectedDocumentIds}
-                            placeholder={isLoadingDocuments ? 'Cargando documentos...' : (selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso')}
+                            placeholder={selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}
+                            isLoading={isLoadingDocuments}
+                            disabled={!selectedCourseId}
                         />
                         <InputText
                             label={'Título del cuestionario'}
@@ -158,7 +162,10 @@ export function CreateQuizPage() {
                                         onRemove={() => removeFile(index)}
                                     />
                                     {entry.status === 'uploading' && (
-                                        <p className="text-xs text-text-subtle pl-1">Subiendo...</p>
+                                        <div className="flex items-center gap-2 text-xs text-text-subtle pl-1">
+                                            <LoadSpinner width={16} height={16} />
+                                            <span>Subiendo...</span>
+                                        </div>
                                     )}
                                     {entry.status === 'done' && (
                                         <p className="text-xs text-green-500 pl-1">Subido correctamente</p>
@@ -181,7 +188,16 @@ export function CreateQuizPage() {
                     <Card.Footer>
                         <div className="w-fit pt-2">
                             <Button
-                                text={isGenerating ? 'Generando quiz...' : 'Generar quiz'}
+                                text={
+                                    isGenerating ? (
+                                        <span className="flex items-center gap-2">
+                                            <LoadSpinner width={18} height={18} monochrome />
+                                            Generando quiz...
+                                        </span>
+                                    ) : (
+                                        'Generar quiz'
+                                    )
+                                }
                                 onClick={handleSubmit}
                                 disabled={!canGenerate}
                             />
@@ -191,5 +207,5 @@ export function CreateQuizPage() {
 
             </Card>
         </>
-    )
+    );
 }

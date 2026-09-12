@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom"
 import { InputText } from "../../../shared/components/ui/inputText.tsx"
 import * as React from "react"
 import { Button } from "../../../shared/components/ui/button.tsx"
+import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx"
+import { ErrorState } from "../../../shared/components/ui/errorState.tsx"
 import { Link } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { AuthSplitLayout } from "../components/authSplitLayout.tsx"
@@ -40,7 +42,7 @@ export function RegisterPage() {
             )
             navigate("/login")
         } catch (err) {
-            setError( "Cannot register user. Please check your credentials and try again.")
+            setError("Cannot register user. Please check your credentials and try again.")
             console.error(err)
         } finally {
             setIsSubmitting(false)
@@ -61,27 +63,51 @@ export function RegisterPage() {
         >
             <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4">
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Nombre" name="name" placeholder="Ej. Ana" value={name} onChange={(e) => setName(e.target.value)}  />
-                    <InputText label="Apellido" name="last_name" placeholder="Ej. García" value={last_name} onChange={(e) => setLastName(e.target.value)}  />
+                    <InputText label="Nombre" name="name" placeholder="Ej. Ana" value={name} onChange={(e) => setName(e.target.value)} />
+                    <InputText label="Apellido" name="last_name" placeholder="Ej. García" value={last_name} onChange={(e) => setLastName(e.target.value)} />
                 </div>
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Universidad" name="college" placeholder="Ej. Universidad Peruana de Ciencias Aplicadas" value={college} onChange={(e) => setCollege(e.target.value)}/>
-                    <InputText label="Carrera" name="major" placeholder="Ej. Ingeniería de Sofware" value={major} onChange={(e) => setMajor(e.target.value)}  />
+                    <InputText label="Universidad" name="college" placeholder="Ej. Universidad Peruana de Ciencias Aplicadas" value={college} onChange={(e) => setCollege(e.target.value)} />
+                    <InputText label="Carrera" name="major" placeholder="Ej. Ingeniería de Software" value={major} onChange={(e) => setMajor(e.target.value)} />
                 </div>
 
                 <InputText label="Correo electrónico" name="email" placeholder="nombre@universidad.edu" value={email} onChange={(e) => setEmail(e.target.value)} type="email" />
 
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                    <InputText label="Contraseña" name="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} type="password"  />
-                    <InputText label="Confirmar contraseña" name="confirmPassword" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password"  />
+                    <InputText label="Contraseña" name="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
+                    <InputText label="Confirmar contraseña" name="confirmPassword" placeholder="••••••••" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" />
                 </div>
 
                 <div className="pt-2">
-                    <Button text={isSubmitting ? 'Creando cuenta...' : 'Crear cuenta'} type="submit" icon={<ArrowRight size={16} />} />
+                    <Button
+                        disabled={isSubmitting}
+                        type="submit"
+                        text={
+                            isSubmitting ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    Creando cuenta...
+                                    <LoadSpinner width={23} height={23} monochrome />
+                                </span>
+                            ) : (
+                                "Crear cuenta"
+                            )
+                        }
+                        icon={!isSubmitting ? <ArrowRight size={16} /> : undefined}
+                    />
                 </div>
             </form>
-            {error && <p className="mt-4 text-sm text-accent-text">{error}</p>}
+
+            {error && (
+                <div className="mt-4">
+                    <ErrorState
+                        variant="compact"
+                        title="Error al registrar"
+                        message={error}
+                        onRetry={() => setError("")}
+                    />
+                </div>
+            )}
         </AuthSplitLayout>
     )
 }

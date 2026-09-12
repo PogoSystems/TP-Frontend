@@ -1,30 +1,29 @@
-import { useEffect, useState } from 'react';
-import {fetchUserDashboard} from "../services/metricsService.ts";
-import type {UserDashboardResponse} from "../types/metrics.types.ts";
+import { useEffect, useState, useCallback } from 'react';
+import { fetchUserDashboard } from "../services/metricsService.ts";
+import type { UserDashboardResponse } from "../types/metrics.types.ts";
 
 export function useUserMetrics() {
-    const [metrics, setMetrics] = useState<UserDashboardResponse  | null>(null);
+    const [metrics, setMetrics] = useState<UserDashboardResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
-    useEffect(() => {
-        let isMounted = true;
+    const loadMetrics = useCallback(async () => {
+        setIsLoading(true);
+        setError(null);
 
-        fetchUserDashboard()
-            .then((data) => {
-                if (isMounted) setMetrics(data);
-            })
-            .catch(() => {
-                if (isMounted) setError('Hubo un error al cargar las métricas de progreso.');
-            })
-            .finally(() => {
-                if (isMounted) setIsLoading(false);
-            });
-
-        return () => {
-            isMounted = false;
-        };
+        try {
+            const data = await fetchUserDashboard();
+            setMetrics(data);
+        } catch {
+            setError('Hubo un error al cargar las métricas de progreso.');
+        } finally {
+            setIsLoading(false);
+        }
     }, []);
 
-    return { metrics, isLoading, error };
+    useEffect(() => {
+        loadMetrics();
+    }, [loadMetrics]);
+
+    return { metrics, isLoading, error, refetch: loadMetrics };
 }

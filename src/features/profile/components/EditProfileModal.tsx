@@ -4,6 +4,7 @@ import { Button } from '../../../shared/components/ui/button';
 import { InputText } from '../../../shared/components/ui/inputText';
 import { updateProfile } from '../services/profileService';
 import type { UserProfileResponse } from '../types/profile.types';
+import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
 
 interface EditProfileModalProps {
     isOpen: boolean;
@@ -64,7 +65,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                         placeholder="Tu nombre"
                         required
                     />
-                    
+
                     <InputText
                         label="Apellido"
                         name="last_name"
@@ -94,7 +95,17 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
 
                     <div className="flex justify-end gap-3 mt-4">
                         <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading} text="Cancelar" />
-                        <Button type="submit" variant="primary" disabled={isLoading} text={isLoading ? "Guardando..." : "Guardar Cambios"} />
+                        <Button type="submit" variant="primary" disabled={isLoading} text={
+                            isLoading ? (
+                                    <span className="flex items-center gap-2">
+                                        <LoadSpinner width={20} height={20} monochrome />
+                                        Guardando...
+                                    </span>
+                            ) : (
+                                "Guardar Cambios"
+                            )
+                        }
+                        />
                     </div>
                 </form>
             </div>
