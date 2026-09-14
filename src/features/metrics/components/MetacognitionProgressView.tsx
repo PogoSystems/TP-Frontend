@@ -96,16 +96,6 @@ export function MetacognitionProgressView() {
                         Analiza tu autoevaluación, precisión de calibración y sesgo de juicio predictivo
                     </p>
                 </div>
-
-                {selectedCourseId && (
-                    <button
-                        onClick={() => setSelectedCourseId(null)}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#1a3a5a] bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors self-start sm:self-auto cursor-pointer"
-                    >
-                        <ArrowLeft size={14} />
-                        Volver a todos los cursos
-                    </button>
-                )}
             </div>
 
             {/* Empty State when no prediction quizzes exist */}
@@ -155,13 +145,12 @@ export function MetacognitionProgressView() {
                                     <span>Real: <strong>{activeActual}</strong></span>
                                 </div>
                                 <span
-                                    className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                                        activeGap > 0
-                                            ? 'bg-[#fff7ed] text-[#ea580c]'
-                                            : activeGap < 0
+                                    className={`text-xs font-bold px-2 py-0.5 rounded-full ${activeGap > 0
+                                        ? 'bg-[#fff7ed] text-[#ea580c]'
+                                        : activeGap < 0
                                             ? 'bg-[#eff6ff] text-[#2563eb]'
                                             : 'bg-[#ecfdf5] text-[#059669]'
-                                    }`}
+                                        }`}
                                 >
                                     {activeGap > 0 ? `+${activeGap}` : activeGap} pts
                                 </span>
@@ -204,6 +193,14 @@ export function MetacognitionProgressView() {
                                                 {activeCourseName} (últimos 2 exámenes)
                                             </p>
                                         </div>
+
+                                        <button
+                                            onClick={() => setSelectedCourseId(null)}
+                                            className="flex items-center gap-2 text-sm font-medium text-[#2e6f95] hover:text-[#1a3a5a] hover:underline transition-colors cursor-pointer shrink-0"
+                                        >
+                                            <ArrowLeft size={18} />
+                                            Volver a vista general
+                                        </button>
                                     </div>
 
                                     <MetacognitionRecentAttempts
@@ -344,8 +341,8 @@ export function MetacognitionProgressView() {
                                         {activeBias === 'overconfident'
                                             ? 'SOBREESTIMACIÓN'
                                             : activeBias === 'underconfident'
-                                            ? 'SUBESTIMACIÓN'
-                                            : 'CALIBRACIÓN ÓPTIMA'}
+                                                ? 'SUBESTIMACIÓN'
+                                                : 'CALIBRACIÓN ÓPTIMA'}
                                     </p>
                                     <p className="text-sm text-[#4a5565] shrink-0">
                                         {activeGap !== 0
