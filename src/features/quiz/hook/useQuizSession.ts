@@ -5,7 +5,7 @@ import {submitQuiz} from "../services/quizService.ts";
 
 type Phase = 'answering' | 'revealed';
 
-export function useQuizSession(quiz: Quiz, expectedCorrectAnswers: number = 0) {
+export function useQuizSession(quiz: Quiz) {
     const navigate = useNavigate();
 
     const startedAt = useRef(new Date().toISOString());
@@ -68,7 +68,6 @@ export function useQuizSession(quiz: Quiz, expectedCorrectAnswers: number = 0) {
 
         const payload: SubmitQuizRequest = {
             started_at: startedAt.current,
-            expected_correct_answers: expectedCorrectAnswers,
             answers: answersRef.current,
         };
 

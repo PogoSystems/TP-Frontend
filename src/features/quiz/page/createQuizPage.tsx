@@ -20,7 +20,6 @@ export function CreateQuizPage() {
     const [quizTitle, setQuizTitle] = useState('');
     const [questionCount, setQuestionCount] = useState('');
     const [quizSubject, setQuizSubject] = useState('');
-    const [expectedCorrectAnswers, setExpectedCorrectAnswers] = useState('');
 
     const {
         bloomLevels,
@@ -61,12 +60,7 @@ export function CreateQuizPage() {
                 queryText: quizSubject,
                 numQuestions: Number(questionCount),
             });
-            navigate('/quiz/taking', {
-                state: {
-                    quiz,
-                    expectedCorrectAnswers: Number(expectedCorrectAnswers),
-                },
-            });
+            navigate('/quiz/taking', { state: { quiz } });
         } catch {
             // error is already set in the hook
         }
@@ -78,8 +72,6 @@ export function CreateQuizPage() {
         quizTitle.trim() &&
         questionCount &&
         Number(questionCount) > 0 &&
-        expectedCorrectAnswers !== '' &&
-        Number(expectedCorrectAnswers) >= 0 &&
         (selectedDocumentIds.length > 0 || totalFiles > 0) &&
         !isGenerating &&
         !isAnyFileUploading;
@@ -134,15 +126,6 @@ export function CreateQuizPage() {
                             value={quizSubject}
                             onChange={(e) => setQuizSubject(e.target.value)}
                             placeholder={'Ej: Patrones de diseño, Diagramas UML, Principios SOLID'}
-                        />
-                        <InputText
-                            label={'Respuestas correctas estimadas'}
-                            required={true}
-                            name={'expectedCorrectAnswers'}
-                            type="number"
-                            value={expectedCorrectAnswers}
-                            onChange={(e) => setExpectedCorrectAnswers(e.target.value)}
-                            placeholder={'Ej: 8'}
                         />
                     </div>
 
