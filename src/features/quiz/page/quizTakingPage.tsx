@@ -6,13 +6,7 @@ import { QuizProgressBar } from '../components/quizProgressBar.tsx';
 import type { Quiz } from '../types/quiz.types.ts';
 import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
 
-function QuizTakingContent({
-    quiz,
-    expectedCorrectAnswers = 0,
-}: {
-    quiz: Quiz;
-    expectedCorrectAnswers?: number;
-}) {
+function QuizTakingContent({ quiz }: { quiz: Quiz }) {
     const {
         currentQuestion,
         currentIndex,
@@ -28,7 +22,7 @@ function QuizTakingContent({
         handleConfirm,
         handleNext,
         handleExit,
-    } = useQuizSession(quiz, expectedCorrectAnswers);
+    } = useQuizSession(quiz);
 
     // Determine the visual state for each answer option
     function getAnswerState(answerIndex: number): 'idle' | 'selected' | 'correct' | 'incorrect' {
@@ -163,13 +157,11 @@ function QuizTakingContent({
 
 export function QuizTakingPage() {
     const location = useLocation();
-    const state = location.state as { quiz?: Quiz; expectedCorrectAnswers?: number } | undefined;
-    const quiz = state?.quiz;
-    const expectedCorrectAnswers = state?.expectedCorrectAnswers ?? 0;
+    const quiz: Quiz | undefined = (location.state as { quiz?: Quiz })?.quiz;
 
     if (!quiz) {
         return <Navigate to="/quiz/create" replace />;
     }
 
-    return <QuizTakingContent quiz={quiz} expectedCorrectAnswers={expectedCorrectAnswers} />;
+    return <QuizTakingContent quiz={quiz} />;
 }

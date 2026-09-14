@@ -1,7 +1,5 @@
 import type { BloomLevel } from "../../../shared/types/bloomLevel";
 
-export type BloomLevelKey = BloomLevel | 'create';
-
 /** Maps to the `bloom_stats` table — one row per (course_id, bloom_level) */
 export interface BloomStatsResponse {
     bloom_level: BloomLevel ;
