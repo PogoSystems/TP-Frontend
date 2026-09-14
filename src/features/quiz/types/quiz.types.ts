@@ -39,6 +39,7 @@ export interface SubmitQuizAnswer {
 
 export interface SubmitQuizRequest {
     started_at: string;
+    expected_correct_answers: number;
     answers: SubmitQuizAnswer[];
 }
 
