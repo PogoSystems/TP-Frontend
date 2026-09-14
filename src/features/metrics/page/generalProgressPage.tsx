@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { TrendingUp, BarChart2, ChevronRight } from 'lucide-react';
+import { Link, useSearchParams } from 'react-router-dom';
+import { TrendingUp, BarChart2, ChevronRight, Brain } from 'lucide-react';
 
 import { useUserMetrics } from '../hook/useUserMetrics.ts';
 import { useUserProgress } from '../hook/useUserProgress.ts';
@@ -14,6 +14,7 @@ import { CourseProgressRow } from '../components/CourseProgressRow.tsx';
 import { BloomCoverageRow } from '../components/BloomCoverageRow.tsx';
 import { BloomBarChart } from '../components/BloomBarChart.tsx';
 import { GeneralProgressSkeleton } from '../components/GeneralProgressSkeleton.tsx';
+import { MetacognitionProgressView } from '../components/MetacognitionProgressView.tsx';
 
 import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
@@ -21,6 +22,9 @@ import { ProgressGranularity } from "../../../shared/utils/progress.ts";
 const MAX_VISIBLE_COURSES = 4;
 
 export function GeneralProgressPage() {
+    const [searchParams, setSearchParams] = useSearchParams();
+    const activeTab = searchParams.get('tab') === 'metacognition' ? 'metacognition' : 'general';
+
     const { metrics, isLoading, error, refetch } = useUserMetrics();
     const { progress, granularity, setGranularity } = useUserProgress();
 
@@ -40,29 +44,63 @@ export function GeneralProgressPage() {
     return (
         <div className="flex flex-col min-h-full gap-6 w-full">
             {/* Header Fijo */}
-            <div className="flex flex-col gap-1">
-                <h1 className="text-3xl font-semibold text-[#1a3a5a]">Progreso General</h1>
-                <p className="text-base text-[#4a5565]">Analiza tu rendimiento y progreso cognitivo</p>
+            <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-1">
+                    <h1 className="text-3xl font-semibold text-[#1a3a5a]">Progreso</h1>
+                    <p className="text-base text-[#4a5565]">
+                        Analiza tu rendimiento y evolución cognitiva y metacognitiva
+                    </p>
+                </div>
+
+                {/* Navigation Tabs */}
+                <div className="flex items-center gap-2 border-b border-gray-200">
+                    <button
+                        onClick={() => setSearchParams({ tab: 'general' })}
+                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                            activeTab === 'general'
+                                ? 'border-[#1a3a5a] text-[#1a3a5a]'
+                                : 'border-transparent text-[#64748b] hover:text-[#1a3a5a]'
+                        }`}
+                    >
+                        <BarChart2 size={18} />
+                        Progreso General
+                    </button>
+                    <button
+                        onClick={() => setSearchParams({ tab: 'metacognition' })}
+                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                            activeTab === 'metacognition'
+                                ? 'border-[#1a3a5a] text-[#1a3a5a]'
+                                : 'border-transparent text-[#64748b] hover:text-[#1a3a5a]'
+                        }`}
+                    >
+                        <Brain size={18} />
+                        Progreso Metacognitivo
+                    </button>
+                </div>
             </div>
 
-            {/* Contenido Principal */}
-            <div className="flex-1">
-                {/* Loading */}
-                {isLoading && <GeneralProgressSkeleton />}
+            {/* Render Metacognition View if active */}
+            {activeTab === 'metacognition' ? (
+                <MetacognitionProgressView />
+            ) : (
+                /* Contenido Principal Progreso General */
+                <div className="flex-1">
+                    {/* Loading */}
+                    {isLoading && <GeneralProgressSkeleton />}
 
-                {/* Error */}
-                {!isLoading && (error || !metrics) && (
-                    <ErrorState
-                        title="Oops, ha ocurrido un problema"
-                        subtitle="No pudimos obtener tu información de rendimiento."
-                        message={typeof error === 'string' ? error : undefined}
-                        onRetry={refetch}
-                    />
-                )}
+                    {/* Error */}
+                    {!isLoading && (error || !metrics) && (
+                        <ErrorState
+                            title="Oops, ha ocurrido un problema"
+                            subtitle="No pudimos obtener tu información de rendimiento."
+                            message={typeof error === 'string' ? error : undefined}
+                            onRetry={refetch}
+                        />
+                    )}
 
-                {/* Data Render */}
-                {!isLoading && !error && metrics && (
-                    <div className="flex flex-col gap-6 w-full">
+                    {/* Data Render */}
+                    {!isLoading && !error && metrics && (
+                        <div className="flex flex-col gap-6 w-full">
                         {/* ── KPI Row ────────────────────────────────────────── */}
                         <div className="flex flex-col sm:flex-row gap-6">
 
@@ -264,6 +302,7 @@ export function GeneralProgressPage() {
                     </div>
                 )}
             </div>
+            )}
         </div>
     );
 }
