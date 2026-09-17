@@ -1,11 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@700&display=swap');
 @import "tailwindcss";
 
 @theme {
     /* Fonts */
     --font-logo: 'Lexend', sans-serif;
     --font-body: 'Inter', sans-serif;
+    --font-pixel: 'Pixelify Sans', sans-serif;
     /* Background */
     --color-bg-auth: #F9F9FF;
     --color-bg-app: #FFF6F6;
@@ -51,8 +53,22 @@
     /* Others */
     --color-vertical-divider: #d9dbe1;
     --color-border-input:#D1D5DC;
-    --color-icon-grey:#889DC1
+    --color-icon-grey:#889DC1;
 
+    /* Restigia Game Theme */
+    --color-restigia-text: #ffe9a8;
+    --color-restigia-stroke: #3f2815;
+    --color-restigia-btn: #6b4526;
+    --color-restigia-btn-hover: #54361e;
+    --color-restigia-btn-text: #f6ead2;
+}
+
+@utility restigia-title {
+    font-family: var(--font-pixel), sans-serif;
+    color: var(--color-restigia-text);
+    -webkit-text-stroke: 2px var(--color-restigia-stroke);
+    paint-order: stroke fill;
+    text-shadow: 0 3px 0 var(--color-restigia-stroke);
 }
 
 body {
