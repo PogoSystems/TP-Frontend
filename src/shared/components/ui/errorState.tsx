@@ -27,18 +27,13 @@ export function ErrorState({
                 className={`group relative flex items-center justify-between p-4 rounded-xl bg-white border border-border-card overflow-hidden transition-all hover:border-red-200 ${className}`}>
                 <div className="flex items-center gap-3.5 pl-2">
                     <div className="flex items-center justify-center w-8 shrink-0">
-                        <img src="/monkeError.svg" alt="Error" className="w-full h-auto"/>
+                        <img src="/monkeError2.svg" alt="Error" className="w-full h-auto"/>
                     </div>
 
                     <div className="flex flex-col">
                     <span className="text-xs font-semibold text-text-title">
                       {title !== "No se pudieron cargar los datos" ? title : "Algo no salió como esperábamos"}
                     </span>
-                        {message && (
-                            <span className="text-[11px] text-text-subtle font-normal leading-normal">
-                                {message}
-                            </span>
-                        )}
                     </div>
                 </div>
 

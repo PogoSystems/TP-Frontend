@@ -4,7 +4,9 @@ import { Button } from '../../../shared/components/ui/button';
 import { InputText } from '../../../shared/components/ui/inputText';
 import { updateProfile } from '../services/profileService';
 import type { UserProfileResponse } from '../types/profile.types';
-import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
+import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
+import { validateProfileData, type ProfileFormData } from '../../../shared/utils/profileValidation';
+import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
 
 interface EditProfileModalProps {
     isOpen: boolean;
@@ -14,24 +16,35 @@ interface EditProfileModalProps {
 }
 
 export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfileModalProps) {
-    const [name, setName] = useState(user.name);
-    const [lastName, setLastName] = useState(user.last_name);
-    const [college, setCollege] = useState(user.college);
-    const [major, setMajor] = useState(user.major);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    const { values, errors, handleChange, validateAll } = useFormValidation<ProfileFormData>(
+        {
+            name: user.name,
+            last_name: user.last_name,
+            college: user.college,
+            major: user.major,
+        },
+        validateProfileData
+    );
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
         setError(null);
+
+        if (!validateAll()) {
+            return;
+        }
+
+        setIsLoading(true);
 
         try {
             await updateProfile({
-                name: name !== user.name ? name : null,
-                last_name: lastName !== user.last_name ? lastName : null,
-                college: college !== user.college ? college : null,
-                major: major !== user.major ? major : null,
+                name: values.name !== user.name ? values.name : null,
+                last_name: values.lastName !== user.last_name ? values.lastName : null,
+                college: values.college !== user.college ? values.college : null,
+                major: values.major !== user.major ? values.major : null,
             });
             onSuccess();
             onClose();
@@ -57,47 +70,74 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                 )}
 
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                    <InputText
-                        label="Nombre"
-                        name="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Tu nombre"
-                        required
-                    />
+                    <div className="flex flex-col gap-1">
+                        <InputText
+                            label="Nombre"
+                            name="name"
+                            value={values.name}
+                            onChange={(e) => handleChange('name', e.target.value)}
+                            placeholder="Ej. Ana"
+                        />
+                        {errors.name && (
+                            <span className="text-xs text-red-500 font-medium pl-1">
+                                {errors.name}
+                            </span>
+                        )}
+                    </div>
 
-                    <InputText
-                        label="Apellido"
-                        name="last_name"
-                        value={lastName}
-                        onChange={(e) => setLastName(e.target.value)}
-                        placeholder="Tu apellido"
-                        required
-                    />
+                    <div className="flex flex-col gap-1">
+                        <InputText
+                            label="Apellido"
+                            name="last_name"
+                            value={values.lastName}
+                            onChange={(e) => handleChange('lastName', e.target.value)}
+                            placeholder="Ej. García"
+                            required
+                        />
+                        {errors.lastName && (
+                            <span className="text-xs text-red-500 font-medium pl-1">
+                                {errors.lastName}
+                            </span>
+                        )}
+                    </div>
 
-                    <InputText
-                        label="Universidad"
-                        name="college"
-                        value={college}
-                        onChange={(e) => setCollege(e.target.value)}
-                        placeholder="Tu universidad"
-                        required
-                    />
+                    <div className="flex flex-col gap-1">
+                        <InputText
+                            label="Universidad"
+                            name="college"
+                            value={values.college}
+                            onChange={(e) => handleChange('college', e.target.value)}
+                            placeholder="Ej. Universidad Peruana de Ciencias Aplicadas"
+                            required
+                        />
+                        {errors.college && (
+                            <span className="text-xs text-red-500 font-medium pl-1">
+                                {errors.college}
+                            </span>
+                        )}
+                    </div>
 
-                    <InputText
-                        label="Carrera"
-                        name="major"
-                        value={major}
-                        onChange={(e) => setMajor(e.target.value)}
-                        placeholder="Tu carrera"
-                        required
-                    />
+                    <div className="flex flex-col gap-1">
+                        <InputText
+                            label="Carrera"
+                            name="major"
+                            value={values.major}
+                            onChange={(e) => handleChange('major', e.target.value)}
+                            placeholder="Ej. Ingeniería de Software"
+                            required
+                        />
+                        {errors.major && (
+                            <span className="text-xs text-red-500 font-medium pl-1">
+                                {errors.major}
+                            </span>
+                        )}
+                    </div>
 
                     <div className="flex justify-end gap-3 mt-4">
                         <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading} text="Cancelar" />
                         <Button type="submit" variant="primary" disabled={isLoading} text={
                             isLoading ? (
-                                    <span className="flex items-center gap-2">
+                                <span className="flex items-center gap-2">
                                         <LoadSpinner width={20} height={20} monochrome />
                                         Guardando...
                                     </span>
