@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {TrendingUp, BarChart2, ArrowLeft, Brain, BookOpenIcon} from 'lucide-react';
+import {TrendingUp, BarChart2, ArrowLeft, Brain} from 'lucide-react';
 import { useMetacognition } from '../hook/useMetacognition';
 import { Card } from '../../../shared/components/ui/card';
 import { ErrorState } from '../../../shared/components/ui/errorState';
@@ -10,7 +10,7 @@ import { MetacognitionBloomRow } from './MetacognitionBloomRow';
 import { MetacognitionRecentAttempts } from './MetacognitionRecentAttempts';
 import { MetacognitionSummaryCard } from './MetacognitionSummaryCard';
 import { MetacognitionLineChart } from './MetacognitionLineChart';
-import { MetacognitionSkeleton } from './MetacognitionSkeleton';
+import { MetacognitionSkeleton} from './MetacognitionSkeleton';
 import type { MetacognitionBias } from '../types/metacognition.types';
 import {EmptyState} from "../../../shared/components/ui/emptyState.tsx";
 
@@ -25,6 +25,7 @@ export function MetacognitionProgressView() {
         granularity,
         setGranularity,
         isLoading,
+        isLoadingDetail,
         error,
         refetch,
     } = useMetacognition();
@@ -203,6 +204,7 @@ export function MetacognitionProgressView() {
 
                                     <MetacognitionRecentAttempts
                                         attempts={courseDetail?.recent_attempts ?? []}
+                                        isLoading={isLoadingDetail }
                                     />
                                 </Card>
                             ) : (
@@ -258,15 +260,15 @@ export function MetacognitionProgressView() {
 
                                 <div className="flex items-center justify-between text-xs text-[#4a5565] pt-2 border-t border-gray-100 flex-wrap gap-2">
                                     <div className="flex items-center gap-1.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-[#2e6f95]" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#59A14F]" />
                                         <span>Calibrado (≥75%)</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#4E79A7]" />
                                         <span>Descalibración media</span>
                                     </div>
                                     <div className="flex items-center gap-1.5">
-                                        <span className="w-2.5 h-2.5 rounded-full bg-[#e95858]" />
+                                        <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" />
                                         <span>Alta sobreestimación (&lt;50%)</span>
                                     </div>
                                 </div>

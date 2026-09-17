@@ -18,7 +18,7 @@ export function ErrorState({
                                onRetry,
                                variant = "card",
                                className = "",
-                           }: ErrorStateProps) {
+                           }: Readonly<ErrorStateProps>) {
     const handleAction = onRetry || (() => window.location.reload());
 
     if (variant === "compact") {
@@ -34,6 +34,9 @@ export function ErrorState({
                     <span className="text-xs font-semibold text-text-title">
                       {title !== "No se pudieron cargar los datos" ? title : "Algo no salió como esperábamos"}
                     </span>
+                        <span className="text-text-subtle text-xs">
+                            {message}
+                        </span>
                     </div>
                 </div>
 

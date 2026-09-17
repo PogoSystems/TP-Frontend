@@ -36,7 +36,7 @@ export function useCreateQuiz() {
     const [isGenerating, setIsGenerating] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    const { values, errors, handleChange, validateAll, setValues } = useFormValidation<CreateQuizFormData>(
+    const { values, errors, handleChange, setFields, validateAll, setValues } = useFormValidation<CreateQuizFormData>(
         {
             selectedCourseId: '',
             quizTitle: '',
@@ -94,9 +94,16 @@ export function useCreateQuiz() {
     }
 
     const handleCourseChange = (courseId: string) => {
-        handleChange('selectedCourseId', courseId)
-        handleChange('selectedDocumentIds', [])
-        loadDocuments(courseId)
+        setFields({
+            selectedCourseId: courseId,
+            selectedDocumentIds: [],
+        });
+
+        if (courseId) {
+            loadDocuments(courseId);
+        } else {
+            setDocuments([]);
+        }
     }
 
     const toggleBloomLevel = (level: BloomLevel) => {
@@ -197,7 +204,7 @@ export function useCreateQuiz() {
             return quiz
         } catch (err) {
             console.error("Error al generar el quiz:", err)
-            setError("Error al generar el quiz. Inténtalo de nuevo.")
+            setError("Error al generar el quiz. Inténtalo de nuevo")
             throw err
         } finally {
             setIsGenerating(false)

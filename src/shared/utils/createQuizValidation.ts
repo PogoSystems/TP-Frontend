@@ -43,5 +43,11 @@ export function validateCreateQuizData(data: CreateQuizFormData): CreateQuizForm
         errors.expectedCorrectAnswers = "Debe ser un número mayor o igual a 0";
     }
 
+    if (data.expectedCorrectAnswers && data.questionCount) { //para que primero valide que siempre haya data, de ahí que compare
+        if (Number(data.expectedCorrectAnswers) > Number(data.questionCount)) {
+            errors.expectedCorrectAnswers = "Las respuestas estimadas no pueden ser mayores que la cantidad de preguntas";
+        }
+    }
+
     return errors;
 }

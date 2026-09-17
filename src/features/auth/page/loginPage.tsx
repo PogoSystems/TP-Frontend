@@ -1,5 +1,5 @@
-import { useState } from "react"
 import * as React from "react"
+import { useState } from "react"
 import { InputText } from "../../../shared/components/ui/inputText.tsx"
 import { Button } from "../../../shared/components/ui/button.tsx"
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx"
@@ -7,31 +7,39 @@ import { useAuth } from "../hook/useAuth.ts"
 import { Link, useNavigate } from "react-router-dom"
 import { ArrowRight } from "lucide-react"
 import { AuthSplitLayout } from "../components/authSplitLayout.tsx"
-import {ErrorState} from "../../../shared/components/ui/errorState.tsx";
+import { ErrorState } from "../../../shared/components/ui/errorState.tsx"
+import { validateLoginData, type LoginFormData } from "../../../shared/utils/loginValidation.ts"
+import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
 
 export function LoginPage() {
-    // to store the email and password input values
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-
     const [error, setError] = useState('')
-
-    // to prevent the user to click the login button multiple times while the request is being processed
     const [isSubmitting, setIsSubmitting] = useState(false)
     const { signIn } = useAuth()
     const navigate = useNavigate()
 
+    const { values, errors, handleChange, validateAll } = useFormValidation<LoginFormData>(
+        {
+            email: '',
+            password: '',
+        },
+        validateLoginData
+    )
+
     async function handleSubmit(event: React.FormEvent) {
-        event.preventDefault() // to stop the page from refreshing when the form is submitted
+        event.preventDefault()
         setError('')
+
+        if (!validateAll()) {
+            return
+        }
+
         setIsSubmitting(true)
 
         try {
-            // if the email and password are correct, create the session and redirect to the homepage
-            await signIn({ email, password })
+            await signIn({ email: values.email, password: values.password })
             navigate('/')
         } catch {
-            setError('Invalid email or password')
+            setError('Credenciales inválidas. Verifica tu correo y contraseña')
         } finally {
             setIsSubmitting(false)
         }
@@ -48,22 +56,37 @@ export function LoginPage() {
             }
         >
             <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-                <InputText
-                    label="Correo electrónico"
-                    name="email"
-                    placeholder="nombre@universidad.edu"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    type="email"
-                />
-                <InputText
-                    label="Contraseña"
-                    name="password"
-                    placeholder="••••••••"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    type="password"
-                />
+                <div className="flex flex-col gap-1">
+                    <InputText
+                        label="Correo electrónico"
+                        name="email"
+                        placeholder="nombre@universidad.edu"
+                        value={values.email}
+                        onChange={(e) => handleChange('email', e.target.value)}
+                        type="email"
+                    />
+                    {errors.email && (
+                        <span className="text-xs text-red-500 font-medium pl-1">
+                            {errors.email}
+                        </span>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <InputText
+                        label="Contraseña"
+                        name="password"
+                        placeholder="••••••••"
+                        value={values.password}
+                        onChange={(e) => handleChange('password', e.target.value)}
+                        type="password"
+                    />
+                    {errors.password && (
+                        <span className="text-xs text-red-500 font-medium pl-1">
+                            {errors.password}
+                        </span>
+                    )}
+                </div>
 
                 <div className="flex">
                     <button type="button" className="text-[14px] font-medium leading-5 text-[#2B6CB0] hover:underline">
@@ -95,7 +118,7 @@ export function LoginPage() {
                     <ErrorState
                         variant="compact"
                         title="Error al iniciar sesión"
-                        message={error}
+                        message="Verifica tus credenciales"
                         onRetry={() => setError("")}
                     />
                 </div>

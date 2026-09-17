@@ -9,6 +9,10 @@ import { useCreateQuiz } from "../hook/useCreateQuiz.ts";
 import { Select } from "../../../shared/components/ui/select.tsx";
 import { MultiSelectDropdown } from "../../../shared/components/ui/multiSelectDropdown.tsx";
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
+import {GameLoader} from "../../../shared/utils/gameLoader.tsx";
+import {ErrorState} from "../../../shared/components/ui/errorState.tsx";
+import * as React from "react";
+
 
 const MAX_FILES = 3;
 
@@ -118,7 +122,7 @@ export function CreateQuizPage() {
                                     const onlyNums = e.target.value.replace(/\D/g, '');
                                     handleChange('questionCount', onlyNums);
                                 }}
-                                placeholder={'10'}
+                                placeholder={'Ej: 10'}
                             />
                             {errors.questionCount && (
                                 <span className="text-xs text-red-500 font-medium pl-1">
@@ -213,7 +217,11 @@ export function CreateQuizPage() {
                     </div>
 
                     {error && (
-                        <p className="text-sm text-red-500 pb-4">{error}</p>
+                        <ErrorState
+                            variant="compact"
+                            title="Error al registrar"
+                            message={error}
+                        />
                     )}
                 </Card.Content>
 
@@ -232,12 +240,13 @@ export function CreateQuizPage() {
                                     )
                                 }
                                 onClick={handleSubmit}
-                                disabled={!canGenerate}
                             />
                         </div>
                     </Card.Footer>
                 </div>
             </Card>
+
+            {isGenerating && <GameLoader />}
         </>
     );
 }

@@ -18,11 +18,11 @@ export function MetacognitionBloomRow({ data, maxAttempted }: MetacognitionBloom
     const widthPercent = maxAttempted > 0 ? Math.round((data.questions_attempted / maxAttempted) * 100) : 0;
     const color = BLOOM_COLORS[data.bloom_level] || '#2e6f95';
 
-    let biasBadge = { label: 'Calibrado', className: 'bg-[#ecfdf5] text-[#059669]' };
+    let biasBadge = { label: 'Calibrado', className: 'text-[#59A14F] rounded-lg border' };
     if (data.bias === 'overconfident') {
-        biasBadge = { label: 'Sobreest.', className: 'bg-[#fff7ed] text-[#ea580c]' };
+        biasBadge = { label: 'Sobreest.', className: 'text-[#F28E2B] rounded-lg border' };
     } else if (data.bias === 'underconfident') {
-        biasBadge = { label: 'Subest.', className: 'bg-[#eff6ff] text-[#2563eb]' };
+        biasBadge = { label: 'Subest.', className: 'text-[#4E79A7] rounded-lg border' };
     }
 
     return (
