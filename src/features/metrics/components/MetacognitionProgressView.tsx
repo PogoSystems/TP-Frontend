@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TrendingUp, BarChart2, ArrowLeft, Brain } from 'lucide-react';
+import {TrendingUp, BarChart2, ArrowLeft, Brain, BookOpenIcon} from 'lucide-react';
 import { useMetacognition } from '../hook/useMetacognition';
 import { Card } from '../../../shared/components/ui/card';
 import { ErrorState } from '../../../shared/components/ui/errorState';
@@ -12,6 +12,7 @@ import { MetacognitionSummaryCard } from './MetacognitionSummaryCard';
 import { MetacognitionLineChart } from './MetacognitionLineChart';
 import { MetacognitionSkeleton } from './MetacognitionSkeleton';
 import type { MetacognitionBias } from '../types/metacognition.types';
+import {EmptyState} from "../../../shared/components/ui/emptyState.tsx";
 
 export function MetacognitionProgressView() {
     const {
@@ -37,8 +38,8 @@ export function MetacognitionProgressView() {
     if (error || (!summary && !courseDetail)) {
         return (
             <ErrorState
-                title="No pudimos cargar la analítica metacognitiva"
-                subtitle="Ocurrió un error al obtener tus métricas de autoevaluación."
+                title="Oops, no se pudieron cargar los datos"
+                subtitle="Ocurrió un error al obtener tus métricas de autoevaluación"
                 message={typeof error === 'string' ? error : undefined}
                 onRetry={refetch}
             />
@@ -100,17 +101,14 @@ export function MetacognitionProgressView() {
 
             {/* Empty State when no prediction quizzes exist */}
             {summary?.total_evaluated_quizzes === 0 && (
-                <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-10 text-center flex flex-col items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center text-[#2e6f95]">
-                        <Brain size={26} />
-                    </div>
-                    <div className="max-w-md flex flex-col gap-1">
-                        <p className="text-base font-semibold text-[#1a3a5a]">Aún no hay predicciones registradas</p>
-                        <p className="text-sm text-[#64748b]">
-                            Para ver tu analítica metacognitiva, ingresa tu estimación de respuestas antes de rendir un cuestionario.
-                        </p>
-                    </div>
-                </div>
+                <EmptyState
+                    variant="card"
+                    icon={Brain}
+                    title="Aún no hay predicciones registradas"
+                    description="Para ver tu analítica metacognitiva, ingresa tu estimación de respuestas antes de rendir un cuestionario"
+                    actionText="Realizar cuestionario"
+                    actionLink="/quizzes"
+                />
             )}
 
             {summary && summary.total_evaluated_quizzes > 0 && (

@@ -6,6 +6,8 @@ import type { DocumentResponse } from "../../../shared/types/document.ts"
 import { generateQuiz } from "../services/quizService.ts"
 import type { Quiz } from "../types/quiz.types.ts"
 import { uploadDocument } from "../../../shared/services/documentService.ts"
+import { validateCreateQuizData, type CreateQuizFormData } from "../../../shared/utils/createQuizValidation.ts"
+import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
 
 const BLOOM_LEVELS: { level: BloomLevel; title: string; description: string }[] = [
     { level: 'remember', title: 'Recordar', description: 'Hechos y conceptos básicos' },
@@ -34,7 +36,19 @@ export function useCreateQuiz() {
     const [isGenerating, setIsGenerating] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    // Load available courses on mount
+    const { values, errors, handleChange, validateAll, setValues } = useFormValidation<CreateQuizFormData>(
+        {
+            selectedCourseId: '',
+            quizTitle: '',
+            questionCount: '5',
+            quizSubject: '',
+            expectedCorrectAnswers: '',
+            selectedDocumentIds: [],
+            totalFiles: 0,
+        },
+        validateCreateQuizData
+    )
+
     useEffect(() => {
         let isMounted = true
 
@@ -62,7 +76,6 @@ export function useCreateQuiz() {
         }
     }, [])
 
-    // Load documents for a specific course (triggered by user action)
     const loadDocuments = async (courseId: string) => {
         if (!courseId) {
             setDocuments([])
@@ -80,7 +93,12 @@ export function useCreateQuiz() {
         }
     }
 
-    // Toggle a bloom level selection
+    const handleCourseChange = (courseId: string) => {
+        handleChange('selectedCourseId', courseId)
+        handleChange('selectedDocumentIds', [])
+        loadDocuments(courseId)
+    }
+
     const toggleBloomLevel = (level: BloomLevel) => {
         setSelectedBloomLevels((prev) =>
             prev.includes(level)
@@ -89,21 +107,20 @@ export function useCreateQuiz() {
         )
     }
 
-    // Add files to the upload queue
     const addFiles = (newFiles: File[]) => {
         const entries: FileUploadEntry[] = newFiles.map((file) => ({
             file,
             status: 'pending',
         }))
         setFileEntries((prev) => [...prev, ...entries])
+        setValues((prev) => ({ ...prev, totalFiles: prev.totalFiles + newFiles.length }))
     }
 
-    // Remove a file entry by index (only if not uploading)
     const removeFile = (index: number) => {
         setFileEntries((prev) => prev.filter((_, i) => i !== index))
+        setValues((prev) => ({ ...prev, totalFiles: Math.max(0, prev.totalFiles - 1) }))
     }
 
-    // Upload a single file and track its status in state
     const uploadFile = async (courseId: string, index: number): Promise<number | null> => {
         const entry = fileEntries[index]
         if (!entry || entry.status === 'done') return entry?.documentId ?? null
@@ -133,7 +150,6 @@ export function useCreateQuiz() {
         }
     }
 
-    // Upload all pending files and return their document IDs
     const uploadAllFiles = async (courseId: string): Promise<number[]> => {
         const pendingIndices = fileEntries
             .map((e, i) => ({ e, i }))
@@ -147,7 +163,6 @@ export function useCreateQuiz() {
             if (id !== null) uploadedIds.push(id)
         }
 
-        // Also include already-uploaded files
         const alreadyDone = fileEntries
             .filter((e) => e.status === 'done' && e.documentId !== undefined)
             .map((e) => e.documentId!)
@@ -155,32 +170,27 @@ export function useCreateQuiz() {
         return [...alreadyDone, ...uploadedIds]
     }
 
-    // Generate quiz: upload pending files first, then call the generate endpoint
-    const handleGenerateQuiz = async (params: {
-        courseId: string
-        title: string
-        selectedDocumentIds: string[]
-        queryText: string
-        numQuestions: number
-    }): Promise<Quiz> => {
+    const handleGenerateQuiz = async (): Promise<Quiz | null> => {
+        if (!validateAll()) {
+            return null
+        }
+
         setError(null)
         setIsGenerating(true)
         try {
-            // Upload any pending files, get all document IDs
-            const uploadedIds = await uploadAllFiles(params.courseId)
+            const uploadedIds = await uploadAllFiles(values.selectedCourseId)
 
-            // Combine existing selected document IDs with newly uploaded ones
             const allDocumentIds = [
-                ...params.selectedDocumentIds.map(Number),
+                ...values.selectedDocumentIds.map(Number),
                 ...uploadedIds,
             ]
 
             const quiz = await generateQuiz({
-                course_id: Number(params.courseId),
-                title: params.title,
+                course_id: Number(values.selectedCourseId),
+                title: values.quizTitle,
                 document_ids: allDocumentIds,
-                query_text: params.queryText,
-                num_questions: params.numQuestions,
+                query_text: values.quizSubject,
+                num_questions: Number(values.questionCount),
                 bloom_levels: selectedBloomLevels,
             })
 
@@ -195,6 +205,20 @@ export function useCreateQuiz() {
     }
 
     const isAnyFileUploading = fileEntries.some((e) => e.status === 'uploading')
+    const hasMaterials = values.selectedDocumentIds.length > 0 || fileEntries.length > 0
+    const hasValidationErrors = Object.keys(errors).some((key) => errors[key as keyof CreateQuizFormData])
+
+    const canGenerate =
+        Boolean(values.selectedCourseId) &&
+        Boolean(values.quizTitle.trim()) &&
+        Boolean(values.questionCount) &&
+        Number(values.questionCount) >= 5 &&
+        values.expectedCorrectAnswers !== '' &&
+        Number(values.expectedCorrectAnswers) >= 0 &&
+        hasMaterials &&
+        !isGenerating &&
+        !isAnyFileUploading &&
+        !hasValidationErrors
 
     return {
         bloomLevels: BLOOM_LEVELS,
@@ -210,7 +234,11 @@ export function useCreateQuiz() {
         isGenerating,
         isAnyFileUploading,
         error,
-        loadDocuments,
+        values,
+        errors,
+        handleChange,
+        handleCourseChange,
         handleGenerateQuiz,
+        canGenerate,
     }
 }

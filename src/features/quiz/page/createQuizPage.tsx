@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileDropzone } from "../../../shared/components/ui/fileDropzone.tsx";
 import { FileListItem } from "../../../shared/components/ui/fileListItem.tsx";
@@ -9,18 +8,12 @@ import { BloomLevelCard } from "../components/bloomLevelCard.tsx";
 import { useCreateQuiz } from "../hook/useCreateQuiz.ts";
 import { Select } from "../../../shared/components/ui/select.tsx";
 import { MultiSelectDropdown } from "../../../shared/components/ui/multiSelectDropdown.tsx";
-import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
+import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
 
 const MAX_FILES = 3;
 
 export function CreateQuizPage() {
     const navigate = useNavigate();
-    const [selectedCourseId, setSelectedCourseId] = useState('');
-    const [selectedDocumentIds, setSelectedDocumentIds] = useState<string[]>([]);
-    const [quizTitle, setQuizTitle] = useState('');
-    const [questionCount, setQuestionCount] = useState('');
-    const [quizSubject, setQuizSubject] = useState('');
-    const [expectedCorrectAnswers, setExpectedCorrectAnswers] = useState('');
 
     const {
         bloomLevels,
@@ -34,55 +27,32 @@ export function CreateQuizPage() {
         isLoadingCourses,
         isLoadingDocuments,
         isGenerating,
-        isAnyFileUploading,
         error,
-        loadDocuments,
+        values,
+        errors,
+        handleChange,
+        handleCourseChange,
         handleGenerateQuiz,
+        canGenerate,
     } = useCreateQuiz();
 
     const documentOptions = availableDocuments.map((doc) => ({ value: String(doc.id), label: doc.title }));
 
-    function handleCourseChange(courseId: string) {
-        setSelectedCourseId(courseId);
-        setSelectedDocumentIds([]);
-        loadDocuments(courseId);
-    }
-
-    function handleFilesSelected(newFiles: File[]) {
-        addFiles(newFiles);
-    }
-
     async function handleSubmit() {
         try {
-            const quiz = await handleGenerateQuiz({
-                courseId: selectedCourseId,
-                title: quizTitle,
-                selectedDocumentIds,
-                queryText: quizSubject,
-                numQuestions: Number(questionCount),
-            });
-            navigate('/quiz/taking', {
-                state: {
-                    quiz,
-                    expectedCorrectAnswers: Number(expectedCorrectAnswers),
-                },
-            });
+            const quiz = await handleGenerateQuiz();
+            if (quiz) {
+                navigate('/quiz/taking', {
+                    state: {
+                        quiz,
+                        expectedCorrectAnswers: Number(values.expectedCorrectAnswers),
+                    },
+                });
+            }
         } catch {
-            // error is already set in the hook
+
         }
     }
-
-    const totalFiles = fileEntries.length;
-    const canGenerate =
-        selectedCourseId &&
-        quizTitle.trim() &&
-        questionCount &&
-        Number(questionCount) > 0 &&
-        expectedCorrectAnswers !== '' &&
-        Number(expectedCorrectAnswers) >= 0 &&
-        (selectedDocumentIds.length > 0 || totalFiles > 0) &&
-        !isGenerating &&
-        !isAnyFileUploading;
 
     return (
         <>
@@ -92,58 +62,105 @@ export function CreateQuizPage() {
             <Card className="w-full mt-4">
                 <Card.Content>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-5 pb-4">
-                        <Select
-                            label={'Selecciona un curso'}
-                            required={true}
-                            options={courses.map((course) => ({ value: course.id, label: course.title }))}
-                            placeholder={'Elige un curso'}
-                            value={selectedCourseId}
-                            onChange={handleCourseChange}
-                            isLoading={isLoadingCourses}
-                        />
-                        <MultiSelectDropdown
-                            label={'Documentos para la generación'}
-                            required={true}
-                            options={documentOptions}
-                            selectedValues={selectedDocumentIds}
-                            onChange={setSelectedDocumentIds}
-                            placeholder={selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}
-                            isLoading={isLoadingDocuments}
-                            disabled={!selectedCourseId}
-                        />
-                        <InputText
-                            label={'Título del cuestionario'}
-                            required={true}
-                            name={'quizTitle'}
-                            value={quizTitle}
-                            onChange={(e) => setQuizTitle(e.target.value)}
-                            placeholder={'Ej: Quiz de repaso - PC1 - Notación Big O'}
-                        />
-                        <InputText
-                            label={'Cantidad de preguntas'}
-                            required={true}
-                            name={'questionCount'}
-                            value={questionCount}
-                            onChange={(e) => setQuestionCount(e.target.value)}
-                            placeholder={'10'}
-                        />
-                        <InputText
-                            label={'Tema del cuestionario'}
-                            required={false}
-                            name={'quizSubject'}
-                            value={quizSubject}
-                            onChange={(e) => setQuizSubject(e.target.value)}
-                            placeholder={'Ej: Patrones de diseño, Diagramas UML, Principios SOLID'}
-                        />
-                        <InputText
-                            label={'Respuestas correctas estimadas'}
-                            required={true}
-                            name={'expectedCorrectAnswers'}
-                            type="number"
-                            value={expectedCorrectAnswers}
-                            onChange={(e) => setExpectedCorrectAnswers(e.target.value)}
-                            placeholder={'Ej: 8'}
-                        />
+                        <div className="flex flex-col gap-1">
+                            <Select
+                                label={'Selecciona un curso'}
+                                required={true}
+                                options={courses.map((course) => ({ value: course.id, label: course.title }))}
+                                placeholder={'Elige un curso'}
+                                value={values.selectedCourseId}
+                                onChange={handleCourseChange}
+                                isLoading={isLoadingCourses}
+                            />
+                            {errors.selectedCourseId && (
+                                <span className="text-xs text-red-500 font-medium pl-1">
+                                    {errors.selectedCourseId}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <MultiSelectDropdown
+                                label={'Documentos para la generación'}
+                                required={true}
+                                options={documentOptions}
+                                selectedValues={values.selectedDocumentIds}
+                                onChange={(selected) => handleChange('selectedDocumentIds', selected)}
+                                placeholder={values.selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}
+                                isLoading={isLoadingDocuments}
+                                disabled={!values.selectedCourseId}
+                            />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <InputText
+                                label={'Título del cuestionario'}
+                                required={true}
+                                name={'quizTitle'}
+                                value={values.quizTitle}
+                                onChange={(e) => handleChange('quizTitle', e.target.value)}
+                                placeholder={'Ej: Quiz de repaso - PC1 - Notación Big O'}
+                            />
+                            {errors.quizTitle && (
+                                <span className="text-xs text-red-500 font-medium pl-1">
+                                    {errors.quizTitle}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <InputText
+                                label={'Cantidad de preguntas (mínimo 5)'}
+                                required={true}
+                                name={'questionCount'}
+                                value={values.questionCount}
+                                onChange={(e) => {
+                                    const onlyNums = e.target.value.replace(/\D/g, '');
+                                    handleChange('questionCount', onlyNums);
+                                }}
+                                placeholder={'10'}
+                            />
+                            {errors.questionCount && (
+                                <span className="text-xs text-red-500 font-medium pl-1">
+                                    {errors.questionCount}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <InputText
+                                label={'Tema del cuestionario'}
+                                required={false}
+                                name={'quizSubject'}
+                                value={values.quizSubject}
+                                onChange={(e) => handleChange('quizSubject', e.target.value)}
+                                placeholder={'Ej: Patrones de diseño, Diagramas UML, Principios SOLID'}
+                            />
+                            {errors.quizSubject && (
+                                <span className="text-xs text-red-500 font-medium pl-1">
+                                    {errors.quizSubject}
+                                </span>
+                            )}
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                            <InputText
+                                label={'Respuestas correctas estimadas'}
+                                required={true}
+                                name={'expectedCorrectAnswers'}
+                                value={values.expectedCorrectAnswers}
+                                onChange={(e) => {
+                                    const onlyNums = e.target.value.replace(/\D/g, '');
+                                    handleChange('expectedCorrectAnswers', onlyNums);
+                                }}
+                                placeholder={'Ej: 8'}
+                            />
+                            {errors.expectedCorrectAnswers && (
+                                <span className="text-xs text-red-500 font-medium pl-1">
+                                    {errors.expectedCorrectAnswers}
+                                </span>
+                            )}
+                        </div>
                     </div>
 
                     <div className="pb-4">
@@ -165,12 +182,12 @@ export function CreateQuizPage() {
 
                     <div className="flex flex-col pb-6">
                         <p className="text-text-title font-medium text-sm">Material de origen</p>
-                        <p className="text-sm font-light text-text-subtle pb-3">Sube nuevos documentos para generar cuestionarios apartir de ellos</p>
+                        <p className="text-sm font-light text-text-subtle pb-3">Sube nuevos documentos para generar cuestionarios a partir de ellos</p>
                         <div className="flex flex-col gap-4">
                             <FileDropzone
-                                onFilesSelected={handleFilesSelected}
+                                onFilesSelected={addFiles}
                                 maxFiles={MAX_FILES}
-                                currentCount={totalFiles}
+                                currentCount={fileEntries.length}
                             />
                             {fileEntries.map((entry, index) => (
                                 <div key={`${entry.file.name}-${index}`} className="flex flex-col gap-1">
@@ -198,7 +215,6 @@ export function CreateQuizPage() {
                     {error && (
                         <p className="text-sm text-red-500 pb-4">{error}</p>
                     )}
-
                 </Card.Content>
 
                 <div className="border-t-1 border-gray-100 pt-2">
@@ -221,7 +237,6 @@ export function CreateQuizPage() {
                         </div>
                     </Card.Footer>
                 </div>
-
             </Card>
         </>
     );

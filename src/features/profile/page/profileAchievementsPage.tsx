@@ -29,7 +29,7 @@ export function ProfileAchievementsPage() {
                 {!isLoading && (error || !data) && (
                     <ErrorState
                         title="Oops, ha ocurrido un problema"
-                        subtitle="No pudimos cargar la información de tu perfil."
+                        subtitle="No pudimos cargar la información de tu perfil"
                         message={typeof error === 'string' ? error : undefined}
                         onRetry={refetch}
                     />
