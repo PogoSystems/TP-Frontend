@@ -76,7 +76,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                             name="name"
                             value={values.name}
                             onChange={(e) => handleChange('name', e.target.value)}
-                            placeholder="Ej. Ana"
+                            placeholder="Ej: Ana"
                         />
                         {errors.name && (
                             <span className="text-xs text-red-500 font-medium pl-1">
@@ -91,7 +91,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                             name="last_name"
                             value={values.lastName}
                             onChange={(e) => handleChange('lastName', e.target.value)}
-                            placeholder="Ej. García"
+                            placeholder="Ej: García"
                             required
                         />
                         {errors.lastName && (
@@ -107,7 +107,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                             name="college"
                             value={values.college}
                             onChange={(e) => handleChange('college', e.target.value)}
-                            placeholder="Ej. Universidad Peruana de Ciencias Aplicadas"
+                            placeholder="Ej: Universidad Peruana de Ciencias Aplicadas"
                             required
                         />
                         {errors.college && (
@@ -123,7 +123,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                             name="major"
                             value={values.major}
                             onChange={(e) => handleChange('major', e.target.value)}
-                            placeholder="Ej. Ingeniería de Software"
+                            placeholder="Ej: Ingeniería de Software"
                             required
                         />
                         {errors.major && (

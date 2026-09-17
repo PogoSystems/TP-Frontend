@@ -69,7 +69,7 @@ export function QuizResultsPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6 max-w-4/5 py-8">
+        <div className="flex flex-col gap-6 w-full lg:max-w-[90%] mx-auto lg:mx-0 px-4 sm:px-6 py-6 sm:py-8">
 
             {/* Page title */}
             <div className="flex flex-col gap-1">

@@ -71,3 +71,27 @@ export function MetacognitionSkeleton() {
 
     );
 }
+
+export function MetacognitionRecentAttemptsSkeleton() {
+    return (
+        <div className="flex flex-col gap-3 animate-pulse">
+            {[0].map((i) => (
+                <div key={i} className="p-5 bg-[#f8fafc] rounded-xl border border-gray-200/80 flex flex-col gap-3">
+                    <div className="flex items-start justify-between gap-3">
+                        <div className="flex flex-col gap-1.5 min-w-0 flex-1">
+                            <div className="h-4 bg-gray-200 rounded-md w-3/4" />
+                            <div className="h-3 bg-gray-200 rounded-md w-1/2" />
+                        </div>
+
+                        <div className="h-6 w-16 bg-gray-200 rounded-lg shrink-0" />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-gray-200/60">
+                        <div className="h-3.5 bg-gray-200 rounded-md w-2/5" />
+                        <div className="h-3.5 bg-gray-200 rounded-md w-1/4" />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}

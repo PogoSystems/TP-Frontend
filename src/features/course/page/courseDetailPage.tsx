@@ -30,7 +30,7 @@ export function CourseDetailPage() {
 
     const { course, isLoading, setCourse } = UseCourseDetail(numericCourseId);
     const { analytics, isLoading: loadingAnalytics } = useCourseAnalytics(numericCourseId);
-    const { uploadSyllabus } = useUploadSyllabus(numericCourseId);
+    const { uploadSyllabus, isUploading: isUploadingSyllabus } = useUploadSyllabus(numericCourseId);
     const {
         quizzes,
         isLoading: loadingQuizzes,
@@ -125,7 +125,12 @@ export function CourseDetailPage() {
             <Card className="flex flex-col gap-4 !p-6">
                 <h2 className="text-xl font-semibold text-text-title">Syllabus</h2>
 
-                {!syllabus ? (
+                {isUploadingSyllabus ? (
+                    <div className="flex flex-row items-center justify-center gap-2 py-8 border border-dashed rounded-lg border-gray-300">
+                        <LoadSpinner width={32} height={32} />
+                        <span className="text-sm text-text-subtle font-medium">Subiendo syllabus...</span>
+                    </div>
+                ) : !syllabus ? (
                     <FileDropzone
                         onFilesSelected={async (files) => {
                             const file = files[0];
@@ -138,14 +143,14 @@ export function CourseDetailPage() {
                         currentCount={0}
                     />
                 ) : (
-                    <div className="flex items-center justify-between border rounded p-3">
-                        <span className="text-sm text-text-body">
-                            {syllabus.title}
-                        </span>
+                    <div className="flex items-center justify-between border border-border-card rounded p-3">
+            <span className="text-sm text-text-body">
+                {syllabus.title}
+            </span>
 
                         <button
                             onClick={() => removeDocument(syllabus.id)}
-                            className="text-red-600 text-sm hover:underline"
+                            className="text-red-600 text-sm hover:underline cursor-pointer"
                         >
                             Eliminar
                         </button>

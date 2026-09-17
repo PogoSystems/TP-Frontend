@@ -59,7 +59,7 @@ export function FileDropzone({onFilesSelected, maxFiles, currentCount}: FileDrop
                 </div>
                 <div>
                     <p className="text-base font-medium text-text-title pb-2">Subir Contenido</p>
-                    <p className="text-sm text-text-subtle">Solamente archivos PDF o DOCX, máximo 10MB</p>
+                    <p className="text-sm text-text-subtle">Solamente archivos PDF, PPT o DOCX, máximo 10MB</p>
                 </div>
 
                 <label htmlFor="file-upload" className={`bg-bg-button text-white px-5 py-2.5 rounded-lg cursor-pointer ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}>

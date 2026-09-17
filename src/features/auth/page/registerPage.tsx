@@ -52,9 +52,13 @@ export function RegisterPage() {
                 }
             )
             navigate("/login")
-        } catch (err) {
-            setError("Cannot register user. Please check your credentials and try again.")
-            console.error(err)
+        } catch (err:any) {
+            const errorMessage = err?.message?.toLowerCase() || '';
+            if (errorMessage.includes('user already registered') || errorMessage.includes('already registered')) {
+                setError('Este correo electrónico ya está registrado');
+            } else {
+                setError('Ocurrió un error al registrar la cuenta. Inténtalo de nuevo más tarde');
+            }
         } finally {
             setIsSubmitting(false)
         }
@@ -78,7 +82,7 @@ export function RegisterPage() {
                         <InputText
                             label="Nombre"
                             name="name"
-                            placeholder="Ej. Ana"
+                            placeholder="Ej: Ana"
                             value={values.name}
                             onChange={(e) => handleChange("name", e.target.value)}
                             required
@@ -94,7 +98,7 @@ export function RegisterPage() {
                         <InputText
                             label="Apellido"
                             name="lastName"
-                            placeholder="Ej. García"
+                            placeholder="Ej: García"
                             value={values.lastName}
                             onChange={(e) => handleChange("lastName", e.target.value)}
                             required
@@ -112,7 +116,7 @@ export function RegisterPage() {
                         <InputText
                             label="Universidad"
                             name="college"
-                            placeholder="Ej. Universidad Peruana de Ciencias Aplicadas"
+                            placeholder="Ej: Universidad Peruana de Ciencias Aplicadas"
                             value={values.college}
                             onChange={(e) => handleChange("college", e.target.value)}
                             required
@@ -128,7 +132,7 @@ export function RegisterPage() {
                         <InputText
                             label="Carrera"
                             name="major"
-                            placeholder="Ej. Ingeniería de Software"
+                            placeholder="Ej: Ingeniería de Software"
                             value={values.major}
                             onChange={(e) => handleChange("major", e.target.value)}
                             required
