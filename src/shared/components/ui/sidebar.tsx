@@ -4,6 +4,7 @@ import * as React from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useAuth} from "../../../features/auth/hook/useAuth.ts";
 import {Button} from "./button.tsx";
+import {RestigiaWidget} from "./restigiaWidget.tsx";
 
 interface NavItem{
     label: string;
@@ -72,7 +73,8 @@ export function Sidebar({onClose}: SidebarProps){
                 </NavLink>
             ))}
 
-            <div className="mt-auto py-6">
+            <div className="flex flex-col mt-auto gap-4 py-6">
+                <RestigiaWidget />
                 <Button text="Cerrar sesión" icon={<LogOut size={18} />} variant="ghost" onClick={handleLogout}/>
             </div>
         </nav>
