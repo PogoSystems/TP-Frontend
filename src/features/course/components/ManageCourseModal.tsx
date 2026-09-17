@@ -94,7 +94,7 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
                         value={values.name}
                         required={true}
                         name={'courseName'}
-                        placeholder={'Ej. Algoritmo y estructura de datos'}
+                        placeholder={'Ej: Algoritmo y estructura de datos'}
                         onChange={(e) => handleChange('name', e.target.value)}
                     />
                     {errors.name && (

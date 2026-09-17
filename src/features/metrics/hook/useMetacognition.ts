@@ -21,11 +21,18 @@ export function useMetacognition() {
     const [selectedCourseId, setSelectedCourseId] = useState<number | null>(null);
     const [granularity, setGranularity] = useState<'week' | 'month'>('week');
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isLoadingDetail, setIsLoadingDetail] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
-    const loadData = useCallback(async () => {
-        setIsLoading(true);
+    const loadData = useCallback(async (isInitial = false) => {
+        if (isInitial) {
+            setIsLoading(true);
+        } else {
+            setIsLoadingDetail(true);
+        }
+
         setError(null);
+
         try {
             const summaryPromise = fetchMetacognitionSummary();
             const bloomPromise = fetchBloomMetacognition(selectedCourseId ?? undefined);
@@ -51,51 +58,14 @@ export function useMetacognition() {
             setError(message);
         } finally {
             setIsLoading(false);
+            setIsLoadingDetail(false);
         }
     }, [selectedCourseId, granularity]);
 
     useEffect(() => {
-        let isMounted = true;
-        // eslint-disable-next-line react-hooks/set-state-in-effect
-        void (async () => {
-            try {
-                const summaryPromise = fetchMetacognitionSummary();
-                const bloomPromise = fetchBloomMetacognition(selectedCourseId ?? undefined);
-                const progressPromise = fetchMetacognitionProgress(granularity, selectedCourseId ?? undefined);
-                const courseDetailPromise = selectedCourseId
-                    ? fetchCourseMetacognition(selectedCourseId)
-                    : Promise.resolve(null);
-
-                const [sumRes, bloomRes, progRes, detailRes] = await Promise.all([
-                    summaryPromise,
-                    bloomPromise,
-                    progressPromise,
-                    courseDetailPromise,
-                ]);
-
-                if (isMounted) {
-                    setSummary(sumRes);
-                    setBloomBreakdown(bloomRes);
-                    setProgress(progRes);
-                    setCourseDetail(detailRes);
-                    setError(null);
-                }
-            } catch (err: unknown) {
-                if (isMounted) {
-                    const message = err instanceof Error ? err.message : 'Error al obtener datos de metacognición.';
-                    setError(message);
-                }
-            } finally {
-                if (isMounted) {
-                    setIsLoading(false);
-                }
-            }
-        })();
-
-        return () => {
-            isMounted = false;
-        };
-    }, [selectedCourseId, granularity]);
+        const isFirstLoad = summary === null;
+        void loadData(isFirstLoad);
+    }, [loadData]);
 
     return {
         summary,
@@ -107,7 +77,8 @@ export function useMetacognition() {
         granularity,
         setGranularity,
         isLoading,
+        isLoadingDetail,
         error,
-        refetch: loadData,
+        refetch: () => loadData(false),
     };
 }

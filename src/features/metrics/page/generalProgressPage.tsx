@@ -18,7 +18,6 @@ import { MetacognitionProgressView } from '../components/MetacognitionProgressVi
 
 import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
-import {Button} from "../../../shared/components/ui/button.tsx";
 import {EmptyState} from "../../../shared/components/ui/emptyState.tsx";
 
 const MAX_VISIBLE_COURSES = 4;

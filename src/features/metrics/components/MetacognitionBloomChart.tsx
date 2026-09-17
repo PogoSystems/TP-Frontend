@@ -16,9 +16,9 @@ interface MetacognitionBloomChartProps {
 }
 
 function getBarColor(accuracy: number): string {
-    if (accuracy >= 75) return '#2e6f95';
-    if (accuracy >= 50) return '#f97316';
-    return '#e95858';
+    if (accuracy >= 75) return '#59A14F';
+    if (accuracy >= 50) return '#4E79A7';
+    return '#f97316';
 }
 
 export function MetacognitionBloomChart({ data }: MetacognitionBloomChartProps) {

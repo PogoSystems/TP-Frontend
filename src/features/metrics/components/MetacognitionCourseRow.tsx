@@ -15,25 +15,25 @@ function getBiasBadge(bias: MetacognitionBias) {
         case 'calibrated':
             return {
                 label: 'Calibrado',
-                className: 'bg-[#ecfdf5] text-[#059669] border-[#a7f3d0]',
-                barColor: '#059669',
+                className: 'text-[#59A14F] ',
+                barColor: '#2e6f95',
             };
         case 'overconfident':
             return {
                 label: 'Sobreestima',
-                className: 'bg-[#fff7ed] text-[#ea580c] border-[#fed7aa]',
-                barColor: '#f97316',
+                className: 'text-[#f97316] ',
+                barColor: '#F28E2B',
             };
         case 'underconfident':
             return {
                 label: 'Subestima',
-                className: 'bg-[#eff6ff] text-[#2563eb] border-[#bfdbfe]',
-                barColor: '#3b82f6',
+                className: ' text-[#4E79A7] ',
+                barColor: '#e95858',
             };
         default:
             return {
                 label: '—',
-                className: 'bg-[#f3f4f6] text-[#4b5563] border-[#e5e7eb]',
+                className: ' text-[#4b5563]',
                 barColor: '#9ca3af',
             };
     }
@@ -47,7 +47,7 @@ export function MetacognitionCourseRow({
     bias,
     isSelected = false,
     onSelect,
-}: MetacognitionCourseRowProps) {
+}: Readonly<MetacognitionCourseRowProps>) {
     const badge = getBiasBadge(bias);
 
     return (
@@ -71,7 +71,7 @@ export function MetacognitionCourseRow({
 
                 <div className="flex items-center gap-2 shrink-0">
                     <span
-                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-full border ${badge.className}`}
+                        className={`text-[11px] font-semibold px-2.5 py-0.5 rounded-lg border ${badge.className}`}
                     >
                         {badge.label}
                     </span>
