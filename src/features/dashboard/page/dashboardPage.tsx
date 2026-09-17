@@ -81,6 +81,7 @@ export default function DashboardPage() {
                                     description="Sube material académico para comenzar a generar cuestionarios adaptativos."
                                     actionText="Crear mi primer curso"
                                     actionLink="/courses/new"
+                                    className="sm:col-span-2"
                                 />
                             ) : (
                                 courses.map((course) => (

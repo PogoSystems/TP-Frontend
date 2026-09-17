@@ -21,8 +21,8 @@ export function CourseProgressRow({ courseName, quizzesCompleted, accuracyPercen
     return (
         <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-                <div className="flex flex-col gap-0.5">
-                    <p className="text-[#1a3a5a] text-base font-medium leading-6">{courseName}</p>
+                <div className="flex flex-col gap-0.5 min-w-0 px-0.5">
+                    <p className="text-[#1a3a5a] text-base font-medium leading-6 truncate title={course.name}">{courseName}</p>
                     <p className="text-[#6a7282] text-xs font-normal">{quizzesCompleted} quizzes</p>
                 </div>
                 <p className="text-lg font-bold" style={{ color }}>{Math.round(accuracyPercentage)}%</p>

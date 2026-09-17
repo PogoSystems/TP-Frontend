@@ -2,53 +2,73 @@ import { Modal } from "../../../shared/components/ui/modal.tsx";
 import { InputText } from "../../../shared/components/ui/inputText.tsx";
 import { Button } from "../../../shared/components/ui/button.tsx";
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
-import {Plus, Pencil, AlertCircle} from 'lucide-react';
+import { Plus, Pencil, AlertCircle } from 'lucide-react';
 import { TextArea } from "../../../shared/components/ui/textArea.tsx";
 import type { CourseResponse } from "../types/course.types.ts";
 import { useState, useEffect } from "react";
 import { createCourse, updateCourse } from "../services/courseService.ts";
+import { validateCourseData, type CourseFormData } from "../../../shared/utils/courseValidation.ts";
+import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
 
 interface ManageCourseModalProps {
     isOpen: boolean;
     onClose: () => void;
     onCourseCreated?: (course: CourseResponse) => void;
     onCourseUpdated?: (course: CourseResponse) => void;
-    initialData?: { id: number, name: string, description: string };
+    initialData?: { id: number; name: string; description: string };
     mode?: 'create' | 'edit';
 }
 
 export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUpdated, initialData, mode = 'create' }: ManageCourseModalProps) {
-    const [name, setName] = useState("");
-    const [description, setDescription] = useState("");
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
 
+    const { values, errors, handleChange, validateAll, resetForm } = useFormValidation<CourseFormData>(
+        {
+            name: "",
+            description: "",
+        },
+        validateCourseData
+    );
+
     useEffect(() => {
-        if (isOpen && mode === 'edit' && initialData) {
-            setName(initialData.name);
-            setDescription(initialData.description);
-        } else if (isOpen && mode === 'create') {
-            setName("");
-            setDescription("");
+        if (isOpen) {
+            if (mode === 'edit' && initialData) {
+                resetForm({
+                    name: initialData.name,
+                    description: initialData.description,
+                });
+            } else {
+                resetForm({
+                    name: "",
+                    description: "",
+                });
+            }
+            setError("");
         }
-        setError("");
     }, [isOpen, mode, initialData]);
 
     async function handleSave() {
         setError("");
 
-        if (!name.trim() || !description.trim()) {
-            setError("Todos los campos son requeridos.");
+        if (!validateAll()) {
             return;
         }
 
         setIsSubmitting(true);
         try {
             if (mode === 'edit' && initialData) {
-                const updated = await updateCourse(initialData.id, { name, description, max_score: 0 });
+                const updated = await updateCourse(initialData.id, {
+                    name: values.name,
+                    description: values.description,
+                    max_score: 0
+                });
                 onCourseUpdated?.(updated);
             } else {
-                const course = await createCourse({ name, description });
+                const course = await createCourse({
+                    name: values.name,
+                    description: values.description
+                });
                 onCourseCreated?.(course);
             }
             onClose();
@@ -68,24 +88,40 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
 
             {/* Form */}
             <div className="grid grid-rows-1 gap-4 mb-3">
-                <InputText
-                    label={'Nombre del curso'}
-                    value={name}
-                    required={true}
-                    name={'courseName'}
-                    placeholder={'Algoritmo y estructura de datos'}
-                    onChange={(e) => setName(e.target.value)}
-                />
-                <TextArea
-                    label={'Descripción'}
-                    value={description}
-                    required={true}
-                    name={'courseDescription'}
-                    placeholder={'Escribe una breve descripción del contenido del curso'}
-                    onChange={(e) => setDescription(e.target.value)}
-                />
+                <div className="flex flex-col gap-1">
+                    <InputText
+                        label={'Nombre del curso'}
+                        value={values.name}
+                        required={true}
+                        name={'courseName'}
+                        placeholder={'Ej. Algoritmo y estructura de datos'}
+                        onChange={(e) => handleChange('name', e.target.value)}
+                    />
+                    {errors.name && (
+                        <span className="text-xs text-red-500 font-medium pl-1">
+                            {errors.name}
+                        </span>
+                    )}
+                </div>
+
+                <div className="flex flex-col gap-1">
+                    <TextArea
+                        label={'Descripción'}
+                        value={values.description}
+                        required={true}
+                        name={'courseDescription'}
+                        placeholder={'Escribe una breve descripción del contenido del curso'}
+                        onChange={(e) => handleChange('description', e.target.value)}
+                    />
+                    {errors.description && (
+                        <span className="text-xs text-red-500 font-medium pl-1">
+                            {errors.description}
+                        </span>
+                    )}
+                </div>
+
                 {error && (
-                    <div className="flex items-center gap-2 text-red-600 text-sm">
+                    <div className="flex items-center gap-2 text-red-600 text-sm mt-1">
                         <AlertCircle size={18} className="shrink-0" />
                         <span>{error}</span>
                     </div>
@@ -93,7 +129,7 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
             </div>
 
             {/* Footer */}
-            <div className="flex flex-row justify-end gap-4">
+            <div className="flex flex-row justify-end gap-4 mt-6">
                 <div>
                     <Button
                         text={'Cancelar'}

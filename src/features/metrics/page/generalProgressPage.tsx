@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from 'react-router-dom';
-import { TrendingUp, BarChart2, ChevronRight, Brain } from 'lucide-react';
+import {TrendingUp, BarChart2, ChevronRight, Brain, FileQuestion} from 'lucide-react';
 
 import { useUserMetrics } from '../hook/useUserMetrics.ts';
 import { useUserProgress } from '../hook/useUserProgress.ts';
@@ -18,6 +18,8 @@ import { MetacognitionProgressView } from '../components/MetacognitionProgressVi
 
 import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
+import {Button} from "../../../shared/components/ui/button.tsx";
+import {EmptyState} from "../../../shared/components/ui/emptyState.tsx";
 
 const MAX_VISIBLE_COURSES = 4;
 
@@ -34,6 +36,7 @@ export function GeneralProgressPage() {
     ) ?? 0;
 
     const totalActiveCourses = metrics?.course_performance.length ?? 0;
+    const hasActivity = Boolean(metrics && metrics.quizzes_completed > 0);
 
     const progressData =
         progress?.points.map((point) => ({
@@ -92,14 +95,25 @@ export function GeneralProgressPage() {
                     {!isLoading && (error || !metrics) && (
                         <ErrorState
                             title="Oops, ha ocurrido un problema"
-                            subtitle="No pudimos obtener tu información de rendimiento."
+                            subtitle="No pudimos obtener tu información de rendimiento"
                             message={typeof error === 'string' ? error : undefined}
                             onRetry={refetch}
                         />
                     )}
 
+                    {/* Empty State: Sin cuestionarios resueltos */}
+                    {!isLoading && !error && metrics && !hasActivity && (
+                        <EmptyState
+                            icon={FileQuestion}
+                            title="Aún no hay datos de progreso"
+                            description="Completa tus primeros cuestionarios para empezar a medir tu rendimiento y evolución cognitiva"
+                            actionText="Explorar cursos"
+                            actionLink="/courses"
+                        />
+                    )}
+
                     {/* Data Render */}
-                    {!isLoading && !error && metrics && (
+                    {!isLoading && !error && metrics && hasActivity && (
                         <div className="flex flex-col gap-6 w-full">
                         {/* ── KPI Row ────────────────────────────────────────── */}
                         <div className="flex flex-col sm:flex-row gap-6">

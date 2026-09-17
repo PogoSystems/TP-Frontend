@@ -1,4 +1,4 @@
-import { CircleCheckBig, Lock } from 'lucide-react';
+import { Check , Lock, CircleCheck } from 'lucide-react';
 import type { AchievementResponse } from '../types/profile.types';
 
 interface AchievementCardProps {
@@ -18,7 +18,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
 
     return (
         <div
-            className={`rounded-xl border-1 py-2 px-4  flex items-center gap-4 transition-all
+            className={`rounded-xl border-1 py-4 px-4  flex items-center gap-4 transition-all
                 ${unlocked
                 ? 'bg-white border-[#c6d2ff] shadow-sm'
                 : 'bg-[#f4f4f4] border-[#e5e7eb]'
@@ -33,7 +33,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
                 }`}
             >
                 {unlocked
-                    ? <CircleCheckBig size={24} className="text-white" />
+                    ? <CircleCheck   size={24} className="text-white" />
                     : <Lock size={24} className="text-white" />
                 }
             </div>
@@ -47,7 +47,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
                     </h3>
                     {unlocked && (
                         <span className="flex items-center gap-1 shrink-0">
-                            <CircleCheckBig size={14} className="text-[#00a63e]" />
+                            <CircleCheck   size={14} className="text-[#00a63e]" />
                             <span className="text-xs font-semibold text-[#00a63e]">Completado</span>
                         </span>
                     )}
