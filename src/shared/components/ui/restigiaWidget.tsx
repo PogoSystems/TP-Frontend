@@ -15,7 +15,7 @@ export const RestigiaWidget: React.FC = () => {
                 <div className="overflow-hidden">
                     <div className="overflow-hidden rounded-xl border border-gray-100">
                         <img
-                            src="/../public/restigia-preview.png"
+                            src="restigia-preview.png"
                             alt="Restigia Preview"
                             className="h-auto w-full object-cover"
                         />
