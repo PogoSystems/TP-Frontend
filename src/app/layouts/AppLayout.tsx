@@ -12,7 +12,7 @@ export default function AppLayout (){
     if (isCheckingSession) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-3 bg-bg-app">
-                <img src="/src/assets/logos/pogo.svg" alt="Cargando..." className="w-8 h-8 animate-spin" />
+                <img src="/pogo.svg" alt="Cargando..." className="w-8 h-8 animate-spin" />
                 <span className="text-sm text-text-subtle font-medium">Cargando sesión...</span>
             </div>
         );

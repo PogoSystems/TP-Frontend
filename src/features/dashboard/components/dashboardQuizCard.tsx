@@ -21,7 +21,7 @@ export function DashboardQuizCard() {
 
             {/* Icon */}
             <div className="absolute top-15 right-0">
-                <img src="/src/assets/images/stars.svg" className="opacity-20" alt="Star icon"/>
+                <img src="/stars.svg" className="opacity-20" alt="Star icon"/>
             </div>
 
         </div>

@@ -27,7 +27,7 @@ export function ErrorState({
                 className={`group relative flex items-center justify-between p-4 rounded-xl bg-white border border-border-card overflow-hidden transition-all hover:border-red-200 ${className}`}>
                 <div className="flex items-center gap-3.5 pl-2">
                     <div className="flex items-center justify-center w-8 shrink-0">
-                        <img src="/src/assets/images/monkeError2.svg" alt="Error" className="w-full h-auto"/>
+                        <img src="/monkeError2.svg" alt="Error" className="w-full h-auto"/>
                     </div>
 
                     <div className="flex flex-col">
@@ -57,7 +57,7 @@ export function ErrorState({
         <Card className={`w-full ${className}`}>
             <Card.Content className="flex flex-col items-center justify-center py-10 px-4 text-center gap-3">
                 <div className="flex items-center justify-center w-20">
-                    <img src="/src/assets/images/monkeError2.svg" alt="Error" className="w-full h-auto"/>
+                    <img src="/monkeError2.svg" alt="Error" className="w-full h-auto"/>
                 </div>
 
                 <div className="flex flex-col gap-1 max-w-sm">
