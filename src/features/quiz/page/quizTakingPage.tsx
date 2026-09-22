@@ -1,15 +1,17 @@
-import { useLocation, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useLocation, Navigate, useOutletContext } from 'react-router-dom';
 import { Clock } from 'lucide-react';
 import { useQuizSession } from '../hook/useQuizSession.ts';
 import { QuizAnswerOption } from '../components/quizAnswerOption.tsx';
 import { QuizProgressBar } from '../components/quizProgressBar.tsx';
 import type { Quiz } from '../types/quiz.types.ts';
-import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
+import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
+import type {AppLayoutContext} from "../../../app/layouts/AppLayout.tsx";
 
 function QuizTakingContent({
-    quiz,
-    expectedCorrectAnswers = 0,
-}: {
+                               quiz,
+                               expectedCorrectAnswers = 0,
+                           }: {
     quiz: Quiz;
     expectedCorrectAnswers?: number;
 }) {
@@ -132,7 +134,7 @@ function QuizTakingContent({
                     {phase === 'answering' && (
                         <button
                             onClick={handleConfirm}
-                            disabled={selectedIndex === null|| isSubmitting}
+                            disabled={selectedIndex === null || isSubmitting}
                             className={`px-6 py-2.5 rounded-xl font-medium text-base transition-colors ${
                                 selectedIndex === null
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
@@ -166,6 +168,15 @@ export function QuizTakingPage() {
     const state = location.state as { quiz?: Quiz; expectedCorrectAnswers?: number } | undefined;
     const quiz = state?.quiz;
     const expectedCorrectAnswers = state?.expectedCorrectAnswers ?? 0;
+
+    const context = useOutletContext<AppLayoutContext>();
+
+    useEffect(() => {
+        if (context?.setIsQuizActive) {
+            context.setIsQuizActive(true);
+            return () => context.setIsQuizActive(false);
+        }
+    }, [context]);
 
     if (!quiz) {
         return <Navigate to="/quiz/create" replace />;

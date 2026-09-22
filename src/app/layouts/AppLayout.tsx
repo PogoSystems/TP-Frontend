@@ -4,9 +4,14 @@ import { IoIosMenu } from "react-icons/io";
 import {useState} from "react";
 import {useSession} from "../../features/auth/hook/useSession.ts";
 
-export default function AppLayout (){
-    const {session, isCheckingSession} = useSession();
-    const [sidebarOpen, setSidebarOpen] =useState(false);
+export interface AppLayoutContext {
+    setIsQuizActive: (active: boolean) => void;
+}
+
+export default function AppLayout() {
+    const { session, isCheckingSession } = useSession();
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [isQuizActive, setIsQuizActive] = useState(false);
 
     // While checking the session, show a loading screen
     if (isCheckingSession) {
@@ -23,18 +28,19 @@ export default function AppLayout (){
         return <Navigate to={'/login'} replace/>
     }
 
-    return(
+    return (
         <div className="h-screen bg-bg-app grid lg:grid-cols-[auto_1fr] overflow-hidden">
 
             {/* Sidebar */}
-            <aside className={`fixed h-screen z-30 lg:static transition-transform duration-300 ease-in-out
-                '            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}>
-                <Sidebar onClose={() => setSidebarOpen(false)} />
+            <aside className={`fixed h-screen z-30 lg:static transition-all duration-300 ease-in-out
+                ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
+                ${isQuizActive ? 'pointer-events-none opacity-40 select-none' : ''}`}>
+                <Sidebar onClose={() => setSidebarOpen(false)} isDisabled={isQuizActive} />
             </aside>
 
             {/* Background mobile */}
             <div
-                onClick={() => setSidebarOpen(false)}
+                onClick={() => !isQuizActive && setSidebarOpen(false)}
                 className={`lg:hidden fixed inset-0 bg-black/50 z-20 transition-opacity  
                 ${sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             />
@@ -51,10 +57,11 @@ export default function AppLayout (){
                 </header>
 
                 <main className="flex-1 px-10 lg:px-16 pt-14 pb-14 max-w-7xl mx-auto w-full">
-                    <Outlet/>
+                    {/* Pasamos setIsQuizActive a las páginas internas */}
+                    <Outlet context={{ setIsQuizActive } satisfies AppLayoutContext} />
                 </main>
 
             </div>
         </div>
-    )
+    );
 }

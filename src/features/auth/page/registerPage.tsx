@@ -51,8 +51,10 @@ export function RegisterPage() {
                     major: values.major,
                 }
             )
+            setIsSubmitting(false)
             navigate("/login")
         } catch (err:any) {
+            setIsSubmitting(false)
             const errorMessage = err?.message?.toLowerCase() || '';
             if (errorMessage.includes('user already registered') || errorMessage.includes('already registered')) {
                 setError('Este correo electrónico ya está registrado');
