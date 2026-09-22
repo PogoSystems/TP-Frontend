@@ -13,7 +13,16 @@ export function useUserMetrics() {
 
         try {
             const data = await fetchUserDashboard();
-            setMetrics(data);
+            const sortedCoursePerformance = [...data.course_performance].sort((a, b) => {
+                if (b.quizzes_completed !== a.quizzes_completed) {
+                    return b.quizzes_completed - a.quizzes_completed;
+                }
+                return a.course_name.localeCompare(b.course_name, undefined, { sensitivity: 'base' });
+            });
+            setMetrics({
+                ...data,
+                course_performance: sortedCoursePerformance,
+            });
         } catch {
             setError('Hubo un error al cargar las métricas de progreso.');
         } finally {

@@ -79,8 +79,8 @@ export function MetacognitionProgressView() {
     const mostCalibrated = sortedBloom[0] ?? null;
     const mostBiased = sortedBloom.length > 1 ? sortedBloom[sortedBloom.length - 1] : null;
 
-    const maxAttempted = bloomBreakdown.reduce(
-        (max, b) => Math.max(max, b.questions_attempted),
+    const maxScore = bloomBreakdown.reduce(
+        (max, b) => Math.max(max, b.actual_correct, b.expected_correct),
         0
     );
 
@@ -136,7 +136,18 @@ export function MetacognitionProgressView() {
                         </StatKpiCard>
 
                         {/* KPI 2: Sesgo de Juicio */}
-                        <StatKpiCard title="Sesgo de juicio" value={activeBias === 'overconfident' ? 'Sobreestima' : activeBias === 'underconfident' ? 'Subestima' : 'Calibrado'}>
+                        <StatKpiCard
+                            title="Sesgo de juicio"
+                            value={
+                                activeBias === 'overconfident'
+                                    ? 'Sobreestima'
+                                    : activeBias === 'underconfident'
+                                        ? 'Subestima'
+                                        : activeBias === 'variable'
+                                            ? 'Juicio variable'
+                                            : 'Calibrado'
+                            }
+                        >
                             <div className="flex items-center justify-between gap-2 pt-0.5">
                                 <div className="flex items-center gap-1.5 text-xs text-[#4a5565]">
                                     <span>Esp: <strong>{activeExpected}</strong></span>
@@ -308,11 +319,23 @@ export function MetacognitionProgressView() {
 
                             {/* Card D: Comparativa esperada vs real por nivel */}
                             <Card className="flex flex-col gap-4 !p-6">
-                                <div className="flex items-center justify-between">
-                                    <h3 className="text-lg font-semibold text-[#1a3a5a]">
-                                        Comparativa esperada vs real
-                                    </h3>
-                                    <span className="text-xs text-[#64748b]">Por taxonomía</span>
+                                <div className="flex items-center justify-between flex-wrap gap-2">
+                                    <div className="flex flex-col">
+                                        <h3 className="text-lg font-semibold text-[#1a3a5a]">
+                                            Comparativa esperada vs real
+                                        </h3>
+                                        <span className="text-xs text-[#64748b]">Por taxonomía</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 text-xs text-[#64748b]">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-3 h-2 rounded-xs bg-[#2e6f95]" />
+                                            <span>Real</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-1.5 h-3 bg-[#0f172a] rounded-xs" />
+                                            <span>Esperado</span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div className="flex flex-col gap-3">
@@ -320,7 +343,7 @@ export function MetacognitionProgressView() {
                                         <MetacognitionBloomRow
                                             key={b.bloom_level}
                                             data={b}
-                                            maxAttempted={maxAttempted}
+                                            maxScore={maxScore}
                                         />
                                     ))}
                                     {bloomBreakdown.length === 0 && (
@@ -342,12 +365,16 @@ export function MetacognitionProgressView() {
                                             ? 'SOBREESTIMACIÓN'
                                             : activeBias === 'underconfident'
                                                 ? 'SUBESTIMACIÓN'
-                                                : 'CALIBRACIÓN ÓPTIMA'}
+                                                : activeBias === 'variable'
+                                                    ? 'JUICIO VARIABLE'
+                                                    : 'CALIBRACIÓN ÓPTIMA'}
                                     </p>
                                     <p className="text-sm text-[#4a5565] shrink-0">
-                                        {activeGap !== 0
-                                            ? `Brecha de ${Math.abs(activeGap)} pts vs realidad`
-                                            : 'Proyección alineada a tu resultado'}
+                                        {activeBias === 'variable'
+                                            ? 'Tendencia mixta según la materia'
+                                            : activeGap !== 0
+                                                ? `Brecha de ${Math.abs(activeGap)} pts vs realidad`
+                                                : 'Proyección alineada a tu resultado'}
                                     </p>
                                 </div>
                             </Card>
