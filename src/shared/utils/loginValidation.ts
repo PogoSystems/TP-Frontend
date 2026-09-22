@@ -5,14 +5,21 @@ export interface LoginFormData {
 
 export type LoginFormErrors = Partial<Record<keyof LoginFormData, string>>;
 
+export function validateEmail(email: string): string | undefined {
+    if (!email || !email.trim()) {
+        return "El correo electrónico es obligatorio";
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+        return "Ingresa un correo electrónico válido";
+    }
+    return undefined;
+}
+
 export function validateLoginData(data: LoginFormData): LoginFormErrors {
     const errors: LoginFormErrors = {};
 
-    if (!data.email || !data.email.trim()) {
-        errors.email = "El correo electrónico es obligatorio";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim())) {
-        errors.email = "Ingresa un correo electrónico válido";
-    }
+    const emailError = validateEmail(data.email);
+    if (emailError) errors.email = emailError;
 
     if (!data.password) {
         errors.password = "La contraseña es obligatoria";
@@ -21,4 +28,9 @@ export function validateLoginData(data: LoginFormData): LoginFormErrors {
     }
 
     return errors;
+}
+
+export function validateForgotPasswordData(data: { email: string }) {
+    const emailError = validateEmail(data.email);
+    return emailError ? { email: emailError } : {};
 }
