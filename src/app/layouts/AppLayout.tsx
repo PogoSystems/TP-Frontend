@@ -13,7 +13,7 @@ export default function AppLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isQuizActive, setIsQuizActive] = useState(false);
 
-    // While checking the session, show a loading screen
+    // While checking the session, show a loading screen 
     if (isCheckingSession) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-3 bg-bg-app">
