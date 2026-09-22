@@ -1,5 +1,5 @@
 import { GiMonkey } from "react-icons/gi";
-import {BookOpen, Brain, LogOut, TrendingUp, UserRound, X} from 'lucide-react';
+import {BookOpen, Brain, Bug, LogOut, TrendingUp, UserRound, X} from 'lucide-react';
 import * as React from "react";
 import {NavLink, useNavigate} from "react-router-dom";
 import {useAuth} from "../../../features/auth/hook/useAuth.ts";
@@ -76,6 +76,19 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
                     {label}
                 </NavLink>
             ))}
+
+            {/* External report link */}
+            <a
+                href="https://docs.google.com/forms/d/e/1FAIpQLScpDKaaeQoOr_jRmSh8IOcpNLd2wJWBZqM5AZ-YjWde5U1rcQ/viewform?usp=dialog"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => isDisabled && e.preventDefault()}
+                tabIndex={isDisabled ? -1 : 0}
+                className="flex flex-row px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150 text-text-body hover:bg-accent-bg/50 hover:text-text-title"
+            >
+                <Bug size={20} />
+                Reportar errores
+            </a>
 
             <div className="flex flex-col mt-auto gap-4 py-6">
                 <RestigiaWidget />
