@@ -39,8 +39,15 @@ export function ResetPasswordPage() {
         try {
             await updatePassword({ newPassword: values.password })
             navigate("/login")
-        } catch {
-            setError("No se pudo actualizar la contraseña. El enlace puede haber expirado.")
+        } catch (err: any) {
+            const errorCode = err?.code || err?.error_code || '';
+            const errorMessage = err?.message?.toLowerCase() || '';
+
+            if (errorCode === 'same_password' || errorMessage.includes('same_password') || errorMessage.includes('different from the old password')) {
+                setError("La nueva contraseña debe ser diferente a la anterior")
+            } else {
+                setError("No se pudo actualizar la contraseña. El enlace puede haber expirado")
+            }
         } finally {
             setIsSubmitting(false)
         }
