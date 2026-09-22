@@ -16,3 +16,11 @@ export interface CompleteProfileData {
     college: string,
     major: string,
 }
+
+export interface ResetPasswordCredentials {
+    email: string;
+}
+
+export interface UpdatePasswordCredentials {
+    newPassword: string;
+}
