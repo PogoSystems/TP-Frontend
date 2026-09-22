@@ -202,9 +202,16 @@ export function useCreateQuiz() {
             })
 
             return quiz
-        } catch (err) {
+        } catch (err: unknown) {
             console.error("Error al generar el quiz:", err)
-            setError("Error al generar el quiz. Inténtalo de nuevo")
+            const axiosErr = err as { response?: { data?: { detail?: string | { msg?: string }[] } } }
+            const detailMsg = axiosErr?.response?.data?.detail
+            const errorMessage = typeof detailMsg === 'string'
+                ? detailMsg
+                : (Array.isArray(detailMsg) && detailMsg[0]?.msg)
+                    ? detailMsg[0].msg
+                    : "Error al generar el quiz. Inténtalo de nuevo"
+            setError(errorMessage)
             throw err
         } finally {
             setIsGenerating(false)
@@ -220,6 +227,7 @@ export function useCreateQuiz() {
         Boolean(values.quizTitle.trim()) &&
         Boolean(values.questionCount) &&
         Number(values.questionCount) >= 5 &&
+        Number(values.questionCount) <= 25 &&
         values.expectedCorrectAnswers !== '' &&
         Number(values.expectedCorrectAnswers) >= 0 &&
         hasMaterials &&

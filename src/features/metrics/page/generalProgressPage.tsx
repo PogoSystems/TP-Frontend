@@ -43,6 +43,8 @@ export function GeneralProgressPage() {
             score: point.accuracy,
         })) ?? [];
 
+    const sortedCoursePerformance = metrics?.course_performance ?? [];
+
     return (
         <div className="flex flex-col min-h-full gap-6 w-full">
             {/* Header Fijo */}
@@ -147,7 +149,7 @@ export function GeneralProgressPage() {
                             {/* Cursos activos */}
                             <StatKpiCard title="Cursos activos" value={totalActiveCourses}>
                                 <div className="flex gap-1 mt-1 flex-wrap">
-                                    {metrics.course_performance.slice(0, 3).map((c) => {
+                                    {sortedCoursePerformance.slice(0, 3).map((c) => {
                                         const initials = c.course_name
                                             .split(' ')
                                             .filter(Boolean)
@@ -198,7 +200,7 @@ export function GeneralProgressPage() {
                                     </div>
 
                                     <div className="flex flex-col gap-4">
-                                        {metrics.course_performance
+                                        {sortedCoursePerformance
                                             .slice(0, MAX_VISIBLE_COURSES)
                                             .map((course) => (
                                                 <CourseProgressRow
@@ -209,9 +211,9 @@ export function GeneralProgressPage() {
                                                 />
                                             ))}
 
-                                        {metrics.course_performance.length > MAX_VISIBLE_COURSES && (
+                                        {sortedCoursePerformance.length > MAX_VISIBLE_COURSES && (
                                             <p className="text-xs text-center text-[#8997a5] pt-1">
-                                                Mostrando {MAX_VISIBLE_COURSES} de {metrics.course_performance.length} cursos.
+                                                Mostrando {MAX_VISIBLE_COURSES} de {sortedCoursePerformance.length} cursos.
                                             </p>
                                         )}
                                     </div>

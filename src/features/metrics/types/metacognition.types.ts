@@ -1,6 +1,6 @@
 import type { BloomLevel } from '../../../shared/types/bloomLevel';
 
-export type MetacognitionBias = 'overconfident' | 'underconfident' | 'calibrated';
+export type MetacognitionBias = 'overconfident' | 'underconfident' | 'calibrated' | 'variable';
 
 export interface CourseMetacognitionSummary {
     course_id: number;

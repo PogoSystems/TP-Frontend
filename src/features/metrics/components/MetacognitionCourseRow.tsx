@@ -30,6 +30,12 @@ function getBiasBadge(bias: MetacognitionBias) {
                 className: ' text-[#4E79A7] ',
                 barColor: '#e95858',
             };
+        case 'variable':
+            return {
+                label: 'Variable',
+                className: 'text-[#64748b] ',
+                barColor: '#94a3b8',
+            };
         default:
             return {
                 label: '—',
