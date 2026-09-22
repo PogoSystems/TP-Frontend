@@ -1,4 +1,4 @@
-import { Check , Lock, CircleCheck } from 'lucide-react';
+import { Lock, CircleCheck } from 'lucide-react';
 import type { AchievementResponse } from '../types/profile.types';
 
 interface AchievementCardProps {

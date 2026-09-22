@@ -22,7 +22,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
     const { values, errors, handleChange, validateAll } = useFormValidation<ProfileFormData>(
         {
             name: user.name,
-            last_name: user.last_name,
+            lastName: user.last_name,
             college: user.college,
             major: user.major,
         },

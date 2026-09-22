@@ -33,6 +33,8 @@ export function validateCreateQuizData(data: CreateQuizFormData): CreateQuizForm
         errors.questionCount = "Solo se permiten números";
     } else if (Number(data.questionCount) < 5) {
         errors.questionCount = "El número mínimo de preguntas debe ser 5";
+    } else if (Number(data.questionCount) > 25) {
+        errors.questionCount = "El número máximo de preguntas permitido es 25";
     }
 
     if (data.expectedCorrectAnswers === "") {

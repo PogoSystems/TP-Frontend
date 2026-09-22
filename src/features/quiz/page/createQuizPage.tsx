@@ -11,7 +11,6 @@ import { MultiSelectDropdown } from "../../../shared/components/ui/multiSelectDr
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
 import {GameLoader} from "../../../shared/utils/gameLoader.tsx";
 import {ErrorState} from "../../../shared/components/ui/errorState.tsx";
-import * as React from "react";
 
 
 const MAX_FILES = 3;
@@ -54,7 +53,7 @@ export function CreateQuizPage() {
                 });
             }
         } catch {
-
+            // Error manejado en el hook useCreateQuiz
         }
     }
 
@@ -114,7 +113,7 @@ export function CreateQuizPage() {
 
                         <div className="flex flex-col gap-1">
                             <InputText
-                                label={'Cantidad de preguntas (mínimo 5)'}
+                                label={'Cantidad de preguntas (5 a 25)'}
                                 required={true}
                                 name={'questionCount'}
                                 value={values.questionCount}
@@ -240,6 +239,7 @@ export function CreateQuizPage() {
                                     )
                                 }
                                 onClick={handleSubmit}
+                                disabled={!canGenerate}
                             />
                         </div>
                     </Card.Footer>
