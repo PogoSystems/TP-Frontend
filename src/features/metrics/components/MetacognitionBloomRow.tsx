@@ -3,7 +3,7 @@ import { BloomLevelLabel } from '../../../shared/types/bloomLevel';
 
 interface MetacognitionBloomRowProps {
     data: BloomMetacognitionResponse;
-    maxAttempted: number;
+    maxScore: number;
 }
 
 const BLOOM_COLORS: Record<string, string> = {
@@ -14,8 +14,10 @@ const BLOOM_COLORS: Record<string, string> = {
     evaluate: '#b07aa1',
 };
 
-export function MetacognitionBloomRow({ data, maxAttempted }: MetacognitionBloomRowProps) {
-    const widthPercent = maxAttempted > 0 ? Math.round((data.questions_attempted / maxAttempted) * 100) : 0;
+export function MetacognitionBloomRow({ data, maxScore }: MetacognitionBloomRowProps) {
+    const actualPercent = maxScore > 0 ? Math.min(100, Math.round((data.actual_correct / maxScore) * 100)) : 0;
+    const expectedPercent = maxScore > 0 ? Math.min(100, Math.round((data.expected_correct / maxScore) * 100)) : 0;
+    const clampedExpected = Math.max(2, Math.min(98, expectedPercent));
     const color = BLOOM_COLORS[data.bloom_level] || '#2e6f95';
 
     let biasBadge = { label: 'Calibrado', className: 'text-[#59A14F] rounded-lg border' };
@@ -23,6 +25,8 @@ export function MetacognitionBloomRow({ data, maxAttempted }: MetacognitionBloom
         biasBadge = { label: 'Sobreest.', className: 'text-[#F28E2B] rounded-lg border' };
     } else if (data.bias === 'underconfident') {
         biasBadge = { label: 'Subest.', className: 'text-[#4E79A7] rounded-lg border' };
+    } else if (data.bias === 'variable') {
+        biasBadge = { label: 'Variable', className: 'text-[#64748b] rounded-lg border' };
     }
 
     return (
@@ -31,10 +35,15 @@ export function MetacognitionBloomRow({ data, maxAttempted }: MetacognitionBloom
                 {BloomLevelLabel[data.bloom_level] ?? data.bloom_level}
             </p>
 
-            <div className="bg-[#e5e7eb] rounded-full h-2.5 flex-1 overflow-hidden">
+            <div className="bg-[#e5e7eb] rounded-full h-2.5 flex-1 relative overflow-visible">
                 <div
                     className="h-2.5 rounded-full transition-all duration-500"
-                    style={{ width: `${widthPercent}%`, backgroundColor: color }}
+                    style={{ width: `${actualPercent}%`, backgroundColor: color }}
+                />
+                <div
+                    className="absolute -top-0.5 -bottom-0.5 w-1 bg-[#0f172a] rounded-full -translate-x-1/2 shadow-xs transition-all duration-500"
+                    style={{ left: `${clampedExpected}%` }}
+                    title={`Esperado: ${data.expected_correct}`}
                 />
             </div>
 
