@@ -22,13 +22,15 @@ const NAV_ITEMS: NavItem[]=[
 
 interface SidebarProps{
     onClose: () => void;
+    isDisabled?: boolean;
 }
 
-export function Sidebar({onClose}: SidebarProps){
+export function Sidebar({onClose, isDisabled = false}: SidebarProps){
     const { signOut } = useAuth();
     const navigate = useNavigate();
 
     async function handleLogout() {
+        if (isDisabled) return;
         try {
             await signOut();
             navigate("/login", { replace: true });
@@ -38,7 +40,7 @@ export function Sidebar({onClose}: SidebarProps){
     }
 
 
-    return(
+    return (
         <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30">
 
             <div className="flex flex-row justify-between py-8">
@@ -60,6 +62,8 @@ export function Sidebar({onClose}: SidebarProps){
                     key={path}
                     to={path}
                     end={path === '/'}
+                    onClick={(e) => isDisabled && e.preventDefault()}
+                    tabIndex={isDisabled ? -1 : 0}
                     className={({ isActive }) =>
                         `flex flex-row px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150
                          ${isActive
