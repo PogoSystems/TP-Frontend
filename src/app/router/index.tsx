@@ -11,6 +11,8 @@ import {LoginPage} from "../../features/auth/page/loginPage.tsx";
 import {RegisterPage} from "../../features/auth/page/registerPage.tsx";
 import { GeneralProgressPage } from "../../features/metrics/page/generalProgressPage.tsx";
 import { ProfileAchievementsPage } from "../../features/profile/page/profileAchievementsPage.tsx";
+import {ForgotPasswordPage} from "../../features/auth/page/ForgotPasswordPage.tsx";
+import {ResetPasswordPage} from "../../features/auth/page/ResetPasswordPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +20,8 @@ export const router = createBrowserRouter([
         children: [
             { path: '/login', element: <LoginPage/> },
             {path: '/register', element: <RegisterPage/>},
+            {path: '/forgot-password', element: <ForgotPasswordPage/>},
+            {path: '/reset-password', element: <ResetPasswordPage/>},
         ]
     },
     {

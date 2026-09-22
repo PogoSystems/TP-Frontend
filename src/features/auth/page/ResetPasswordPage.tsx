@@ -5,29 +5,30 @@ import { Button } from "../../../shared/components/ui/button.tsx"
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx"
 import { useAuth } from "../hook/useAuth.ts"
 import { Link, useNavigate } from "react-router-dom"
-import { ArrowRight } from "lucide-react"
+import {ArrowLeft, ArrowRight} from "lucide-react"
 import { AuthSplitLayout } from "../components/authSplitLayout.tsx"
 import { ErrorState } from "../../../shared/components/ui/errorState.tsx"
-import { validateLoginData, type LoginFormData } from "../../../shared/utils/loginValidation.ts"
-import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
+import { useFormValidation } from "../../../shared/utils/useFormValidation.ts"
+import {type ResetPasswordFormData, validateResetPasswordData} from "../../../shared/utils/resetPasswordPage.ts";
 
-export function LoginPage() {
-    const [error, setError] = useState('')
+export function ResetPasswordPage() {
+    const [error, setError] = useState("")
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const { signIn } = useAuth()
+
+    const { updatePassword } = useAuth()
     const navigate = useNavigate()
 
-    const { values, errors, handleChange, validateAll } = useFormValidation<LoginFormData>(
+    const { values, errors, handleChange, validateAll } = useFormValidation<ResetPasswordFormData>(
         {
-            email: '',
-            password: '',
+            password: "",
+            confirmPassword: "",
         },
-        validateLoginData
+        validateResetPasswordData
     )
 
     async function handleSubmit(event: React.FormEvent) {
         event.preventDefault()
-        setError('')
+        setError("")
 
         if (!validateAll()) {
             return
@@ -36,10 +37,10 @@ export function LoginPage() {
         setIsSubmitting(true)
 
         try {
-            await signIn({ email: values.email, password: values.password })
-            navigate('/')
+            await updatePassword({ newPassword: values.password })
+            navigate("/login")
         } catch {
-            setError('Credenciales inválidas. Verifica tu correo y contraseña')
+            setError("No se pudo actualizar la contraseña. El enlace puede haber expirado.")
         } finally {
             setIsSubmitting(false)
         }
@@ -47,38 +48,24 @@ export function LoginPage() {
 
     return (
         <AuthSplitLayout
-            title="Iniciar sesión"
-            description="Bienvenido de nuevo. Por favor, ingresa tus credenciales."
+            title="Restablecer contraseña"
+            description="Crea una nueva contraseña segura para tu cuenta académica de Pogo."
             footer={
                 <p className="text-center text-[16px] leading-6 text-text-body">
-                    ¿No tienes cuenta? <Link to="/register" className="font-medium text-[#0060AC] hover:underline">Crear cuenta</Link>
+                    <Link to="/login" className="font-medium text-[#0060AC] hover:underline flex items-center justify-center gap-1">
+                        <ArrowLeft size={16} /> Volver al inicio de sesión
+                    </Link>
                 </p>
             }
         >
-            <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="flex flex-col gap-1">
                     <InputText
-                        label="Correo electrónico"
-                        name="email"
-                        placeholder="nombre@universidad.edu"
-                        value={values.email}
-                        onChange={(e) => handleChange('email', e.target.value)}
-                        type="email"
-                    />
-                    {errors.email && (
-                        <span className="text-xs text-red-500 font-medium pl-1">
-                            {errors.email}
-                        </span>
-                    )}
-                </div>
-
-                <div className="flex flex-col gap-1">
-                    <InputText
-                        label="Contraseña"
+                        label="Nueva contraseña"
                         name="password"
                         placeholder="••••••••"
                         value={values.password}
-                        onChange={(e) => handleChange('password', e.target.value)}
+                        onChange={(e) => handleChange("password", e.target.value)}
                         type="password"
                     />
                     {errors.password && (
@@ -88,10 +75,20 @@ export function LoginPage() {
                     )}
                 </div>
 
-                <div className="flex">
-                    <Link to="/forgot-password" type="button" className="text-[14px] font-medium leading-5 text-[#2B6CB0] hover:underline">
-                        ¿Olvidaste tu contraseña?
-                    </Link>
+                <div className="flex flex-col gap-1">
+                    <InputText
+                        label="Confirmar contraseña"
+                        name="confirmPassword"
+                        placeholder="••••••••"
+                        value={values.confirmPassword}
+                        onChange={(e) => handleChange("confirmPassword", e.target.value)}
+                        type="password"
+                    />
+                    {errors.confirmPassword && (
+                        <span className="text-xs text-red-500 font-medium pl-1">
+                            {errors.confirmPassword}
+                        </span>
+                    )}
                 </div>
 
                 <div className="pt-2">
@@ -101,11 +98,11 @@ export function LoginPage() {
                         text={
                             isSubmitting ? (
                                 <span className="flex items-center justify-center gap-2">
-                                    Iniciando sesión...
+                                    Guardando...
                                     <LoadSpinner width={23} height={23} monochrome />
                                 </span>
                             ) : (
-                                "Iniciar sesión"
+                                "Guardar contraseña"
                             )
                         }
                         icon={!isSubmitting ? <ArrowRight size={16} /> : undefined}
@@ -117,8 +114,8 @@ export function LoginPage() {
                 <div className="mt-4">
                     <ErrorState
                         variant="compact"
-                        title="Error al iniciar sesión"
-                        message="Verifica tus credenciales"
+                        title="Error al restablecer"
+                        message={error}
                         onRetry={() => setError("")}
                     />
                 </div>
