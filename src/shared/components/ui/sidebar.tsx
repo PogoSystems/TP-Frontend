@@ -1,7 +1,7 @@
 import { GiMonkey } from "react-icons/gi";
 import {BookOpen, Brain, Bug, LogOut, TrendingUp, UserRound, X} from 'lucide-react';
 import * as React from "react";
-import {NavLink, useNavigate} from "react-router-dom";
+import {Link, NavLink, useNavigate} from "react-router-dom";
 import {useAuth} from "../../../features/auth/hook/useAuth.ts";
 import {Button} from "./button.tsx";
 import {RestigiaWidget} from "./restigiaWidget.tsx";
@@ -45,7 +45,10 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
 
             <div className="flex flex-row justify-between py-8">
                 {/* App Name */}
-                <span className="font-logo text-accent-text font-bold text-4xl px-3">Pogo.</span>
+                <Link to={'/'}>
+                    <span className="font-logo text-accent-text font-bold text-4xl px-3">Pogo.</span>
+                </Link>
+
 
                 {/* Close button (mobile only)*/}
                 <button
