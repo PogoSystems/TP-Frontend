@@ -65,7 +65,15 @@ export function FileDropzone({onFilesSelected, maxFiles, currentCount}: FileDrop
                 <label htmlFor="file-upload" className={`bg-bg-button text-white px-5 py-2.5 rounded-lg cursor-pointer ${isDisabled ? 'cursor-not-allowed opacity-50' : ''}`}>
                    Seleccionar archivos
                 </label>
-                <input id="file-upload" type="file" multiple disabled={isDisabled} className="hidden" onChange={handleFileInputChange}/>
+                <input
+                    id="file-upload"
+                    type="file"
+                    multiple
+                    disabled={isDisabled}
+                    accept=".pdf,.ppt,.pptx,.doc,.docx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    className="hidden"
+                    onChange={handleFileInputChange}
+                />
             </div>
 
     )
