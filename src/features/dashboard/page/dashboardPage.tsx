@@ -125,21 +125,19 @@ export default function DashboardPage() {
                                     const Icon = style.icon;
                                     return (
                                         <Card key={activity.id}>
-                                            <div className="flex flex-row items-center gap-5 ">
-                                                <div>
+                                            <div className="flex flex-row items-start sm:items-center gap-3 sm:gap-5 min-w-0">
+                                                <div className="shrink-0 pt-0.5 sm:pt-0">
                                                     <Icon size={30} className={style.color} />
                                                 </div>
-                                                <div className="flex flex-col">
+                                                <div className="flex flex-col min-w-0 flex-1">
                                                     <Card.Header title={`${activity.title}`} />
-                                                    <Card.Content className="flex flex-col gap-5">
-                                                        <div>
-                                                            <p className="text-sm text-text-subtle">
-                                                                {activity.description}
-                                                            </p>
-                                                            <p className="text-xs font-light text-text-subtle">
-                                                                {activity.time}
-                                                            </p>
-                                                        </div>
+                                                    <Card.Content className="flex flex-col gap-1 mt-1">
+                                                        <p className="text-sm text-text-subtle break-words">
+                                                            {activity.description}
+                                                        </p>
+                                                        <p className="text-xs font-light text-text-subtle">
+                                                            {activity.time}
+                                                        </p>
                                                     </Card.Content>
                                                 </div>
                                             </div>

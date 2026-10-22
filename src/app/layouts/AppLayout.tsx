@@ -29,10 +29,10 @@ export default function AppLayout() {
     }
 
     return (
-        <div className="h-screen bg-bg-app grid lg:grid-cols-[auto_1fr] overflow-hidden">
+        <div className="h-dvh min-h-dvh bg-bg-app grid lg:grid-cols-[auto_1fr] overflow-hidden">
 
             {/* Sidebar */}
-            <aside className={`fixed h-screen z-30 lg:static transition-all duration-300 ease-in-out
+            <aside className={`fixed inset-y-0 left-0 z-30 w-64 lg:static lg:h-full lg:max-h-none transition-all duration-300 ease-in-out
                 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0
                 ${isQuizActive ? 'pointer-events-none opacity-40 select-none' : ''}`}>
                 <Sidebar onClose={() => setSidebarOpen(false)} isDisabled={isQuizActive} />

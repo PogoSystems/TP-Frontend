@@ -10,14 +10,15 @@ interface CardHeaderProps {
 }
 
 function CardHeader({ title, subtitle, className = "" }: CardHeaderProps) {
+    const isTruncate = className.includes('truncate');
     return (
-        <div className={`min-w-0 overflow-hidden ${className}`}>
+        <div className={`min-w-0 ${className}`}>
             {subtitle && (
                 <p className="text-icon-purple font-semibold text-sm truncate">
                     {subtitle}
                 </p>
             )}
-            <h2 className="text-text-title font-semibold lg:text-lg truncate block w-full [overflow-wrap:anywhere]">
+            <h2 className={`text-text-title font-semibold text-base lg:text-lg break-words ${isTruncate ? 'truncate' : 'line-clamp-2'}`}>
                 {title}
             </h2>
         </div>
