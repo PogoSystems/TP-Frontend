@@ -57,10 +57,10 @@ export function GeneralProgressPage() {
                 </div>
 
                 {/* Navigation Tabs */}
-                <div className="flex items-center gap-2 border-b border-gray-200">
+                <div className="flex items-center gap-2 border-b border-gray-200 overflow-x-auto whitespace-nowrap scrollbar-none pb-px">
                     <button
                         onClick={() => setSearchParams({ tab: 'general' })}
-                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                        className={`flex items-center gap-2 px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold border-b-2 transition-all cursor-pointer shrink-0 min-h-[44px] ${
                             activeTab === 'general'
                                 ? 'border-[#1a3a5a] text-[#1a3a5a]'
                                 : 'border-transparent text-[#64748b] hover:text-[#1a3a5a]'
@@ -71,7 +71,7 @@ export function GeneralProgressPage() {
                     </button>
                     <button
                         onClick={() => setSearchParams({ tab: 'metacognition' })}
-                        className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold border-b-2 transition-all cursor-pointer ${
+                        className={`flex items-center gap-2 px-3.5 sm:px-4 py-2.5 sm:py-3 text-xs sm:text-sm font-semibold border-b-2 transition-all cursor-pointer shrink-0 min-h-[44px] ${
                             activeTab === 'metacognition'
                                 ? 'border-[#1a3a5a] text-[#1a3a5a]'
                                 : 'border-transparent text-[#64748b] hover:text-[#1a3a5a]'

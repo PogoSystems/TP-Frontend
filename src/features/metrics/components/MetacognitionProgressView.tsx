@@ -93,8 +93,8 @@ export function MetacognitionProgressView() {
             {/* Header / Course contextual banner */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex flex-col gap-1">
-                    <h2 className="text-2xl font-semibold text-[#1a3a5a]">Progreso Metacognitivo</h2>
-                    <p className="text-sm text-[#4a5565]">
+                    <h2 className="text-xl sm:text-2xl font-semibold text-[#1a3a5a]">Progreso Metacognitivo</h2>
+                    <p className="text-xs sm:text-sm text-[#4a5565]">
                         Analiza tu autoevaluación, precisión de calibración y sesgo de juicio predictivo
                     </p>
                 </div>
