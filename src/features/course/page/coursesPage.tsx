@@ -15,15 +15,15 @@ export function CoursesPage() {
     return (
         <div className="flex flex-col min-h-full">
             {/* Header */}
-            <div className="flex flex-row justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <div className="flex flex-col gap-1">
-                    <h2 className="font-semibold text-4xl text-text-title">Mis cursos</h2>
-                    <p className="text-base text-text-subtle">
+                    <h2 className="font-semibold text-3xl sm:text-4xl text-text-title">Mis cursos</h2>
+                    <p className="text-sm sm:text-base text-text-subtle">
                         Gestiona tus cursos y material académico
                     </p>
                 </div>
 
-                <div className="max-h-11">
+                <div className="w-full sm:w-auto shrink-0">
                     <Button
                         text="Agregar curso"
                         icon={<Plus size={18} />}
