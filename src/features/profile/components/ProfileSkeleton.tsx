@@ -3,31 +3,31 @@ import { Skeleton } from '../../../shared/components/ui/skeletons.tsx';
 export function ProfileSkeleton() {
     return (
         <div className="flex flex-col gap-6 w-full">
-            {/* Carta Perfil (ProfileCard)*/}
-            <div className="bg-white border border-[#e5e7eb] rounded-[14px] px-6 pt-6 pb-5 flex flex-col gap-6">
+            {/* Carta Perfil (ProfileCard) */}
+            <div className="bg-white border border-[#e5e7eb] rounded-[14px] p-5 sm:p-6 flex flex-col gap-6 min-w-0">
                 {/* Tu perfil y Botón Editar perfil */}
-                <div className="flex items-start justify-between">
+                <div className="flex items-center justify-between gap-3">
                     <Skeleton className="h-7 w-28" />
-                    <Skeleton className="h-10 w-32 rounded-lg shrink-0" />
+                    <Skeleton className="h-10 w-28 sm:w-32 rounded-lg shrink-0" />
                 </div>
 
-                {/* Avatar */}
-                <div className="flex items-start gap-5">
-                    {/* Avatar circular*/}
-                    <Skeleton className="w-24 h-24 !rounded-full overflow-hidden shrink-0" />
+                {/* Avatar y Detalles */}
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 min-w-0">
+                    {/* Avatar circular */}
+                    <Skeleton className="size-20 sm:size-24 !rounded-full overflow-hidden shrink-0" />
 
                     {/* Detalles */}
-                    <div className="flex flex-col gap-1.5 flex-1 min-w-0 pt-1">
+                    <div className="flex flex-col items-center sm:items-start gap-2 flex-1 min-w-0 w-full pt-1">
                         {/* Nombre completo */}
-                        <Skeleton className="h-8 w-64" />
+                        <Skeleton className="h-7 sm:h-8 w-44 sm:w-64 max-w-full" />
 
                         {/* Carrera */}
-                        <Skeleton className="h-5 w-44" />
+                        <Skeleton className="h-4 sm:h-5 w-36 sm:w-44 max-w-full" />
 
-                        {/* Email y Universidad  */}
-                        <div className="flex flex-wrap gap-x-8 gap-y-2 mt-2">
-                            <Skeleton className="h-5 w-48" />
-                            <Skeleton className="h-5 w-40" />
+                        {/* Email y Universidad */}
+                        <div className="flex flex-wrap justify-center sm:justify-start gap-x-6 gap-y-2 mt-2 w-full">
+                            <Skeleton className="h-4 sm:h-5 w-40 max-w-full" />
+                            <Skeleton className="h-4 sm:h-5 w-32 max-w-full" />
                         </div>
                     </div>
                 </div>
