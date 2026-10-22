@@ -41,7 +41,7 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
 
 
     return (
-        <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30 overflow-y-auto">
+        <nav className="flex flex-col bg-bg-sidebar px-5 h-full w-64 z-30 overflow-y-auto overscroll-contain">
 
             <div className="flex flex-row justify-between py-6 shrink-0">
                 {/* App Name */}
@@ -107,7 +107,7 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
                 </a>
             </div>
 
-            <div className="flex flex-col mt-auto gap-4 py-6 shrink-0">
+            <div className="flex flex-col mt-6 lg:mt-auto gap-3 pt-4 pb-[max(2rem,env(safe-area-inset-bottom))] shrink-0 border-t border-gray-100/80 lg:border-t-0">
                 <RestigiaWidget />
                 <Button text="Cerrar sesión" icon={<LogOut size={18} />} variant="ghost" onClick={handleLogout}/>
             </div>
