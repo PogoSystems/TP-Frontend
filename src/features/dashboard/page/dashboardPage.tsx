@@ -28,41 +28,41 @@ export default function DashboardPage() {
         <div className="flex flex-col">
             {/* Header */}
             <div className="flex flex-col gap-1">
-                <h2 className="font-semibold text-4xl text-text-title">Hola, Usuario</h2>
-                <ul className="flex flex-row gap-5">
+                <h2 className="font-semibold text-3xl sm:text-4xl text-text-title">Hola, Usuario</h2>
+                <ul className="flex flex-row items-center overflow-x-auto sm:overflow-visible gap-3 sm:gap-5 py-2 scrollbar-none max-w-full">
                     <DashboardStat
                         title={`Racha actual ${currentStreak} días`}
-                        icon={<Flame className="text-accent-text" size={20} />}
+                        icon={<Flame className="text-accent-text shrink-0" size={18} />}
                     />
-                    <div className="border-l border-vertical-divider" aria-hidden="true" />
+                    <div className="border-l border-vertical-divider h-4 shrink-0" aria-hidden="true" />
 
                     <DashboardStat
                         title={`${totalQuizzes} Cuestionarios completados`}
-                        icon={<FileQuestionMark className="text-icon-green" size={20} />}
+                        icon={<FileQuestionMark className="text-icon-green shrink-0" size={18} />}
                     />
 
-                    <div className="border-l border-vertical-divider" aria-hidden="true" />
+                    <div className="border-l border-vertical-divider h-4 shrink-0" aria-hidden="true" />
                     <DashboardStat
                         title={`${totalCourses} cursos activos`}
-                        icon={<BookMarked className="text-icon-purple" size={20} />}
+                        icon={<BookMarked className="text-icon-purple shrink-0" size={18} />}
                     />
                 </ul>
             </div>
 
             {/* Banner */}
-            <div className="w-full pt-10">
-                <DashboardQuizCard />
+            <div className="w-full pt-6 sm:pt-10">
+                <DashboardQuizCard hasCourses={courses.length > 0} />
             </div>
 
             {/* Content */}
-            <div className="flex flex-col lg:flex-row justify-between pt-8 sm:pt-10 gap-8 lg:gap-10 min-w-0">
-                <div className="flex flex-col gap-5 flex-1">
+            <div className="flex flex-col lg:flex-row justify-between pt-6 sm:pt-10 gap-6 lg:gap-10 min-w-0">
+                <div className="flex flex-col gap-5 flex-1 min-w-0">
 
                     {/* My Courses */}
                     <div>
-                        <div className="flex flex-row justify-between pb-3.5">
+                        <div className="flex flex-row items-center justify-between pb-3.5 gap-2">
                             <h2 className="font-semibold text-lg text-text-title">Mis cursos</h2>
-                            <Link to={"/courses"} className="self-center">
+                            <Link to={"/courses"} className="self-center shrink-0">
                                 <Button text={"Ver todos"} variant={"ghost"} icon={<ArrowRight />} />
                             </Link>
                         </div>
