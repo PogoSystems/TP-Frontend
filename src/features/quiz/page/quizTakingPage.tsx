@@ -48,23 +48,23 @@ function QuizTakingContent({
     const isCorrectAnswer = selectedIndex !== null && currentQuestion.answers[selectedIndex]?.is_correct;
 
     return (
-        <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto py-8">
+        <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto py-4 sm:py-8 min-w-0">
 
             {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-2xl font-semibold text-[#1a3a5a] leading-tight">
+            <div className="flex flex-col-reverse sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
+                <div className="flex flex-col gap-1 min-w-0">
+                    <h1 className="text-xl sm:text-2xl font-semibold text-[#1a3a5a] leading-tight break-words">
                         {quiz.title}
                     </h1>
-                    <p className="text-base text-[#4a5565]">
+                    <p className="text-sm sm:text-base text-[#4a5565]">
                         Pregunta {currentIndex + 1} de {totalQuestions}
                     </p>
                 </div>
-                <div className={`flex items-center gap-2 px-4 py-2 rounded-xl shrink-0 transition-colors ${
+                <div className={`flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shrink-0 self-start transition-colors ${
                     secondsLeft <= 60 ? 'bg-red-50' : 'bg-[#f3f4f6]'
                 }`}>
                     <Clock size={18} className={secondsLeft <= 60 ? 'text-red-500' : 'text-[#1a3a5a]'} />
-                    <span className={`text-base font-medium tabular-nums ${
+                    <span className={`text-sm sm:text-base font-medium tabular-nums ${
                         secondsLeft <= 60 ? 'text-red-500' : 'text-[#1a3a5a]'
                     }`}>{formattedTime}</span>
                 </div>
@@ -74,14 +74,14 @@ function QuizTakingContent({
             <QuizProgressBar percentage={progressPercentage} />
 
             {/* Question card */}
-            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-8 flex flex-col gap-6">
+            <div className="bg-white border border-[#e5e7eb] rounded-2xl p-5 sm:p-8 flex flex-col gap-6 min-w-0">
 
                 {/* Bloom badge + question text */}
-                <div className="flex flex-col gap-3">
-                    <p className="text-sm font-semibold text-[#432dd7]">
+                <div className="flex flex-col gap-2 sm:gap-3">
+                    <p className="text-xs sm:text-sm font-semibold text-[#432dd7]">
                         Nivel de Bloom: {bloomLabel}
                     </p>
-                    <h2 className="text-xl font-semibold text-[#1a3a5a] leading-snug">
+                    <h2 className="text-lg sm:text-xl font-semibold text-[#1a3a5a] leading-snug break-words">
                         {currentQuestion.text}
                     </h2>
                 </div>
@@ -121,11 +121,11 @@ function QuizTakingContent({
             </div>
 
             {/* Footer actions */}
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 w-full">
                 <button
                     onClick={handleExit}
                     disabled={isSubmitting}
-                    className="text-base text-[#4a5565] hover:text-[#1a3a5a] transition-colors font-medium"
+                    className="text-sm sm:text-base text-[#4a5565] hover:text-[#1a3a5a] transition-colors font-medium py-2.5 px-4 text-center min-h-[44px] flex items-center justify-center cursor-pointer"
                 >
                     Salir del Quiz
                 </button>
@@ -135,10 +135,10 @@ function QuizTakingContent({
                         <button
                             onClick={handleConfirm}
                             disabled={selectedIndex === null || isSubmitting}
-                            className={`px-6 py-2.5 rounded-xl font-medium text-base transition-colors ${
+                            className={`w-full sm:w-auto px-6 py-2.5 rounded-xl font-medium text-sm sm:text-base transition-colors min-h-[44px] ${
                                 selectedIndex === null
                                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                                    : 'bg-[#092e5e] text-white hover:bg-[#1a3a5a]'
+                                    : 'bg-[#092e5e] text-white hover:bg-[#1a3a5a] cursor-pointer'
                             }`}
                         >
                             Confirmar
@@ -148,7 +148,7 @@ function QuizTakingContent({
                         <button
                             onClick={handleNext}
                             disabled={isSubmitting}
-                            className="px-6 py-2.5 rounded-xl font-medium text-base bg-[#092e5e] text-white hover:bg-[#1a3a5a] transition-colors"
+                            className="w-full sm:w-auto px-6 py-2.5 rounded-xl font-medium text-sm sm:text-base bg-[#092e5e] text-white hover:bg-[#1a3a5a] transition-colors min-h-[44px] cursor-pointer"
                         >
                             {isSubmitting
                                 ? "Enviando..."

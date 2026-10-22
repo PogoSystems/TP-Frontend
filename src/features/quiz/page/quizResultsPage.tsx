@@ -69,51 +69,51 @@ export function QuizResultsPage() {
     }
 
     return (
-        <div className="flex flex-col gap-6 w-full lg:max-w-[90%] mx-auto lg:mx-0 px-4 sm:px-6 py-6 sm:py-8">
+        <div className="flex flex-col gap-6 w-full lg:max-w-[90%] mx-auto lg:mx-0 py-2 sm:py-6 min-w-0">
 
             {/* Page title */}
             <div className="flex flex-col gap-1">
-                <h1 className="text-3xl font-semibold text-[#1a3a5a]">Resultados del Quiz</h1>
-                <p className="text-base text-[#4a5565]">
+                <h1 className="text-2xl sm:text-3xl font-semibold text-[#1a3a5a]">Resultados del Quiz</h1>
+                <p className="text-sm sm:text-base text-[#4a5565]">
                     Análisis detallado de tu dominio cognitivo del tema basado en la Taxonomía de Bloom.
                 </p>
             </div>
 
             {/* Top row: score card + bloom breakdown */}
-            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 items-start ">
+            <div className="grid grid-cols-1 lg:grid-cols-[auto_1fr] gap-4 items-start min-w-0">
 
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 w-full lg:w-80 shrink-0 min-w-0">
                     {/* Score card */}
-                    <Card className="flex flex-col items-center gap-4 !p-8  min-w-[350px]">
+                    <Card className="flex flex-col items-center gap-4 !p-6 sm:!p-8 w-full min-w-0">
                         <h2 className="text-xl font-semibold text-[#1a3a5a] w-full text-center">
                             Puntaje Total
                         </h2>
 
                         <div className="flex flex-col items-center gap-1">
-                            <p className="text-8xl font-semibold text-[#031632] leading-none tracking-tight">
+                            <p className="text-7xl sm:text-8xl font-semibold text-[#031632] leading-none tracking-tight">
                                 {totalScore}
                             </p>
-                            <p className="text-xl font-medium text-[#44474d]">puntos</p>
+                            <p className="text-lg sm:text-xl font-medium text-[#44474d]">puntos</p>
                         </div>
 
-                        <div className="flex gap-6 pt-2">
+                        <div className="flex gap-4 sm:gap-6 pt-2">
                             {/* Correct */}
                             <div className="flex flex-col items-start gap-1">
                                 <div className="flex items-center gap-2">
-                                    <CheckCircle size={22} className="text-[#0d542b]" />
-                                    <p className="text-2xl font-bold text-[#0d542b]">{correctCount}</p>
+                                    <CheckCircle size={20} className="text-[#0d542b] shrink-0" />
+                                    <p className="text-xl sm:text-2xl font-bold text-[#0d542b]">{correctCount}</p>
                                 </div>
-                                <p className="text-sm font-semibold text-[#4a5565] leading-tight">
+                                <p className="text-xs sm:text-sm font-semibold text-[#4a5565] leading-tight">
                                     Preguntas<br />Correctas
                                 </p>
                             </div>
                             {/* Incorrect */}
                             <div className="flex flex-col items-start gap-1">
                                 <div className="flex items-center gap-2">
-                                    <XCircle size={22} className="text-[#82181a]" />
-                                    <p className="text-2xl font-bold text-[#82181a]">{incorrectCount}</p>
+                                    <XCircle size={20} className="text-[#82181a] shrink-0" />
+                                    <p className="text-xl sm:text-2xl font-bold text-[#82181a]">{incorrectCount}</p>
                                 </div>
-                                <p className="text-sm font-semibold text-[#4a5565] leading-tight">
+                                <p className="text-xs sm:text-sm font-semibold text-[#4a5565] leading-tight">
                                     Preguntas<br />Incorrectas
                                 </p>
                             </div>
@@ -121,7 +121,7 @@ export function QuizResultsPage() {
                     </Card>
 
                     {/* Tip banner */}
-                    <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-5 py-4 max-w-[350px]">
+                    <div className="flex items-start gap-3 bg-blue-50 border border-blue-200 rounded-xl px-4 sm:px-5 py-4 w-full min-w-0">
                         <Lightbulb size={18} className="text-blue-700 shrink-0 mt-0.5" />
                         <p className="text-sm text-blue-800">
                             <span className="font-semibold">Tip: </span>
@@ -187,15 +187,14 @@ export function QuizResultsPage() {
                         </Card>
                     </div>
                     {/* CTA */}
-                    <div className="flex items-center justify-evenly shrink-0">
-                        <div className="max-w-2/4">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 w-full pt-2">
+                        <div className="w-full sm:w-auto">
                             <Button onClick={() => navigate('/courses')} text={'Volver a mis cursos'} variant={'secondary'}/>
                         </div>
 
-                        <div>
+                        <div className="w-full sm:w-auto">
                             <Button onClick={() => navigate('/quizzes')} text={'Generar nuevo quiz'} variant={'primary'}/>
                         </div>
-
                     </div>
 
 
