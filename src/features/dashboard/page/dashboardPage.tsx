@@ -51,7 +51,7 @@ export default function DashboardPage() {
 
             {/* Banner */}
             <div className="w-full pt-6 sm:pt-10">
-                <DashboardQuizCard />
+                <DashboardQuizCard hasCourses={courses.length > 0} />
             </div>
 
             {/* Content */}
