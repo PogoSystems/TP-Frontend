@@ -7,9 +7,9 @@ interface DashboardStatProps{
 
 export function DashboardStat({title, icon} : DashboardStatProps){
     return(
-        <li className="flex flex-row items-center gap-1 text-base">
+        <li className="flex flex-row items-center gap-1.5 text-xs sm:text-base shrink-0 whitespace-nowrap">
             {icon}
-            {title}
+            <span>{title}</span>
         </li>
     )
 }

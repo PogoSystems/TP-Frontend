@@ -99,14 +99,15 @@ export function CourseDetailPage() {
                 Regresar a Cursos
             </Link>
 
-            <div className="flex flex-row items-start justify-between">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl font-semibold text-text-title">{course.title}</h1>
-                    <p className="text-base text-text-subtle">{course.description}</p>
+            <div className="flex flex-row items-start justify-between gap-4">
+                <div className="flex flex-col gap-1 min-w-0 flex-1">
+                    <h1 className="text-2xl sm:text-3xl font-semibold text-text-title break-words">{course.title}</h1>
+                    <p className="text-sm sm:text-base text-text-subtle break-words">{course.description}</p>
                 </div>
                 <button
                     onClick={() => setIsEditModalOpen(true)}
-                    className="text-text-subtle hover:text-text-title transition-colors mt-2 mr-2 cursor-pointer"
+                    aria-label="Editar curso"
+                    className="text-text-subtle hover:text-text-title transition-colors p-2 rounded-lg hover:bg-gray-100 cursor-pointer shrink-0 min-h-[44px] min-w-[44px] flex items-center justify-center"
                 >
                     <Pencil size={20} />
                 </button>
@@ -143,14 +144,14 @@ export function CourseDetailPage() {
                         currentCount={0}
                     />
                 ) : (
-                    <div className="flex items-center justify-between border border-border-card rounded p-3">
-            <span className="text-sm text-text-body">
-                {syllabus.title}
-            </span>
+                    <div className="flex items-center justify-between gap-3 border border-border-card rounded-lg p-3 min-w-0">
+                        <span className="text-sm text-text-body truncate min-w-0 flex-1" title={syllabus.title}>
+                            {syllabus.title}
+                        </span>
 
                         <button
                             onClick={() => removeDocument(syllabus.id)}
-                            className="text-red-600 text-sm hover:underline cursor-pointer"
+                            className="text-red-600 text-sm hover:underline cursor-pointer shrink-0 py-1 px-2"
                         >
                             Eliminar
                         </button>
@@ -272,9 +273,9 @@ export function CourseDetailPage() {
                 </Card>
 
                 <Card className="flex flex-col gap-4 !p-6">
-                    <div className="flex items-center justify-between">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                         <div className="flex items-center gap-2">
-                            <TrendingUp size={20} className="text-text-subtle" />
+                            <TrendingUp size={20} className="text-text-subtle shrink-0" />
                             <h3 className="text-lg font-semibold text-text-title">
                                 Progreso en el tiempo
                             </h3>
@@ -284,7 +285,7 @@ export function CourseDetailPage() {
                                 onChange={(e) =>
                                     setGranularity(e.target.value as typeof granularity)
                                 }
-                                className="rounded-lg px-3 py-2 text-sm bg-white border border-gray-300">
+                                className="rounded-lg px-3 py-2 text-sm bg-white border border-gray-300 w-fit">
 
                             <option value={ProgressGranularity.WEEK}>
                                 Semanas

@@ -13,7 +13,7 @@ interface AuthSplitLayoutProps {
 
 export function AuthSplitLayout({ title, description, children, footer, brandPlacement = "top", brandSubtitle, contentMaxWidth = "lg:max-w-[372px]" }: AuthSplitLayoutProps) {
     return (
-        <Card className="w-full max-w-[840px] min-h-[566px] overflow-hidden border-0 px-0 py-0 shadow-[0px_4px_20px_0px_rgba(26,43,68,0.08)]">
+        <Card className="w-full max-w-[840px] min-h-auto lg:min-h-[566px] overflow-hidden border-0 px-0 py-0 shadow-[0px_4px_20px_0px_rgba(26,43,68,0.08)]">
             <div className="grid min-h-full grid-cols-1 lg:grid-cols-[333fr_467fr]">
                 <div className="relative hidden min-h-[566px] overflow-hidden bg-[linear-gradient(203.08deg,#441E1A_18.427%,#AC0000_97.693%)] px-8 py-10 text-white lg:block lg:px-12 lg:py-12">
                     <div className="absolute inset-0 opacity-20">
@@ -37,20 +37,24 @@ export function AuthSplitLayout({ title, description, children, footer, brandPla
                     </div>
                 </div>
 
-                <div className="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-12 lg:px-12 lg:py-12">
+                <div className="flex flex-col justify-center px-4 py-6 sm:px-10 sm:py-12 lg:px-12 lg:py-12">
                     <div className={`w-full max-w-full ${contentMaxWidth}`}>
-                        <header className="space-y-2 pb-8">
-                            <h1 className="text-[32px] font-semibold leading-10 tracking-[-0.01em] text-text-title">
+                        {/* Mobile brand logo */}
+                        <div className="lg:hidden pb-5">
+                            <span className="font-logo text-accent-text font-bold text-3xl">Pogo.</span>
+                        </div>
+                        <header className="space-y-1.5 pb-6 sm:pb-8">
+                            <h1 className="text-2xl sm:text-[32px] font-semibold leading-tight sm:leading-10 tracking-[-0.01em] text-text-title">
                                 {title}
                             </h1>
-                            <p className="text-[16px] leading-6 text-text-body">
+                            <p className="text-sm sm:text-[16px] leading-5 sm:leading-6 text-text-body">
                                 {description}
                             </p>
                         </header>
 
                         {children}
 
-                        {footer ? <div className="pt-8">{footer}</div> : null}
+                        {footer ? <div className="pt-6 sm:pt-8">{footer}</div> : null}
                     </div>
                 </div>
             </div>
