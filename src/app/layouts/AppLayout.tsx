@@ -49,14 +49,18 @@ export default function AppLayout() {
             <div className="flex flex-col min-w-0 h-full overflow-y-auto">
 
                 {/* Header mobile */}
-                <header className='w-full flex flex-row gap-3 lg:hidden p-6 bg-bg-sidebar '>
-                    <button onClick={() => setSidebarOpen(true)} className='hover:bg-accent-bg rounded-lg p-2 transition-colors'>
-                        <IoIosMenu size={30} className="fill-text-body" />
+                <header className='w-full flex flex-row items-center gap-3 lg:hidden px-4 py-3.5 bg-bg-sidebar border-b border-gray-100'>
+                    <button 
+                        onClick={() => setSidebarOpen(true)} 
+                        aria-label="Abrir menú"
+                        className='hover:bg-accent-bg rounded-lg p-2 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center'
+                    >
+                        <IoIosMenu size={28} className="fill-text-body" />
                     </button>
-                    <span className="font-logo text-accent-text font-bold text-4xl px-3 ">Pogo.</span>
+                    <span className="font-logo text-accent-text font-bold text-3xl px-1">Pogo.</span>
                 </header>
 
-                <main className="flex-1 px-10 lg:px-16 pt-14 pb-14 max-w-7xl mx-auto w-full">
+                <main className="flex-1 px-4 sm:px-6 lg:px-12 pt-6 sm:pt-10 pb-12 max-w-7xl mx-auto w-full">
                     {/* Pasamos setIsQuizActive a las páginas internas */}
                     <Outlet context={{ setIsQuizActive } satisfies AppLayoutContext} />
                 </main>

@@ -41,59 +41,73 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
 
 
     return (
-        <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30">
+        <nav className="flex flex-col bg-bg-sidebar px-5 h-screen w-64 z-30 overflow-y-auto">
 
-            <div className="flex flex-row justify-between py-8">
+            <div className="flex flex-row justify-between py-6 shrink-0">
                 {/* App Name */}
-                <Link to={'/'}>
+                <Link to={'/'} onClick={() => onClose()}>
                     <span className="font-logo text-accent-text font-bold text-4xl px-3">Pogo.</span>
                 </Link>
 
 
                 {/* Close button (mobile only)*/}
                 <button
-                onClick={onClose}
-                aria-label="Close sidebar"
-                className="lg:hidden absolute top-5 right-5 rounded-md p-1 text-text-subtle hover:bg-accent-bg transition-colors">
-                <X size={20}/>
+                    onClick={onClose}
+                    aria-label="Cerrar menú"
+                    className="lg:hidden absolute top-5 right-4 rounded-md p-2 text-text-subtle hover:bg-accent-bg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
+                    <X size={20}/>
                 </button>
             </div>
 
             {/* Navigation items */}
-            {NAV_ITEMS.map(({label, icon, path}) => (
-                <NavLink
-                    key={path}
-                    to={path}
-                    end={path === '/'}
-                    onClick={(e) => isDisabled && e.preventDefault()}
+            <div className="flex flex-col gap-1">
+                {NAV_ITEMS.map(({label, icon, path}) => (
+                    <NavLink
+                        key={path}
+                        to={path}
+                        end={path === '/'}
+                        onClick={(e) => {
+                            if (isDisabled) {
+                                e.preventDefault();
+                                return;
+                            }
+                            onClose();
+                        }}
+                        tabIndex={isDisabled ? -1 : 0}
+                        className={({ isActive }) =>
+                            `flex flex-row items-center px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150 min-h-[44px]
+                             ${isActive
+                                ? 'bg-accent-bg text-accent-text font-medium'
+                                : 'text-text-body hover:bg-accent-bg/50 hover:text-text-title'
+                            }`
+                        }
+                    >
+                        {icon}
+                        {label}
+                    </NavLink>
+                ))}
+
+                {/* External report link */}
+                <a
+                    href="https://docs.google.com/forms/d/e/1FAIpQLScpDKaaeQoOr_jRmSh8IOcpNLd2wJWBZqM5AZ-YjWde5U1rcQ/viewform?usp=dialog"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => {
+                        if (isDisabled) {
+                            e.preventDefault();
+                            return;
+                        }
+                        onClose();
+                    }}
                     tabIndex={isDisabled ? -1 : 0}
-                    className={({ isActive }) =>
-                        `flex flex-row px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150
-                         ${isActive
-                            ? 'bg-accent-bg text-accent-text font-medium'
-                            : 'text-text-body hover:bg-accent-bg/50 hover:text-text-title'
-                        }`
-                    }
+                    className="flex flex-row items-center px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150 text-text-body hover:bg-accent-bg/50 hover:text-text-title min-h-[44px]"
                 >
-                    {icon}
-                    {label}
-                </NavLink>
-            ))}
+                    <Bug size={20} />
+                    Reportar errores
+                </a>
+            </div>
 
-            {/* External report link */}
-            <a
-                href="https://docs.google.com/forms/d/e/1FAIpQLScpDKaaeQoOr_jRmSh8IOcpNLd2wJWBZqM5AZ-YjWde5U1rcQ/viewform?usp=dialog"
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(e) => isDisabled && e.preventDefault()}
-                tabIndex={isDisabled ? -1 : 0}
-                className="flex flex-row px-3 py-2.5 font-body gap-3 rounded-lg transition-colors duration-150 text-text-body hover:bg-accent-bg/50 hover:text-text-title"
-            >
-                <Bug size={20} />
-                Reportar errores
-            </a>
-
-            <div className="flex flex-col mt-auto gap-4 py-6">
+            <div className="flex flex-col mt-auto gap-4 py-6 shrink-0">
                 <RestigiaWidget />
                 <Button text="Cerrar sesión" icon={<LogOut size={18} />} variant="ghost" onClick={handleLogout}/>
             </div>
