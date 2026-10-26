@@ -8,6 +8,8 @@ const ALLOWED_FILE_TYPES = [
     'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 ]
 
+const ALLOWED_EXTENSIONS = ['.pdf', '.doc', '.docx', '.ppt', '.pptx']
+
 export interface FileValidationResult {
     validFiles: File[]
     rejectedFiles: { file: File; reason: string }[]
@@ -18,7 +20,11 @@ export function validateFiles(files: File[]): FileValidationResult {
     const rejectedFiles: { file: File; reason: string }[] = []
 
     for (const file of files) {
-        if (!ALLOWED_FILE_TYPES.includes(file.type)) {
+        const fileExtension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase()
+        const hasValidType = ALLOWED_FILE_TYPES.includes(file.type)
+        const hasValidExtension = ALLOWED_EXTENSIONS.includes(fileExtension)
+
+        if (!hasValidType && !hasValidExtension) {
             rejectedFiles.push({ file, reason: 'Formato no permitido. Solo PDF, Word o PowerPoint.' })
             continue
         }
