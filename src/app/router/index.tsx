@@ -13,10 +13,12 @@ import { GeneralProgressPage } from "../../features/metrics/page/generalProgress
 import { ProfileAchievementsPage } from "../../features/profile/page/profileAchievementsPage.tsx";
 import {ForgotPasswordPage} from "../../features/auth/page/ForgotPasswordPage.tsx";
 import {ResetPasswordPage} from "../../features/auth/page/ResetPasswordPage.tsx";
+import { RouteErrorBoundary } from "../../shared/components/ui/routeErrorBoundary.tsx";
 
 export const router = createBrowserRouter([
     {
         element: <AuthLayout />,
+        errorElement: <RouteErrorBoundary />,
         children: [
             { path: '/login', element: <LoginPage/> },
             {path: '/register', element: <RegisterPage/>},
@@ -26,6 +28,7 @@ export const router = createBrowserRouter([
     },
     {
         element: <AppLayout />,
+        errorElement: <RouteErrorBoundary />,
         children: [
             { path: '/', element: <DashboardPage /> },
             { path: '/courses', element: <CoursesPage /> },
