@@ -1,22 +1,34 @@
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { FileDropzone } from "../../../shared/components/ui/fileDropzone.tsx";
 import { FileListItem } from "../../../shared/components/ui/fileListItem.tsx";
 import { Card } from "../../../shared/components/ui/card.tsx";
 import { Button } from "../../../shared/components/ui/button.tsx";
 import { InputText } from "../../../shared/components/ui/inputText.tsx";
+import { Toast, type ToastType } from "../../../shared/components/ui/toast.tsx";
 import { BloomLevelCard } from "../components/bloomLevelCard.tsx";
 import { useCreateQuiz } from "../hook/useCreateQuiz.ts";
 import { Select } from "../../../shared/components/ui/select.tsx";
 import { MultiSelectDropdown } from "../../../shared/components/ui/multiSelectDropdown.tsx";
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
-import {GameLoader} from "../../../shared/utils/gameLoader.tsx";
-import {ErrorState} from "../../../shared/components/ui/errorState.tsx";
-
+import { GameLoader } from "../../../shared/utils/gameLoader.tsx";
+import { ErrorState } from "../../../shared/components/ui/errorState.tsx";
 
 const MAX_FILES = 3;
 
 export function CreateQuizPage() {
     const navigate = useNavigate();
+    const sourceMaterialRef = useRef<HTMLDivElement>(null);
+
+    const [toast, setToast] = useState<{ isOpen: boolean; message: string; type: ToastType }>({
+        isOpen: false,
+        message: "",
+        type: "success"
+    });
+
+    const triggerToast = (message: string, type: ToastType = "success") => {
+        setToast({ isOpen: true, message, type });
+    };
 
     const {
         bloomLevels,
@@ -39,7 +51,16 @@ export function CreateQuizPage() {
         canGenerate,
     } = useCreateQuiz();
 
-    const documentOptions = availableDocuments.map((doc) => ({ value: String(doc.id), label: doc.title }));
+    const hasSelectedCourse = Boolean(values.selectedCourseId);
+
+    const hasSyllabus = availableDocuments.some((doc) => doc.syllabus === true);
+
+    const documentOptions = availableDocuments
+        .filter((doc) => doc.syllabus !== true)
+        .map((doc) => ({
+            value: String(doc.id),
+            label: doc.title,
+        }));
 
     async function handleSubmit() {
         try {
@@ -53,7 +74,7 @@ export function CreateQuizPage() {
                 });
             }
         } catch {
-            // Error manejado en el hook useCreateQuiz
+            // Error manejado en el hook
         }
     }
 
@@ -89,9 +110,17 @@ export function CreateQuizPage() {
                                 options={documentOptions}
                                 selectedValues={values.selectedDocumentIds}
                                 onChange={(selected) => handleChange('selectedDocumentIds', selected)}
-                                placeholder={values.selectedCourseId ? 'Selecciona uno o varios documentos' : 'Primero elige un curso'}
+                                placeholder="Selecciona uno o varios documentos"
                                 isLoading={isLoadingDocuments}
-                                disabled={!values.selectedCourseId}
+                                disabled={!hasSelectedCourse}
+                                hasSelectedCourse={hasSelectedCourse}
+                                hasSyllabus={hasSyllabus}
+                                onGoToSourceMaterial={() => {
+                                    sourceMaterialRef.current?.scrollIntoView({ behavior: "smooth" });
+                                }}
+                                onGoToCourseDetail={() => {
+                                    navigate(`/courses/${values.selectedCourseId}`);
+                                }}
                             />
                         </div>
 
@@ -183,14 +212,18 @@ export function CreateQuizPage() {
                         </div>
                     </div>
 
-                    <div className="flex flex-col pb-6">
+                    <div ref={sourceMaterialRef} className="flex flex-col pb-6 scroll-mt-6">
                         <p className="text-text-title font-medium text-sm">Material de origen</p>
                         <p className="text-sm font-light text-text-subtle pb-3">Sube nuevos documentos para generar cuestionarios a partir de ellos</p>
                         <div className="flex flex-col gap-4">
                             <FileDropzone
-                                onFilesSelected={addFiles}
+                                onFilesSelected={(files) => {
+                                    addFiles(files);
+                                    triggerToast("Archivos agregados exitosamente", "success");
+                                }}
                                 maxFiles={MAX_FILES}
                                 currentCount={fileEntries.length}
+                                onError={(msg) => triggerToast(msg, "error")}
                             />
                             {fileEntries.map((entry, index) => (
                                 <div key={`${entry.file.name}-${index}`} className="flex flex-col gap-1">
@@ -247,6 +280,13 @@ export function CreateQuizPage() {
             </Card>
 
             {isGenerating && <GameLoader />}
+
+            <Toast
+                isOpen={toast.isOpen}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(prev => ({ ...prev, isOpen: false }))}
+            />
         </>
     );
 }

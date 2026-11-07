@@ -51,9 +51,11 @@ export function RegisterPage() {
                     major: values.major,
                 }
             )
+            localStorage.setItem(`pending_terms_${values.email.toLowerCase()}`, "true");
+
             setIsSubmitting(false)
             navigate("/login")
-        } catch (err:any) {
+        } catch (err: any) {
             setIsSubmitting(false)
             const errorMessage = err?.message?.toLowerCase() || '';
             if (errorMessage.includes('user already registered') || errorMessage.includes('already registered')) {
@@ -217,6 +219,13 @@ export function RegisterPage() {
                         icon={!isSubmitting ? <ArrowRight size={16} /> : undefined}
                     />
                 </div>
+                <p className="text-xs text-center text-text-subtle mt-3">
+                    Al registrarte, reconoces haber leído nuestra{" "}
+                    <Link to="/terms" className="text-[#0060AC] underline hover:text-blue-800">
+                        Política de Privacidad
+                    </Link>{" "}
+                    y tratamiento de datos personales.
+                </p>
             </form>
 
             {error && (

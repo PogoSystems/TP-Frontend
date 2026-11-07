@@ -14,6 +14,7 @@ import { ProfileAchievementsPage } from "../../features/profile/page/profileAchi
 import {ForgotPasswordPage} from "../../features/auth/page/ForgotPasswordPage.tsx";
 import {ResetPasswordPage} from "../../features/auth/page/ResetPasswordPage.tsx";
 import { RouteErrorBoundary } from "../../shared/components/ui/routeErrorBoundary.tsx";
+import {TermsPage} from "../../features/terms/page/termsPage.tsx";
 
 export const router = createBrowserRouter([
     {
@@ -38,6 +39,8 @@ export const router = createBrowserRouter([
             { path: '/quiz/results', element: <QuizResultsPage /> },
             { path: '/progress', element: <GeneralProgressPage /> },
             { path: '/profile-achievements', element: <ProfileAchievementsPage /> },
+            { path: '/terms', element: <TermsPage/> },
+            { path: '*', element: <RouteErrorBoundary /> }
         ]
     }
 ])

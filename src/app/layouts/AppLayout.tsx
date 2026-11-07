@@ -1,8 +1,9 @@
-import {Navigate, Outlet} from "react-router-dom";
-import {Sidebar} from "../../shared/components/ui/sidebar.tsx";
+import { Navigate, Outlet } from "react-router-dom";
+import { Sidebar } from "../../shared/components/ui/sidebar.tsx";
 import { IoIosMenu } from "react-icons/io";
-import {useState} from "react";
-import {useSession} from "../../features/auth/hook/useSession.ts";
+import { useState, useEffect } from "react";
+import { useSession } from "../../features/auth/hook/useSession.ts";
+import {TermsModal} from "../../shared/components/ui/termsModal.tsx";
 
 export interface AppLayoutContext {
     setIsQuizActive: (active: boolean) => void;
@@ -12,8 +13,30 @@ export default function AppLayout() {
     const { session, isCheckingSession } = useSession();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isQuizActive, setIsQuizActive] = useState(false);
+    const [showTermsModal, setShowTermsModal] = useState(false);
 
-    // While checking the session, show a loading screen 
+    useEffect(() => {
+        if (session?.user?.email) {
+            const userEmail = session.user.email.toLowerCase();
+            const pendingKey = `pending_terms_${userEmail}`;
+            const acceptedKey = `accepted_terms_${userEmail}`;
+
+            if (localStorage.getItem(pendingKey) === "true" || !localStorage.getItem(acceptedKey)) {
+                setShowTermsModal(true);
+            }
+        }
+    }, [session]);
+
+    const handleAcceptTerms = () => {
+        if (session?.user?.email) {
+            const userEmail = session.user.email.toLowerCase();
+            localStorage.removeItem(`pending_terms_${userEmail}`);
+            localStorage.setItem(`accepted_terms_${userEmail}`, "true");
+        }
+        setShowTermsModal(false);
+    };
+
+    // While checking the session, show a loading screen
     if (isCheckingSession) {
         return (
             <div className="h-screen flex flex-col items-center justify-center gap-3 bg-bg-app">
@@ -24,8 +47,8 @@ export default function AppLayout() {
     }
 
     // If there is no session, redirect to the login page
-    if(!session){
-        return <Navigate to={'/login'} replace/>
+    if (!session) {
+        return <Navigate to={'/login'} replace />;
     }
 
     return (
@@ -50,8 +73,8 @@ export default function AppLayout() {
 
                 {/* Header mobile */}
                 <header className='w-full flex flex-row items-center gap-3 lg:hidden px-4 py-3.5 bg-bg-sidebar border-b border-gray-100'>
-                    <button 
-                        onClick={() => setSidebarOpen(true)} 
+                    <button
+                        onClick={() => setSidebarOpen(true)}
                         aria-label="Abrir menú"
                         className='hover:bg-accent-bg rounded-lg p-2 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center'
                     >
@@ -61,11 +84,15 @@ export default function AppLayout() {
                 </header>
 
                 <main className="flex-1 px-4 sm:px-6 lg:px-12 pt-6 sm:pt-10 pb-12 max-w-7xl mx-auto w-full">
-                    {/* Pasamos setIsQuizActive a las páginas internas */}
                     <Outlet context={{ setIsQuizActive } satisfies AppLayoutContext} />
                 </main>
 
             </div>
+
+            <TermsModal
+                isOpen={showTermsModal}
+                onAccept={handleAcceptTerms}
+            />
         </div>
     );
 }

@@ -1,12 +1,12 @@
 import { GiMonkey } from "react-icons/gi";
-import {BookOpen, Brain, Bug, LogOut, TrendingUp, UserRound, X} from 'lucide-react';
+import { BookOpen, Brain, Bug, LogOut, ShieldCheck, TrendingUp, UserRound, X } from 'lucide-react';
 import * as React from "react";
-import {Link, NavLink, useNavigate} from "react-router-dom";
-import {useAuth} from "../../../features/auth/hook/useAuth.ts";
-import {Button} from "./button.tsx";
-import {RestigiaWidget} from "./restigiaWidget.tsx";
+import { Link, NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../features/auth/hook/useAuth.ts";
+import { Button } from "./button.tsx";
+import { RestigiaWidget } from "./restigiaWidget.tsx";
 
-interface NavItem{
+interface NavItem {
     label: string;
     icon: React.ReactNode;
     path: string;
@@ -17,15 +17,16 @@ const NAV_ITEMS: NavItem[]=[
     {label: 'Curso', icon: <BookOpen size={20}/>, path: '/courses' },
     {label: 'Cuestionarios', icon: <Brain  size={20}/>, path: '/quizzes' },
     {label: 'Progreso', icon: <TrendingUp  size={20}/>, path: '/progress' },
-    {label: 'Perfil y Logros', icon: <UserRound size={20}/>, path: '/profile-achievements' }
+    {label: 'Perfil y Logros', icon: <UserRound size={20}/>, path: '/profile-achievements' },
+    { label: 'Términos y Privacidad', icon: <ShieldCheck size={20} />, path: '/terms' }
 ]
 
-interface SidebarProps{
+interface SidebarProps {
     onClose: () => void;
     isDisabled?: boolean;
 }
 
-export function Sidebar({onClose, isDisabled = false}: SidebarProps){
+export function Sidebar({ onClose, isDisabled = false }: SidebarProps) {
     const { signOut } = useAuth();
     const navigate = useNavigate();
 
@@ -39,7 +40,6 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
         }
     }
 
-
     return (
         <nav className="flex flex-col bg-bg-sidebar px-5 h-full w-64 z-30 overflow-y-auto overscroll-contain">
 
@@ -49,19 +49,18 @@ export function Sidebar({onClose, isDisabled = false}: SidebarProps){
                     <span className="font-logo text-accent-text font-bold text-4xl px-3">Pogo.</span>
                 </Link>
 
-
-                {/* Close button (mobile only)*/}
+                {/* Close button (mobile only) */}
                 <button
                     onClick={onClose}
                     aria-label="Cerrar menú"
                     className="lg:hidden absolute top-5 right-4 rounded-md p-2 text-text-subtle hover:bg-accent-bg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
-                    <X size={20}/>
+                    <X size={20} />
                 </button>
             </div>
 
             {/* Navigation items */}
             <div className="flex flex-col gap-1">
-                {NAV_ITEMS.map(({label, icon, path}) => (
+                {NAV_ITEMS.map(({ label, icon, path }) => (
                     <NavLink
                         key={path}
                         to={path}

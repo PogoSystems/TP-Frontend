@@ -25,3 +25,4 @@ project_context.md
 *.njsproj
 *.sln
 *.sw?
+.vercel

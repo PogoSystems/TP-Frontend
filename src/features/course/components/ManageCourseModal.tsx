@@ -8,28 +8,39 @@ import type { CourseResponse } from "../types/course.types.ts";
 import { useState, useEffect } from "react";
 import { createCourse, updateCourse } from "../services/courseService.ts";
 import { validateCourseData, type CourseFormData } from "../../../shared/utils/courseValidation.ts";
-import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
+import { useFormValidation } from "../../../shared/utils/useFormValidation.ts";
 
 interface ManageCourseModalProps {
     isOpen: boolean;
     onClose: () => void;
     onCourseCreated?: (course: CourseResponse) => void;
     onCourseUpdated?: (course: CourseResponse) => void;
+    onError?: (message: string) => void;
     initialData?: { id: number; name: string; description: string };
     mode?: 'create' | 'edit';
+    existingCourses?: { name: string }[];
 }
 
-export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUpdated, initialData, mode = 'create' }: ManageCourseModalProps) {
+export function ManageCourseModal({isOpen, onClose, onCourseCreated, onCourseUpdated, onError, initialData, mode = 'create', existingCourses = []}: ManageCourseModalProps) {
     const [error, setError] = useState("");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const existingCourseNames = existingCourses.map(course => course.name);
 
     const { values, errors, handleChange, validateAll, resetForm } = useFormValidation<CourseFormData>(
         {
             name: "",
             description: "",
         },
-        validateCourseData
+        (data) => validateCourseData(
+            data,
+            existingCourseNames,
+            initialData?.id,
+            initialData?.name
+        )
     );
+
+    const hasActiveErrors = Boolean(errors.name) || Boolean(errors.description);
 
     useEffect(() => {
         if (isOpen) {
@@ -59,21 +70,26 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
         try {
             if (mode === 'edit' && initialData) {
                 const updated = await updateCourse(initialData.id, {
-                    name: values.name,
-                    description: values.description,
+                    name: values.name.trim(),
+                    description: values.description.trim(),
                     max_score: 0
                 });
                 onCourseUpdated?.(updated);
             } else {
                 const course = await createCourse({
-                    name: values.name,
-                    description: values.description
+                    name: values.name.trim(),
+                    description: values.description.trim()
                 });
                 onCourseCreated?.(course);
             }
             onClose();
         } catch {
-            setError(mode === 'edit' ? "Hubo un error al actualizar el curso. Inténtalo de nuevo." : "Hubo un error al crear el curso. Inténtalo de nuevo.");
+            const errorMsg = mode === 'edit'
+                ? "Hubo un error al actualizar el curso. Inténtalo de nuevo."
+                : "Hubo un error al crear el curso. Inténtalo de nuevo.";
+
+            setError(errorMsg);
+            onError?.(errorMsg);
         } finally {
             setIsSubmitting(false);
         }
@@ -152,7 +168,8 @@ export function ManageCourseModal({ isOpen, onClose, onCourseCreated, onCourseUp
                             )
                         }
                         onClick={handleSave}
-                        disabled={isSubmitting}
+                        // Solo se deshabilita si se está enviando o si hay un error visible (como nombre repetido)
+                        disabled={isSubmitting || hasActiveErrors}
                     />
                 </div>
             </div>
