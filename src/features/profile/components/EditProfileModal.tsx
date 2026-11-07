@@ -6,16 +6,18 @@ import { updateProfile } from '../services/profileService';
 import type { UserProfileResponse } from '../types/profile.types';
 import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
 import { validateProfileData, type ProfileFormData } from '../../../shared/utils/profileValidation';
-import {useFormValidation} from "../../../shared/utils/useFormValidation.ts";
+import { useFormValidation } from "../../../shared/utils/useFormValidation.ts";
+import { type ToastType } from "../../../shared/components/ui/toast.tsx";
 
 interface EditProfileModalProps {
     isOpen: boolean;
     onClose: () => void;
     user: UserProfileResponse;
     onSuccess: () => void;
+    triggerToast?: (message: string, type: ToastType) => void;
 }
 
-export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfileModalProps) {
+export function EditProfileModal({ isOpen, onClose, user, onSuccess, triggerToast }: EditProfileModalProps) {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -28,6 +30,8 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
         },
         validateProfileData
     );
+
+    const hasActiveErrors = Boolean(errors.name) || Boolean(errors.lastName) || Boolean(errors.college) || Boolean(errors.major);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -46,10 +50,14 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                 college: values.college !== user.college ? values.college : null,
                 major: values.major !== user.major ? values.major : null,
             });
+
+            triggerToast?.("Perfil actualizado exitosamente", "success");
             onSuccess();
             onClose();
         } catch (err: any) {
-            setError(err.response?.data?.detail || 'Ocurrió un error al actualizar el perfil.');
+            const errorMsg = err.response?.data?.detail || 'Ocurrió un error al actualizar el perfil.';
+            setError(errorMsg);
+            triggerToast?.(errorMsg, "error");
         } finally {
             setIsLoading(false);
         }
@@ -77,6 +85,7 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
                             value={values.name}
                             onChange={(e) => handleChange('name', e.target.value)}
                             placeholder="Ej: Ana"
+                            required
                         />
                         {errors.name && (
                             <span className="text-xs text-red-500 font-medium pl-1">
@@ -135,16 +144,20 @@ export function EditProfileModal({ isOpen, onClose, user, onSuccess }: EditProfi
 
                     <div className="flex justify-end gap-3 mt-4">
                         <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading} text="Cancelar" />
-                        <Button type="submit" variant="primary" disabled={isLoading} text={
-                            isLoading ? (
-                                <span className="flex items-center gap-2">
+                        <Button
+                            type="submit"
+                            variant="primary"
+                            disabled={isLoading || hasActiveErrors}
+                            text={
+                                isLoading ? (
+                                    <span className="flex items-center gap-2">
                                         <LoadSpinner width={20} height={20} monochrome />
                                         Guardando...
                                     </span>
-                            ) : (
-                                "Guardar Cambios"
-                            )
-                        }
+                                ) : (
+                                    "Guardar Cambios"
+                                )
+                            }
                         />
                     </div>
                 </form>

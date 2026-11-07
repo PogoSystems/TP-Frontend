@@ -8,6 +8,7 @@ import { FileDropzone } from '../../../shared/components/ui/fileDropzone.tsx';
 import { HorizontalBarChart } from '../../../shared/components/ui/horizontalBarChart.tsx';
 import { BloomRadarChart } from '../../../shared/components/ui/bloomRadarChart.tsx';
 import { LineChart } from '../../../shared/components/ui/lineChart.tsx';
+import { Toast, type ToastType } from "../../../shared/components/ui/toast.tsx";
 import { UseCourseDetail } from "../hook/useCourseDetail.ts";
 import { useCourseDocuments } from "../../../shared/hooks/useCourseDocuments.ts";
 import { useUploadSyllabus } from "../hook/useUploadSyllabus.ts";
@@ -21,8 +22,8 @@ import { useCourseAnalytics } from "../hook/useCourseAnalytics.ts";
 import { BloomLevel } from "../../../shared/types/bloomLevel.ts";
 import { useCourseProgress } from "../hook/useCourseProgress.ts";
 import { ProgressGranularity } from "../../../shared/utils/progress.ts";
-import {LoadSpinner} from "../../../shared/components/ui/loadSpinner.tsx";
-import {CourseDetailSkeleton} from "../components/CourseDetailSkeleton.tsx";
+import { LoadSpinner } from "../../../shared/components/ui/loadSpinner.tsx";
+import { CourseDetailSkeleton } from "../components/CourseDetailSkeleton.tsx";
 
 export function CourseDetailPage() {
     const { courseId } = useParams<{ courseId: string }>();
@@ -43,6 +44,17 @@ export function CourseDetailPage() {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    const [toast, setToast] = useState<{ isOpen: boolean; message: string; type: ToastType }>({
+        isOpen: false,
+        message: "",
+        type: "success"
+    });
+
+    const triggerToast = (message: string, type: ToastType = "success") => {
+        setToast({ isOpen: true, message, type });
+    };
+
     const navigate = useNavigate();
     const BLOOM_LEVELS: BloomLevel[] = Object.values(BloomLevel);
     const { progress, granularity, setGranularity } = useCourseProgress(numericCourseId);
@@ -56,15 +68,26 @@ export function CourseDetailPage() {
         setIsDeleting(true);
         try {
             await deleteCourse(numericCourseId);
-            navigate('/courses');
-        } catch (error) {
+            navigate('/courses', {
+                state: { toastMessage: "Curso eliminado exitosamente", toastType: "success" }
+            });
+        } catch (error: any) {
             console.error("Failed to delete course", error);
-            setIsDeleting(false);
+
+            const isNotFound = error?.response?.status === 404 || error?.status === 404;
+
+            if (isNotFound) {
+                navigate('/courses', {
+                    state: { toastMessage: "Este curso ya ha sido eliminado previamente.", toastType: "error" }
+                });
+            } else {
+                triggerToast("Hubo un error al eliminar el curso. Inténtalo de nuevo.", "error");
+                setIsDeleting(false);
+            }
         }
     };
     const { syllabus, addDocument, removeDocument } = useCourseDocuments(numericCourseId);
 
-    // Carga inicial
     if (isLoading || loadingAnalytics) {
         return <CourseDetailSkeleton />;
     }
@@ -120,7 +143,9 @@ export function CourseDetailPage() {
                 initialData={{ id: numericCourseId, name: course.title, description: course.description }}
                 onCourseUpdated={(updated) => {
                     setCourse(toCourseDetail(updated));
+                    triggerToast("Curso actualizado exitosamente", "success");
                 }}
+                onError={(msg) => triggerToast(msg, "error")}
             />
 
             <Card className="flex flex-col gap-4 !p-6">
@@ -137,11 +162,17 @@ export function CourseDetailPage() {
                             const file = files[0];
                             if (!file) return;
 
-                            const created = await uploadSyllabus(file);
-                            addDocument(created);
+                            try {
+                                const created = await uploadSyllabus(file);
+                                addDocument(created);
+                                triggerToast("Sílabo subido exitosamente", "success");
+                            } catch (error) {
+                                triggerToast("Hubo un error al subir el sílabo. Inténtalo de nuevo.", "error");
+                            }
                         }}
                         maxFiles={1}
                         currentCount={0}
+                        onError={(msg) => triggerToast(msg, "error")}
                     />
                 ) : (
                     <div className="flex items-center justify-between gap-3 border border-border-card rounded-lg p-3 min-w-0">
@@ -150,7 +181,14 @@ export function CourseDetailPage() {
                         </span>
 
                         <button
-                            onClick={() => removeDocument(syllabus.id)}
+                            onClick={async () => {
+                                try {
+                                    await removeDocument(syllabus.id);
+                                    triggerToast("Sílabo eliminado exitosamente", "success");
+                                } catch (error) {
+                                    triggerToast("Hubo un error al eliminar el sílabo. Inténtalo de nuevo.", "error");
+                                }
+                            }}
                             className="text-red-600 text-sm hover:underline cursor-pointer shrink-0 py-1 px-2"
                         >
                             Eliminar
@@ -166,7 +204,7 @@ export function CourseDetailPage() {
                     className="w-full flex items-center justify-between p-4 bg-white border border-[#e5e7eb] rounded-xl hover:bg-gray-50 transition-colors cursor-pointer"
                 >
                     <div className="flex items-center gap-3">
-                        <div className="p-2  text-blue-600 rounded-lg">
+                        <div className="p-2 text-blue-600 rounded-lg">
                             <RotateCcw size={20} />
                         </div>
                         <span className="font-medium text-text-title">Reintentar cuestionarios pasados</span>
@@ -340,6 +378,13 @@ export function CourseDetailPage() {
                     </div>
                 </div>
             </Modal>
+
+            <Toast
+                isOpen={toast.isOpen}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }

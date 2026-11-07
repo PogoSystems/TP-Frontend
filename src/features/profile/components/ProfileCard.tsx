@@ -2,17 +2,19 @@ import { useState } from 'react';
 import { Mail, MapPin } from 'lucide-react';
 import type { UserProfileResponse } from '../types/profile.types';
 import { EditProfileModal } from './EditProfileModal';
+import type {ToastType} from "../../../shared/components/ui/toast.tsx";
 
 interface ProfileCardProps {
     user: UserProfileResponse;
     onEditSuccess?: () => void;
+    triggerToast?: (message: string, type: ToastType) => void;
 }
 
 /**
  * Tarjeta de perfil del usuario con avatar de iniciales, datos personales
  * y botón "Editar perfil".
  */
-export function ProfileCard({ user, onEditSuccess }: ProfileCardProps) {
+export function ProfileCard({ user, onEditSuccess, triggerToast }: ProfileCardProps) {
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     
     const initials = `${user.name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase();
@@ -67,7 +69,8 @@ export function ProfileCard({ user, onEditSuccess }: ProfileCardProps) {
                 user={user} 
                 onSuccess={() => {
                     if (onEditSuccess) onEditSuccess();
-                }} 
+                }}
+                triggerToast={triggerToast}
             />
         </div>
     );
