@@ -10,7 +10,8 @@ import { AuthSplitLayout } from "../components/authSplitLayout.tsx"
 import { ErrorState } from "../../../shared/components/ui/errorState.tsx"
 import { useFormValidation } from "../../../shared/utils/useFormValidation.ts"
 import { validateForgotPasswordData } from "../../../shared/utils/loginValidation.ts"
-import {SuccessState} from "../../../shared/components/ui/successState.tsx";
+import { SuccessState } from "../../../shared/components/ui/successState.tsx"
+import {supabase} from "../../../shared/services/api/supabase-client.ts";
 
 export function ForgotPasswordPage() {
     const [error, setError] = useState("")
@@ -34,7 +35,25 @@ export function ForgotPasswordPage() {
         setIsSubmitting(true)
 
         try {
-            await resetPassword({ email: values.email })
+            const cleanEmail = values.email.trim().toLowerCase()
+
+            const { data: userProfile, error: checkError } = await supabase
+                .from('user')
+                .select('email')
+                .eq('email', cleanEmail)
+                .maybeSingle()
+
+            if (checkError) {
+                console.error("Error comprobando correo:", checkError)
+            }
+
+            if (!userProfile) {
+                setError("No hay un usuario asociado a este correo")
+                setIsSubmitting(false)
+                return
+            }
+
+            await resetPassword({ email: cleanEmail })
             setIsSuccess(true)
         } catch {
             setError("Ocurrió un error al enviar el enlace. Inténtalo de nuevo más tarde.")

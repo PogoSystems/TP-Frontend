@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Flame, Star, Trophy } from 'lucide-react';
 
 import { useProfileData } from '../hook/useProfileData';
@@ -7,9 +8,20 @@ import { WeeklyActivityCard } from '../components/WeeklyActivityCard';
 import { AchievementCard } from '../components/AchievementCard';
 import { ProfileSkeleton } from '../components/ProfileSkeleton';
 import { ErrorState } from '../../../shared/components/ui/errorState';
+import { Toast, type ToastType } from '../../../shared/components/ui/toast';
 
 export function ProfileAchievementsPage() {
     const { data, isLoading, error, refetch } = useProfileData();
+
+    const [toast, setToast] = useState<{ isOpen: boolean; message: string; type: ToastType }>({
+        isOpen: false,
+        message: "",
+        type: "success"
+    });
+
+    const triggerToast = (message: string, type: ToastType = "success") => {
+        setToast({ isOpen: true, message, type });
+    };
 
     return (
         <div className="flex flex-col gap-6 w-full min-h-full">
@@ -38,8 +50,11 @@ export function ProfileAchievementsPage() {
                 {/* State: Success Data */}
                 {!isLoading && !error && data && (
                     <div className="flex flex-col gap-6 w-full">
-                        {/* Profile Card */}
-                        <ProfileCard user={data.user} onEditSuccess={refetch} />
+                        <ProfileCard
+                            user={data.user}
+                            onEditSuccess={refetch}
+                            triggerToast={triggerToast}
+                        />
 
                         {/* KPI Row */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -87,6 +102,13 @@ export function ProfileAchievementsPage() {
                     </div>
                 )}
             </div>
+
+            <Toast
+                isOpen={toast.isOpen}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast((prev) => ({ ...prev, isOpen: false }))}
+            />
 
         </div>
     );

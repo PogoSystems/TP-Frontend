@@ -1,11 +1,12 @@
-import {Navigate, useLocation, useNavigate} from 'react-router-dom';
-import { Lightbulb, CheckCircle, XCircle } from 'lucide-react';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Lightbulb, CheckCircle, XCircle, BarChart3, BrainCircuit } from 'lucide-react';
 import { Card } from '../../../shared/components/ui/card.tsx';
 import { QuizBloomResultBar } from '../components/quizBloomResultBar.tsx';
 import { BloomSummaryCard } from '../../../shared/components/ui/bloomSummaryCard.tsx';
-import type {AttemptResultResponse} from "../types/quiz.types.ts";
-import {BloomLevelLabel} from "../../../shared/types/bloomLevel.ts";
-import {Button} from "../../../shared/components/ui/button.tsx";
+import { EmptyState } from '../../../shared/components/ui/emptyState.tsx';
+import type { AttemptResultResponse } from "../types/quiz.types.ts";
+import { BloomLevelLabel } from "../../../shared/types/bloomLevel.ts";
+import { Button } from "../../../shared/components/ui/button.tsx";
 
 type ResultState = {
     result: AttemptResultResponse;
@@ -64,8 +65,8 @@ export function QuizResultsPage() {
         sortedByFailure[0] ?? null;
     if (dominant && weak && dominant.bloomLevel === weak.bloomLevel) {
         weak = sortedByFailure.length > 1
-                ? sortedByFailure[1]
-                : null;
+            ? sortedByFailure[1]
+            : null;
     }
 
     return (
@@ -138,7 +139,7 @@ export function QuizResultsPage() {
                         <h2 className="text-xl font-semibold text-[#1a3a5a]">
                             Desempeño por Taxonomía de Bloom
                         </h2>
-                        <div className="flex flex-col gap-5">
+                        <div className="flex flex-col gap-5 justify-center flex-1">
                             {bloomStats.length > 0 ? (
                                 bloomStats.map((item) => (
                                     <QuizBloomResultBar
@@ -149,9 +150,12 @@ export function QuizResultsPage() {
                                     />
                                 ))
                             ) : (
-                                <p className="text-sm text-[#4a5565]">
-                                    No hay datos disponibles.
-                                </p>
+                                <EmptyState
+                                    icon={BarChart3}
+                                    title="Sin métricas disponibles"
+                                    description="Aún no hay suficientes datos registrados para calcular el desglose por Taxonomía de Bloom en este intento."
+                                    variant={'inline'}
+                                />
                             )}
                         </div>
                     </Card>
@@ -180,9 +184,12 @@ export function QuizResultsPage() {
                                     )}
                                 </div>
                             ) : (
-                                <p className="text-sm text-[#4a5565] py-4 text-center">
-                                    No hay datos de rendimiento cognitivo disponibles.
-                                </p>
+                                <EmptyState
+                                    icon={BrainCircuit}
+                                    title="Sin datos de rendimiento"
+                                    description="No se detectó un patrón cognitivo claro para mostrar tus fortalezas o áreas de refuerzo en este cuestionario."
+                                    variant={'inline'}
+                                />
                             )}
                         </Card>
                     </div>
@@ -199,7 +206,7 @@ export function QuizResultsPage() {
 
 
                 </div>
-                </div>
+            </div>
 
         </div>
     );

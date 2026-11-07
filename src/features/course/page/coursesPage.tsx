@@ -1,16 +1,41 @@
 import * as React from "react";
-import { Link } from "react-router-dom";
-import {BookOpenIcon, Plus} from "lucide-react";
+import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { BookOpenIcon, Plus } from "lucide-react";
 import { Button } from "../../../shared/components/ui/button.tsx";
 import { CardCourse } from "../../../shared/components/ui/cardCourse.tsx";
 import { EmptyState } from "../../../shared/components/ui/emptyState.tsx";
 import { ErrorState } from "../../../shared/components/ui/errorState.tsx";
+import { Toast, type ToastType } from "../../../shared/components/ui/toast.tsx";
 import { ManageCourseModal } from "../components/ManageCourseModal.tsx";
 import { UseCourseList } from "../hook/useCourseList.ts";
-import {CourseCardSkeleton} from "../../../shared/components/ui/skeletons.tsx";
+import { CourseCardSkeleton } from "../../../shared/components/ui/skeletons.tsx";
+
 export function CoursesPage() {
     const { courses, isLoading, error, addCourse, refetch } = UseCourseList();
-    const [isModalOpen, setIsModalOpen] = React.useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const location = useLocation();
+
+    const [toast, setToast] = useState<{ isOpen: boolean; message: string; type: ToastType }>({
+        isOpen: false,
+        message: "",
+        type: "success"
+    });
+
+    const triggerToast = (message: string, type: ToastType = "success") => {
+        setToast({ isOpen: true, message, type });
+    };
+
+    useEffect(() => {
+        if (location.state?.toastMessage) {
+            triggerToast(
+                location.state.toastMessage,
+                location.state.toastType || "success"
+            );
+
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
     return (
         <div className="flex flex-col min-h-full">
@@ -32,14 +57,19 @@ export function CoursesPage() {
                     <ManageCourseModal
                         isOpen={isModalOpen}
                         onClose={() => setIsModalOpen(false)}
-                        onCourseCreated={addCourse}
+                        mode="create"
+                        onCourseCreated={(course) => {
+                            addCourse(course);
+                            triggerToast("Curso creado exitosamente", "success");
+                        }}
+                        onError={(msg) => triggerToast(msg, "error")}
+                        existingCourses={courses.map(c => ({ name: c.title }))}
                     />
                 </div>
             </div>
 
             {/* Contenido Principal */}
             <div className="pt-10 flex-1">
-                {/* Loading */}
                 {isLoading && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Array.from({ length: 3 }).map((_, index) => (
@@ -48,7 +78,6 @@ export function CoursesPage() {
                     </div>
                 )}
 
-                {/*Error */}
                 {!isLoading && error && (
                     <ErrorState
                         title="Oops, ha ocurrido un problema"
@@ -58,7 +87,6 @@ export function CoursesPage() {
                     />
                 )}
 
-                {/*Lista Vacía */}
                 {!isLoading && !error && courses.length === 0 && (
                     <EmptyState
                         icon={BookOpenIcon}
@@ -70,7 +98,6 @@ export function CoursesPage() {
                     />
                 )}
 
-                {/* Lista de Cursos */}
                 {!isLoading && !error && courses.length > 0 && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {courses.map((course) => (
@@ -86,6 +113,13 @@ export function CoursesPage() {
                     </div>
                 )}
             </div>
+
+            <Toast
+                isOpen={toast.isOpen}
+                message={toast.message}
+                type={toast.type}
+                onClose={() => setToast(prev => ({ ...prev, isOpen: false }))}
+            />
         </div>
     );
 }
